@@ -1,0 +1,97 @@
+/* V69-empty-scroll-structural-fix
+   Structural follow-up: every view is normalized into #main-screen by v69-scroll-fix.js.
+   This prevents the old out-of-flow view bank from adding blank document height. */
+
+html:not(.nw-logged-out),
+html:not(.nw-logged-out) body{
+  min-height:0!important;
+  height:auto!important;
+}
+
+html:not(.nw-logged-out) body{
+  display:block!important;
+}
+
+/* One real layout root only. */
+html:not(.nw-logged-out) body > .relative.z-10.flex.flex-col.min-h-screen{
+  min-height:0!important;
+  height:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+
+/* One content row only. */
+html:not(.nw-logged-out) body:not(.study-note-section-open)
+> .relative.z-10.flex.flex-col.min-h-screen
+> .flex-1.max-w-7xl{
+  flex:0 0 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  align-items:flex-start!important;
+}
+
+/* Main screen follows actual active content height. */
+html:not(.nw-logged-out) body:not(.study-note-section-open) #main-screen{
+  min-height:0!important;
+  height:auto!important;
+  flex:1 1 0!important;
+  align-self:flex-start!important;
+}
+
+/* Hidden views must have zero layout contribution even if utility CSS fails/loads late. */
+section[id^="view-"].hidden{
+  display:none!important;
+}
+
+/* Only the active view contributes document height. */
+html:not(.nw-logged-out) body:not(.study-note-section-open)
+#main-screen > section[id^="view-"]:not(.hidden){
+  position:relative!important;
+  inset:auto!important;
+  width:100%!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none;
+  margin-top:0!important;
+  margin-bottom:0!important;
+  align-self:flex-start!important;
+}
+
+/* No ghost space from the legacy external view bank. */
+html:not(.nw-logged-out) body:not(.study-note-section-open)
+> .relative.z-10.flex.flex-col.min-h-screen
+> section[id^="view-"]{
+  display:none!important;
+}
+
+/* Sidebar is viewport-local and can no longer define page height. */
+@media(min-width:768px){
+  html:not(.nw-logged-out) #main-sidebar{
+    position:sticky!important;
+    top:74px!important;
+    align-self:flex-start!important;
+    height:auto!important;
+    max-height:calc(100dvh - 86px)!important;
+    overflow-y:auto!important;
+    overscroll-behavior:contain;
+  }
+}
+
+/* Footer sticks directly after real content. */
+html:not(.nw-logged-out) body > footer{
+  margin-top:0!important;
+}
+
+/* Small screens: never reserve a second screen below content. */
+@media(max-width:767px){
+  html:not(.nw-logged-out) body:not(.study-note-section-open)
+  > .relative.z-10.flex.flex-col.min-h-screen
+  > .flex-1.max-w-7xl,
+  html:not(.nw-logged-out) body:not(.study-note-section-open) #main-screen,
+  html:not(.nw-logged-out) body:not(.study-note-section-open)
+  #main-screen > section[id^="view-"]:not(.hidden){
+    min-height:0!important;
+    height:auto!important;
+    padding-bottom:min(24px,4vh);
+  }
+}
