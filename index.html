@@ -1459,6 +1459,105 @@ html:not(.nw-logged-out) body:not(.study-note-section-open)
 }
 </style>
 
+
+<style id="study-note-v58-pdf-mobile-fix">
+/* V58 · PDF 삽입 중에도 노트 헤더 고정 / 모바일 오버플로 방지 */
+#study-note-editor-shell .study-note-head,
+#study-note-editor-shell .study-note-head-main {
+  width:100%!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+#study-note-editor-shell .study-note-head-main {
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:6px!important;
+}
+#study-note-editor-shell .study-note-head-main > .min-w-0 {
+  min-width:0!important;
+  width:auto!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  display:flex!important;
+  align-items:center!important;
+}
+#study-note-editor-shell .study-note-head-main > .min-w-0 > .min-w-0 {
+  min-width:0!important;
+  overflow:hidden!important;
+}
+#study-note-editor-shell #study-note-app-title {
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+#study-note-editor-shell .study-note-utility-actions {
+  position:relative!important;
+  inset:auto!important;
+  transform:none!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  flex:0 0 auto!important;
+  min-width:max-content!important;
+  margin-left:0!important;
+  z-index:20!important;
+}
+#study-note-editor-shell .study-note-utility-actions > *,
+#study-note-editor-shell .study-note-utility-btn {
+  flex:0 0 auto!important;
+}
+#study-note-editor-shell .study-note-more-wrap-inline {
+  position:relative!important;
+  margin-left:0!important;
+}
+#study-note-editor-shell .study-note-more-menu {
+  right:0!important;
+  left:auto!important;
+}
+#study-note-editor-shell .study-note-pdf-card,
+#study-note-editor-shell .study-note-pdf-pages,
+#study-note-editor-shell .study-note-pdf-stack,
+#study-note-editor-shell .study-note-pdf-page {
+  max-width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+#study-note-editor-shell .study-note-pdf-page canvas {
+  display:block!important;
+  max-width:100%!important;
+  height:auto!important;
+}
+@media(max-width:640px){
+  #study-note-editor-shell .study-note-head {
+    overflow:visible!important;
+  }
+  #study-note-editor-shell .study-note-head-main {
+    grid-template-columns:minmax(0,1fr) auto!important;
+    gap:4px!important;
+  }
+  #study-note-editor-shell .study-note-utility-actions {
+    gap:0!important;
+  }
+  #study-note-editor-shell #study-note-print-btn,
+  #study-note-editor-shell #study-note-more-btn,
+  #study-note-editor-shell #study-note-fullscreen-btn {
+    width:36px!important;
+    min-width:36px!important;
+    height:36px!important;
+    min-height:36px!important;
+    margin:0!important;
+  }
+  #study-note-editor-shell #study-note-app-title {
+    font-size:16px!important;
+  }
+}
+</style>
+
 </head> <body class="min-h-screen text-slate-800 dark:text-slate-100 flex flex-col justify-between relative selection:bg-blue-500 selection:text-white bg-slate-50 dark:bg-slate-950 antialiased overflow-x-hidden"> <div class="aurora-bg">
 <div class="aurora-blob -top-32 -left-20 w-[550px] h-[550px] bg-blue-300 dark:bg-blue-900/30 animate-pulse"></div> <div class="aurora-blob top-1/3 -right-32 w-[600px] h-[600px] bg-sky-200 dark:bg-sky-900/20"></div> <div class="aurora-blob -bottom-20 left-1/4 w-[650px] h-[650px] bg-indigo-200 dark:bg-indigo-900/20"></div> </div>
 <div class="relative z-10 flex flex-col min-h-screen"> <header class="sticky top-0 z-10 backdrop-blur-2xl bg-white/75 dark:bg-slate-900/75 border-b border-white/80 dark:border-slate-800 shadow-[0_8px_32px_rgba(0,102,255,0.06)]"> <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-1 sm:gap-2"> <div class="flex items-center space-x-1 sm:space-x-2 min-w-0">
@@ -2612,7 +2711,7 @@ async function studyNotePdfResolveSource(att,c,holder,seq){
  const cached=studyNotePdfSignedUrlCache.get(key);
  if(cached&&cached.url&&cached.expiresAt>Date.now()+30000)return {url:cached.url,kind:'signed'};
  try{
-  const sig=await studyNotePdfWithTimeout(c.storage.from('study-note-pdfs').createSignedUrl(att.storage_path,3600),5500,'PDF 서명 주소 연결 시간이 초과되었습니다.');
+  const sig=await studyNotePdfWithTimeout(c.storage.from('study-note-pdfs').createSignedUrl(att.storage_path,3600),3500,'PDF 서명 주소 연결 시간이 초과되었습니다.');
   if(sig?.error)throw sig.error;
   const url=sig?.data?.signedUrl||'';
   if(!url)throw new Error('PDF 주소를 만들지 못했습니다.');
@@ -2623,7 +2722,7 @@ async function studyNotePdfResolveSource(att,c,holder,seq){
    holder.dataset.pdfStage='download';
    holder.innerHTML='<div class="study-note-pdf-status"><span class="study-note-pdf-loading-dot"></span>PDF 연결이 지연되어 다른 방식으로 연결 중…</div>';
   }
-  const dl=await studyNotePdfWithTimeout(c.storage.from('study-note-pdfs').download(att.storage_path),10000,'PDF 직접 연결 시간이 초과되었습니다.');
+  const dl=await studyNotePdfWithTimeout(c.storage.from('study-note-pdfs').download(att.storage_path),7000,'PDF 직접 연결 시간이 초과되었습니다.');
   if(dl?.error)throw dl.error;
   const blob=dl?.data;
   if(!(blob instanceof Blob))throw signErr;
@@ -2640,7 +2739,7 @@ async function loadStudyNotePdfPreview(att,token=studyNotePdfRenderToken){
  if(!c){holder.innerHTML=studyNotePdfPreviewFallback(att,'','PDF 연결을 준비하지 못했습니다.');holder.dataset.pdfStage='fallback';return;}
  let url='';
  studyNotePdfStage(holder,seq,'connect','<div class="study-note-pdf-status"><span class="study-note-pdf-loading-dot"></span>PDF 연결 중… <span style="opacity:.55">잠시만 기다려주세요</span></div>');
- studyNotePdfArmWatchdog(att,holder,seq,18000);
+ studyNotePdfArmWatchdog(att,holder,seq,9000);
  try{
   const source=await studyNotePdfResolveSource(att,c,holder,seq);
   if(holder.dataset.pdfLoadSeq!==String(seq)||!holder.isConnected)return;
@@ -2696,14 +2795,14 @@ async function renderStudyNotePdfPages(att,url,token=studyNotePdfRenderToken){
  if(token!==studyNotePdfRenderToken)return;
  const holder=document.getElementById('study-note-pdf-pages-'+att.id);
  if(!holder)return;
- await studyNotePdfWithTimeout(ensurePdfJs(),9000,'PDF 미리보기 모듈 로딩 시간이 초과되었습니다.');
+ await studyNotePdfWithTimeout(ensurePdfJs(),7000,'PDF 미리보기 모듈 로딩 시간이 초과되었습니다.');
  if(token!==studyNotePdfRenderToken||!holder.isConnected)return;
 
  // 큰 PDF에서 첫 페이지를 보기 전에 불필요하게 전체 파일을 선읽지 않도록 설정한다.
  let task=null,pdf=null;
  try{
   task=pdfjsLib.getDocument({url,isEvalSupported:false,rangeChunkSize:131072,disableAutoFetch:true});
-  pdf=await studyNotePdfWithTimeout(task.promise,15000,'PDF 문서를 여는 시간이 초과되었습니다.',()=>{try{task?.destroy?.()}catch(_){}});
+  pdf=await studyNotePdfWithTimeout(task.promise,10000,'PDF 문서를 여는 시간이 초과되었습니다.',()=>{try{task?.destroy?.()}catch(_){}});
  }catch(err){try{await task?.destroy?.()}catch(_){}throw err;}
  if(token!==studyNotePdfRenderToken){try{await pdf.destroy()}catch(_){}return;}
  const total=Math.max(1,Math.min(Number(pdf.numPages)||1,100));
