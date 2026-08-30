@@ -25,16 +25,16 @@ jobs:
               print("already applied")
               raise SystemExit(0)
 
-          needle="""  // 삽입 완료와 미리보기는 완전히 분리한다. idle 콜백에만 의존하지 않고
-           // 짧은 setTimeout으로 반드시 실행되게 하여 "준비 중"에서 영구 정지하지 않게 한다.
-           items.forEach((a,index)=>{
-            const delay=Math.min(index*180,720);
-            setTimeout(()=>{void loadStudyNotePdfPreview(a,token);},30+delay);
-           });"""
+          start=text.find("async function renderStudyNotePdfAttachments()")
+          if start<0:
+              raise RuntimeError("renderStudyNotePdfAttachments not found")
+          pos=text.find("items.forEach((a,index)=>{",start)
+          if pos<0:
+              raise RuntimeError("PDF preview scheduling loop not found")
 
-          replacement="""  // V59-mobile-pdf-on-demand
-           // 모바일에서는 PDF 삽입 직후 PDF.js 캔버스를 자동 렌더링하지 않는다.
-           // 대용량 PDF 렌더가 메인 스레드를 점유해 앱 전체가 멈추는 현상을 방지한다.
+          guard="""// V59-mobile-pdf-on-demand
+           // 모바일에서는 삽입 직후 PDF.js 자동 렌더링을 하지 않는다.
+           // 큰 PDF의 캔버스 렌더가 메인 스레드를 점유해 앱이 멈추는 문제를 차단한다.
            const mobile=window.matchMedia?.('(max-width: 767px)')?.matches||window.innerWidth<768;
            if(mobile){
             items.forEach(a=>{
@@ -45,24 +45,19 @@ jobs:
             });
             return;
            }
-           items.forEach((a,index)=>{
-            const delay=Math.min(index*180,720);
-            setTimeout(()=>{void loadStudyNotePdfPreview(a,token);},80+delay);
-           });"""
+           """
+          text=text[:pos]+guard+text[pos:]
 
-          if needle not in text:
-              raise RuntimeError("target render scheduling block not found")
-          text=text.replace(needle,replacement,1)
-
-          # 모바일에서 수동 미리보기를 열더라도 첫 화면 주변의 여러 페이지가 동시에
-          # 렌더링되지 않게 observer preload 범위를 줄인다.
+          text=text.replace(
+              "setTimeout(()=>{void loadStudyNotePdfPreview(a,token);},30+delay);",
+              "setTimeout(()=>{void loadStudyNotePdfPreview(a,token);},80+delay);",
+              1
+          )
           text=text.replace(
               "},{root:root||null,rootMargin:'280px 0px 360px 0px',threshold:.03});",
               "},{root:root||null,rootMargin:(window.innerWidth<768?'0px':'120px 0px 180px 0px'),threshold:.05});",
               1
           )
-
-          # 모바일 캔버스 메모리 사용량을 더 낮춘다.
           text=text.replace(
               "const dpr=Math.max(1,Math.min(window.devicePixelRatio||1,mobile?1.5:2));",
               "const dpr=Math.max(1,Math.min(window.devicePixelRatio||1,mobile?1.1:2));",
@@ -73,9 +68,8 @@ jobs:
               "const maxSide=mobile?1400:2200,maxPx=mobile?1200000:4200000,long=Math.max(css.width,css.height);",
               1
           )
-
           p.write_text(text,encoding="utf-8")
-          print("Applied V59 mobile PDF on-demand preview fix")
+          print("Applied V59 mobile PDF freeze fix")
       - name: Commit fix
         shell: bash
         run: |
