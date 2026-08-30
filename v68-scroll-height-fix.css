@@ -1,0 +1,125 @@
+/* V68-scroll-height-fix
+   Remove excessive EMPTY vertical scrolling across logged-in views.
+   Keeps real content scrollable, but prevents flex/min-height/sidebar layout from creating blank screens. */
+
+html:not(.nw-logged-out),
+html:not(.nw-logged-out) body{
+  min-height:100%;
+  height:auto;
+}
+
+html:not(.nw-logged-out) body{
+  justify-content:flex-start!important;
+}
+
+/* The app root used min-h-screen while body also used min-h-screen/justify-between.
+   That can create an extra viewport of empty scroll. */
+html:not(.nw-logged-out) body > .relative.z-10.flex.flex-col.min-h-screen{
+  min-height:0!important;
+  height:auto!important;
+  flex:0 0 auto!important;
+}
+
+/* Main wrapper should size to content, not reserve/stretch a viewport. */
+html:not(.nw-logged-out) body:not(.study-note-section-open)
+> .relative.z-10.flex.flex-col.min-h-screen
+> .flex-1.max-w-7xl{
+  flex:0 0 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  align-items:flex-start!important;
+}
+
+/* Main content and every active view use natural content height. */
+html:not(.nw-logged-out) body:not(.study-note-section-open) #main-screen{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  align-self:flex-start!important;
+}
+
+html:not(.nw-logged-out) body:not(.study-note-section-open) #main-screen > section:not(.hidden),
+html:not(.nw-logged-out) body:not(.study-note-section-open)
+> .relative.z-10.flex.flex-col.min-h-screen
+> section[id^="view-"]:not(.hidden){
+  min-height:0!important;
+  height:auto!important;
+  max-height:none;
+  align-self:flex-start!important;
+}
+
+/* Home grid: never distribute rows through leftover height. */
+#view-home{
+  min-height:0!important;
+  height:auto!important;
+  align-content:start!important;
+}
+#view-home > .grid{
+  min-height:0!important;
+  height:auto!important;
+  align-content:start!important;
+  grid-auto-rows:auto!important;
+}
+
+/* On tablet/desktop the tall sidebar must NOT determine the document height.
+   It becomes a viewport-local scroller instead. */
+@media(min-width:768px){
+  html:not(.nw-logged-out) #main-sidebar{
+    align-self:flex-start!important;
+    position:sticky!important;
+    top:78px!important;
+    max-height:calc(100dvh - 94px)!important;
+    height:auto!important;
+    overflow-y:auto!important;
+    overscroll-behavior-y:contain;
+  }
+
+  html:not(.nw-logged-out) body:not(.study-note-section-open)
+  > .relative.z-10.flex.flex-col.min-h-screen
+  > .flex-1.max-w-7xl{
+    align-items:flex-start!important;
+  }
+}
+
+/* Footer follows content directly; no flex spacer pushing it one viewport lower. */
+html:not(.nw-logged-out) body > footer{
+  flex:0 0 auto!important;
+  margin-top:.25rem!important;
+}
+
+/* Remove common accidental viewport-height reservations from normal views.
+   Full-screen note editor is excluded. */
+html:not(.nw-logged-out) body:not(.study-note-app-open)
+section[id^="view-"]:not(.hidden).min-h-screen,
+html:not(.nw-logged-out) body:not(.study-note-app-open)
+section[id^="view-"]:not(.hidden).h-screen{
+  min-height:0!important;
+  height:auto!important;
+}
+
+/* Chat-like views can still scroll internally without making the whole page enormous. */
+html:not(.nw-logged-out) body:not(.study-note-section-open)
+#view-chat:not(.hidden),
+html:not(.nw-logged-out) body:not(.study-note-section-open)
+#view-ai-chat:not(.hidden),
+html:not(.nw-logged-out) body:not(.study-note-section-open)
+#view-ai-life:not(.hidden){
+  min-height:0!important;
+  max-height:calc(100dvh - 92px)!important;
+}
+
+/* Mobile: remove bottom blank area caused by parent stretching. */
+@media(max-width:767px){
+  html:not(.nw-logged-out) body:not(.study-note-section-open)
+  > .relative.z-10.flex.flex-col.min-h-screen
+  > .flex-1.max-w-7xl,
+  html:not(.nw-logged-out) body:not(.study-note-section-open) #main-screen,
+  html:not(.nw-logged-out) body:not(.study-note-section-open) #main-screen > section:not(.hidden){
+    min-height:0!important;
+    height:auto!important;
+  }
+
+  html:not(.nw-logged-out) body > footer{
+    padding-top:.25rem!important;
+  }
+}
