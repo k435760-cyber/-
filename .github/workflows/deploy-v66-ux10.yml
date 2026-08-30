@@ -1,0 +1,53 @@
+name: Deploy V66 UX10
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-v66-ux10.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Patch index for V66 assets
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path("index.html")
+          s=p.read_text(encoding="utf-8")
+          if "./v66-ux.css" not in s:
+              s=s.replace("</head>", '<link rel="stylesheet" href="./v66-ux.css">\n</head>', 1)
+          if "./v66-ux.js" not in s:
+              s=s.replace("</body>", '<script src="./v66-ux.js" defer></script>\n</body>', 1)
+          if "'unsafe-eval'" in s[s.rfind("<meta",0,s.find("Content-Security-Policy")):s.find("/>",s.find("Content-Security-Policy"))]:
+              raise SystemExit("unsafe-eval returned")
+          if "V65-security-hardening" not in s:
+              raise SystemExit("V65 security marker missing")
+          if not s.rstrip().endswith("</html>"):
+              raise SystemExit("HTML ending broken")
+          p.write_text(s,encoding="utf-8")
+
+      - name: Validate V66 JS
+        run: node --check v66-ux.js
+
+      - name: Commit V66
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "No index changes"
+            exit 0
+          fi
+          git commit -m "Deploy V66 UX improvements"
+          git push origin main
