@@ -95,3 +95,55 @@ html:not(.nw-logged-out) body > footer{
     padding-bottom:min(24px,4vh);
   }
 }
+
+
+/* V70-mobile-main-height-repair
+   Fix mobile clipping caused by flex-basis:0 on #main-screen after V69. */
+html:not(.nw-logged-out) body:not(.study-note-section-open) #main-screen{
+  flex:0 0 auto!important;
+  flex-basis:auto!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow:visible!important;
+  align-self:stretch!important;
+}
+html:not(.nw-logged-out) body:not(.study-note-section-open) #main-screen > section[id^="view-"]:not(.hidden){
+  display:block;
+  width:100%!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow:visible;
+}
+@media(max-width:767px){
+  html:not(.nw-logged-out) body:not(.study-note-section-open) > .relative.z-10.flex.flex-col.min-h-screen > .flex-1.max-w-7xl{
+    display:flex!important;
+    flex-direction:column!important;
+    flex:0 0 auto!important;
+    min-height:0!important;
+    height:auto!important;
+    overflow:visible!important;
+  }
+  html:not(.nw-logged-out) body:not(.study-note-section-open) #main-screen{
+    flex:0 0 auto!important;
+    flex-basis:auto!important;
+    min-height:0!important;
+    height:auto!important;
+    padding-top:0!important;
+    overflow:visible!important;
+  }
+  html:not(.nw-logged-out) body:not(.study-note-section-open) #main-screen > section[id^="view-"]:not(.hidden){
+    flex:0 0 auto!important;
+    min-height:0!important;
+    height:auto!important;
+    transform:none!important;
+  }
+}
+@media(min-width:768px){
+  html:not(.nw-logged-out) body:not(.study-note-section-open) #main-screen{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    height:auto!important;
+  }
+}
