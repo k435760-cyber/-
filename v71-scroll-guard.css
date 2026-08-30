@@ -1,20 +1,12 @@
-/* V71-real-content-scroll-guard */
+/* V72-scroll-recovery
+   Restore native vertical scrolling. Horizontal overflow protections remain in V67. */
 html,body{
-  overscroll-behavior-y:none!important;
+  overscroll-behavior-y:auto!important;
 }
 html:not(.nw-logged-out) body:not(.study-note-app-open){
   min-height:0!important;
   height:auto!important;
 }
-
-/* Do not let trailing decorative/background layers create document height. */
-html:not(.nw-logged-out) body > [aria-hidden="true"],
-html:not(.nw-logged-out) body > .fixed,
-html:not(.nw-logged-out) body > .absolute{
-  max-height:100dvh;
-}
-
-/* Footer is the real end of normal pages. */
 html:not(.nw-logged-out) body:not(.study-note-app-open) > footer{
   position:relative;
   z-index:20;
