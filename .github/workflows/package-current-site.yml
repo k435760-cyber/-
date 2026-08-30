@@ -14,10 +14,26 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
+      - name: Verify V62 PDF preview script syntax
+        shell: python
+        run: |
+          from pathlib import Path
+          import re, subprocess, tempfile
+          text=Path("index.html").read_text(encoding="utf-8")
+          if "V62-mobile-pdf-byte-renderer" not in text:
+              raise SystemExit("V62 marker missing")
+          scripts=re.findall(r'<script\b[^>]*>(.*?)</script>',text,re.I|re.S)
+          target=next((s for s in scripts if "V62-mobile-pdf-byte-renderer" in s),None)
+          if target is None:
+              raise SystemExit("V62 script block not found")
+          q=Path("/tmp/v62-check.js")
+          q.write_text(target,encoding="utf-8")
+          subprocess.run(["node","--check",str(q)],check=True)
+          print("V62 JavaScript syntax OK")
       - name: Upload Cloudflare-ready site
         uses: actions/upload-artifact@v4
         with:
-          name: yougje-v61-pdf-preview
+          name: yougje-v62-pdf-preview
           path: index.html
           if-no-files-found: error
           retention-days: 7
