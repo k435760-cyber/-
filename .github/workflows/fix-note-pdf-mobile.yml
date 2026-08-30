@@ -1,0 +1,171 @@
+name: Fix note PDF mobile UI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-note-pdf-mobile.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Patch PDF preview and note header
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path("index.html")
+          text = p.read_text(encoding="utf-8")
+          marker = 'id="study-note-v58-pdf-mobile-fix"'
+
+          if marker not in text:
+              css = r"""
+          <style id="study-note-v58-pdf-mobile-fix">
+          /* V58 · PDF 삽입 중에도 노트 헤더 고정 / 모바일 오버플로 방지 */
+          #study-note-editor-shell .study-note-head,
+          #study-note-editor-shell .study-note-head-main {
+            width:100%!important;
+            max-width:100%!important;
+            box-sizing:border-box!important;
+          }
+          #study-note-editor-shell .study-note-head-main {
+            display:grid!important;
+            grid-template-columns:minmax(0,1fr) auto!important;
+            align-items:center!important;
+            gap:6px!important;
+          }
+          #study-note-editor-shell .study-note-head-main > .min-w-0 {
+            min-width:0!important;
+            width:auto!important;
+            max-width:100%!important;
+            overflow:hidden!important;
+            display:flex!important;
+            align-items:center!important;
+          }
+          #study-note-editor-shell .study-note-head-main > .min-w-0 > .min-w-0 {
+            min-width:0!important;
+            overflow:hidden!important;
+          }
+          #study-note-editor-shell #study-note-app-title {
+            display:block!important;
+            width:100%!important;
+            max-width:100%!important;
+            min-width:0!important;
+            overflow:hidden!important;
+            text-overflow:ellipsis!important;
+            white-space:nowrap!important;
+          }
+          #study-note-editor-shell .study-note-utility-actions {
+            position:relative!important;
+            inset:auto!important;
+            transform:none!important;
+            display:flex!important;
+            align-items:center!important;
+            justify-content:flex-end!important;
+            flex:0 0 auto!important;
+            min-width:max-content!important;
+            margin-left:0!important;
+            z-index:20!important;
+          }
+          #study-note-editor-shell .study-note-utility-actions > *,
+          #study-note-editor-shell .study-note-utility-btn {
+            flex:0 0 auto!important;
+          }
+          #study-note-editor-shell .study-note-more-wrap-inline {
+            position:relative!important;
+            margin-left:0!important;
+          }
+          #study-note-editor-shell .study-note-more-menu {
+            right:0!important;
+            left:auto!important;
+          }
+          #study-note-editor-shell .study-note-pdf-card,
+          #study-note-editor-shell .study-note-pdf-pages,
+          #study-note-editor-shell .study-note-pdf-stack,
+          #study-note-editor-shell .study-note-pdf-page {
+            max-width:100%!important;
+            min-width:0!important;
+            box-sizing:border-box!important;
+          }
+          #study-note-editor-shell .study-note-pdf-page canvas {
+            display:block!important;
+            max-width:100%!important;
+            height:auto!important;
+          }
+          @media(max-width:640px){
+            #study-note-editor-shell .study-note-head {
+              overflow:visible!important;
+            }
+            #study-note-editor-shell .study-note-head-main {
+              grid-template-columns:minmax(0,1fr) auto!important;
+              gap:4px!important;
+            }
+            #study-note-editor-shell .study-note-utility-actions {
+              gap:0!important;
+            }
+            #study-note-editor-shell #study-note-print-btn,
+            #study-note-editor-shell #study-note-more-btn,
+            #study-note-editor-shell #study-note-fullscreen-btn {
+              width:36px!important;
+              min-width:36px!important;
+              height:36px!important;
+              min-height:36px!important;
+              margin:0!important;
+            }
+            #study-note-editor-shell #study-note-app-title {
+              font-size:16px!important;
+            }
+          }
+          </style>
+          """
+              if "</head>" not in text:
+                  raise RuntimeError("index.html has no </head>")
+              text = text.replace("</head>", css + "\n</head>", 1)
+
+          replacements = {
+              "studyNotePdfArmWatchdog(att,holder,seq,18000);":
+                  "studyNotePdfArmWatchdog(att,holder,seq,9000);",
+              "createSignedUrl(att.storage_path,3600),5500,'PDF 서명 주소 연결 시간이 초과되었습니다.'":
+                  "createSignedUrl(att.storage_path,3600),3500,'PDF 서명 주소 연결 시간이 초과되었습니다.'",
+              "download(att.storage_path),10000,'PDF 직접 연결 시간이 초과되었습니다.'":
+                  "download(att.storage_path),7000,'PDF 직접 연결 시간이 초과되었습니다.'",
+              "await studyNotePdfWithTimeout(ensurePdfJs(),9000,'PDF 미리보기 모듈 로딩 시간이 초과되었습니다.');":
+                  "await studyNotePdfWithTimeout(ensurePdfJs(),7000,'PDF 미리보기 모듈 로딩 시간이 초과되었습니다.');",
+              "pdf=await studyNotePdfWithTimeout(task.promise,15000,'PDF 문서를 여는 시간이 초과되었습니다.'":
+                  "pdf=await studyNotePdfWithTimeout(task.promise,10000,'PDF 문서를 여는 시간이 초과되었습니다.'",
+          }
+
+          changed = False
+          for old, new in replacements.items():
+              if old in text:
+                  text = text.replace(old, new)
+                  changed = True
+
+          # PDF 연결 중 상태가 장시간 남는 경우 사용자가 앱을 계속 쓸 수 있도록
+          # 상태 영역 자체가 레이아웃 폭을 밀어내지 않게 한다.
+          if marker in text or changed:
+              p.write_text(text, encoding="utf-8")
+              print("Applied V58 PDF/mobile header fix")
+          else:
+              raise RuntimeError("Expected PDF code patterns were not found")
+
+      - name: Commit patch
+        shell: bash
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Fix PDF preview hang and note header layout"
+          git push origin main
