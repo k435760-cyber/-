@@ -1,0 +1,73 @@
+name: Fix CSP hashes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - '.github/workflows/fix-csp.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix-csp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Rebuild inline script CSP hashes
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re, hashlib, base64
+
+          p = Path('index.html')
+          text = p.read_text(encoding='utf-8')
+
+          meta = re.search(r'(<meta\s+content=")([^"]*)("\s+http-equiv="Content-Security-Policy"\s*/?>)', text, re.I)
+          if not meta:
+              raise SystemExit('CSP meta tag not found')
+
+          csp = meta.group(2)
+          scripts = []
+          for m in re.finditer(r'<script\b([^>]*)>(.*?)</script>', text, re.I | re.S):
+              attrs, body = m.group(1), m.group(2)
+              if re.search(r'\bsrc\s*=', attrs, re.I):
+                  continue
+              digest = base64.b64encode(hashlib.sha256(body.encode('utf-8')).digest()).decode('ascii')
+              scripts.append("'sha256-" + digest + "'")
+
+          parts = [x.strip() for x in csp.split(';')]
+          out = []
+          replaced = False
+          for part in parts:
+              if part.startswith('script-src '):
+                  tokens = part.split()
+                  kept = [t for t in tokens[1:] if not (t.startswith("'sha256-") and t.endswith("'"))]
+                  part = 'script-src ' + ' '.join(kept + scripts)
+                  replaced = True
+              out.append(part)
+          if not replaced:
+              raise SystemExit('script-src directive not found')
+
+          new_csp = ';'.join(out)
+          new_text = text[:meta.start(2)] + new_csp + text[meta.end(2):]
+          p.write_text(new_text, encoding='utf-8')
+          print(f'Updated CSP with {len(scripts)} inline script hashes')
+          PY
+      - name: Commit CSP repair
+        shell: bash
+        run: |
+          if git diff --quiet -- index.html; then
+            echo 'CSP hashes already current'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Fix CSP hashes for current index.html'
+          git push origin main
