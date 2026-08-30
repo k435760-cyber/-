@@ -1,0 +1,23 @@
+/* V71-real-content-scroll-guard */
+html,body{
+  overscroll-behavior-y:none!important;
+}
+html:not(.nw-logged-out) body:not(.study-note-app-open){
+  min-height:0!important;
+  height:auto!important;
+}
+
+/* Do not let trailing decorative/background layers create document height. */
+html:not(.nw-logged-out) body > [aria-hidden="true"],
+html:not(.nw-logged-out) body > .fixed,
+html:not(.nw-logged-out) body > .absolute{
+  max-height:100dvh;
+}
+
+/* Footer is the real end of normal pages. */
+html:not(.nw-logged-out) body:not(.study-note-app-open) > footer{
+  position:relative;
+  z-index:20;
+  margin-bottom:0!important;
+  padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important;
+}
