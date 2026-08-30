@@ -1,0 +1,305 @@
+name: Fix PDF preview V62
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-pdf-preview-v62.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Replace mobile preview with byte-based single-page renderer
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path("index.html")
+          text=p.read_text(encoding="utf-8")
+          marker="V62-mobile-pdf-byte-renderer"
+          if marker in text:
+              print("V62 already applied")
+              raise SystemExit(0)
+
+          start=text.find("async function loadStudyNotePdfNativeMobile(att,token=studyNotePdfRenderToken){")
+          if start<0:
+              raise RuntimeError("mobile PDF preview function not found")
+          end=text.find("\n}\n\nasync function loadStudyNotePdfPreview", start)
+          if end<0:
+              raise RuntimeError("mobile PDF preview function end not found")
+          end += 2
+
+          replacement=r'''// V62-mobile-pdf-byte-renderer
+          async function loadStudyNotePdfNativeMobile(att,token=studyNotePdfRenderToken){
+           const holder=document.getElementById('study-note-pdf-pages-'+att.id);
+           if(!holder||!holder.isConnected)return;
+           const seq=++studyNotePdfLoadSeq;
+           const c=getSupabase();
+           let blobUrl='',pdf=null,task=null,renderTask=null,renderGen=0;
+
+           const stillCurrent=()=>holder.isConnected&&holder.dataset.pdfLoadSeq===String(seq);
+           const failSafe=setTimeout(()=>{
+            if(!stillCurrent())return;
+            const stage=holder.dataset.pdfStage||'';
+            if(stage==='ready'||stage==='fallback')return;
+            holder.dataset.pdfStage='fallback';
+            holder.innerHTML=studyNotePdfPreviewFallback(att,blobUrl,'PDF 미리보기 준비가 오래 걸려 중단했습니다.');
+           },22000);
+
+           if(!c){
+            clearTimeout(failSafe);
+            holder.dataset.pdfStage='fallback';
+            holder.innerHTML=studyNotePdfPreviewFallback(att,'','PDF 미리보기를 준비하지 못했습니다.');
+            return;
+           }
+
+           studyNotePdfStage(holder,seq,'download','<div class="study-note-pdf-status"><span class="study-note-pdf-loading-dot"></span>PDF 파일을 불러오는 중…</div>');
+
+           try{
+            const dl=await studyNotePdfWithTimeout(
+             c.storage.from('study-note-pdfs').download(att.storage_path),
+             7500,
+             'PDF 파일 다운로드 시간이 초과되었습니다.'
+            );
+            if(dl?.error)throw dl.error;
+            if(!stillCurrent())return;
+
+            const blob=dl?.data;
+            if(!(blob instanceof Blob))throw new Error('PDF 파일 데이터를 읽지 못했습니다.');
+
+            const key=String(att.id||att.storage_path||'');
+            const old=studyNotePdfBlobUrls.get(key);
+            if(old){try{URL.revokeObjectURL(old)}catch(_){}}
+            blobUrl=URL.createObjectURL(blob);
+            studyNotePdfBlobUrls.set(key,blobUrl);
+
+            studyNotePdfStage(holder,seq,'decode','<div class="study-note-pdf-status"><span class="study-note-pdf-loading-dot"></span>PDF 미리보기를 준비하는 중…</div>');
+
+            const buffer=await studyNotePdfWithTimeout(
+             blob.arrayBuffer(),
+             4500,
+             'PDF 파일 변환 시간이 초과되었습니다.'
+            );
+            if(!stillCurrent())return;
+
+            await studyNotePdfWithTimeout(
+             ensurePdfJs(),
+             7000,
+             'PDF 미리보기 모듈 로딩 시간이 초과되었습니다.'
+            );
+            if(!stillCurrent())return;
+
+            const bytes=new Uint8Array(buffer);
+            task=pdfjsLib.getDocument({
+             data:bytes,
+             isEvalSupported:false,
+             disableAutoFetch:true,
+             disableStream:true,
+             disableRange:true,
+             useWorkerFetch:false
+            });
+            pdf=await studyNotePdfWithTimeout(
+             task.promise,
+             8500,
+             'PDF 문서를 여는 시간이 초과되었습니다.',
+             ()=>{try{task?.destroy?.()}catch(_){}}
+            );
+            if(!stillCurrent()){try{await pdf?.destroy?.()}catch(_){}return;}
+
+            const total=Math.max(1,Math.min(Number(pdf.numPages)||1,200));
+            if(Number(att.page_count||0)!==total){
+             att.page_count=total;
+             const meta=document.querySelector('[data-pdf-meta="'+att.id+'"]');
+             if(meta)meta.textContent=total+'페이지 · '+((Number(att.file_size||0)/1048576).toFixed(1))+'MB';
+             try{
+              const u=activeUser?.id;
+              if(c&&u)c.from('study_note_attachments').update({page_count:total}).eq('id',att.id).eq('user_id',u).then(()=>{}).catch(()=>{});
+             }catch(_){}
+            }
+
+            const safe=studyNotePdfUsableUrl(blobUrl)||blobUrl;
+            holder.dataset.pdfStage='render';
+            holder.innerHTML=
+             '<div class="study-note-pdf-toolbar">'+
+              '<div class="study-note-pdf-nav">'+
+               '<button type="button" data-v62-prev>‹</button>'+
+               '<span class="study-note-pdf-count" data-v62-count>1 / '+total+'</span>'+
+               '<button type="button" data-v62-next>›</button>'+
+              '</div>'+
+              '<div class="study-note-pdf-quick">'+
+               '<a class="study-note-pdf-open" href="'+escapeHtml(safe)+'" target="_blank" rel="noopener noreferrer" title="원본 열기">↗</a>'+
+               '<button type="button" class="study-note-pdf-remove-mini" data-onclick="removeStudyNotePdf('+Number(att.id)+')" title="PDF 삭제" aria-label="PDF 메뉴"><span class="study-note-more-dots" aria-hidden="true"><i></i><i></i><i></i></span></button>'+
+              '</div>'+
+             '</div>'+
+             '<div class="study-note-pdf-v62-stage"><div class="study-note-pdf-status"><span class="study-note-pdf-loading-dot"></span>1페이지를 불러오는 중…</div></div>';
+
+            const stage=holder.querySelector('.study-note-pdf-v62-stage');
+            const count=holder.querySelector('[data-v62-count]');
+            const prev=holder.querySelector('[data-v62-prev]');
+            const next=holder.querySelector('[data-v62-next]');
+            let current=1;
+
+            const updateNav=()=>{
+             if(count)count.textContent=current+' / '+total;
+             if(prev)prev.disabled=current<=1;
+             if(next)next.disabled=current>=total;
+            };
+
+            const renderPage=async(pageNo)=>{
+             if(!stillCurrent()||!stage?.isConnected)return;
+             current=Math.max(1,Math.min(total,Number(pageNo)||1));
+             const myGen=++renderGen;
+             updateNav();
+             try{renderTask?.cancel?.()}catch(_){}
+             stage.innerHTML='<div class="study-note-pdf-status"><span class="study-note-pdf-loading-dot"></span>'+current+'페이지를 불러오는 중…</div>';
+
+             let page=null;
+             try{
+              page=await studyNotePdfWithTimeout(pdf.getPage(current),5500,current+'페이지 로딩 시간이 초과되었습니다.');
+              if(!stillCurrent()||myGen!==renderGen||!stage.isConnected)return;
+
+              const base=page.getViewport({scale:1});
+              const available=Math.max(260,Math.min(holder.clientWidth||window.innerWidth-16,window.innerWidth-16));
+              const cssScale=Math.max(.2,Math.min(1.6,available/base.width));
+              const css=page.getViewport({scale:cssScale});
+              const maxPixels=1150000;
+              const dpr=Math.max(1,Math.min(window.devicePixelRatio||1,1.15));
+              let q=dpr;
+              const px=css.width*css.height*q*q;
+              if(px>maxPixels)q=Math.max(.7,Math.sqrt(maxPixels/Math.max(1,css.width*css.height)));
+              const vp=page.getViewport({scale:cssScale*q});
+
+              const canvas=document.createElement('canvas');
+              canvas.width=Math.max(1,Math.ceil(vp.width));
+              canvas.height=Math.max(1,Math.ceil(vp.height));
+              canvas.style.width=Math.ceil(css.width)+'px';
+              canvas.style.height=Math.ceil(css.height)+'px';
+              canvas.style.maxWidth='100%';
+              canvas.style.display='block';
+              canvas.style.margin='0 auto';
+
+              const ctx=canvas.getContext('2d',{alpha:false,desynchronized:true});
+              if(!ctx)throw new Error('PDF 캔버스를 만들지 못했습니다.');
+
+              stage.innerHTML='';
+              stage.appendChild(canvas);
+
+              renderTask=page.render({canvasContext:ctx,viewport:vp,intent:'display'});
+              await studyNotePdfWithTimeout(
+               renderTask.promise,
+               8500,
+               current+'페이지 렌더링 시간이 초과되었습니다.',
+               ()=>{try{renderTask?.cancel?.()}catch(_){}}
+              );
+              if(!stillCurrent()||myGen!==renderGen)return;
+              holder.dataset.pdfStage='ready';
+              clearTimeout(failSafe);
+             }catch(err){
+              if(!stillCurrent()||myGen!==renderGen)return;
+              holder.dataset.pdfStage='fallback';
+              stage.innerHTML=
+               '<div class="study-note-pdf-status" data-pdf-fallback="1">'+
+                '<div>'+escapeHtml(current+'페이지 미리보기를 불러오지 못했습니다.')+'</div>'+
+                '<div class="study-note-pdf-status-actions">'+
+                 '<button type="button" class="study-note-pdf-retry" data-v62-page-retry>다시 시도</button>'+
+                 '<a class="study-note-pdf-open" href="'+escapeHtml(safe)+'" target="_blank" rel="noopener noreferrer">원본 열기</a>'+
+                '</div>'+
+               '</div>';
+              stage.querySelector('[data-v62-page-retry]')?.addEventListener('click',()=>{holder.dataset.pdfStage='render';void renderPage(current);},{once:true});
+              clearTimeout(failSafe);
+              if(window.__NW_DEBUG)console.warn('[PDF] V62 page render failed',err);
+             }finally{
+              try{page?.cleanup?.()}catch(_){}
+             }
+            };
+
+            prev?.addEventListener('click',()=>{if(current>1)void renderPage(current-1)});
+            next?.addEventListener('click',()=>{if(current<total)void renderPage(current+1)});
+            updateNav();
+
+            if(!window.__studyNotePdfPageRenderers)window.__studyNotePdfPageRenderers=new Map();
+            window.__studyNotePdfPageRenderers.set(String(att.id),{
+             token:studyNotePdfRenderToken,
+             stack:stage,
+             render:()=>renderPage(current),
+             destroy:()=>{renderGen++;try{renderTask?.cancel?.()}catch(_){}try{pdf?.destroy?.()}catch(_){}}
+            });
+
+            await renderPage(1);
+            try{window.nwFixPdfNoteLayout?.()}catch(_){}
+           }catch(err){
+            clearTimeout(failSafe);
+            if(!stillCurrent())return;
+            holder.dataset.pdfStage='fallback';
+            holder.innerHTML=studyNotePdfPreviewFallback(att,blobUrl,'PDF 미리보기를 불러오지 못했습니다. 다시 시도해주세요.');
+            try{await task?.destroy?.()}catch(_){}
+            if(window.__NW_DEBUG)console.warn('[PDF] V62 mobile preview failed',err);
+           }
+          }'''
+
+          text=text[:start]+replacement+text[end:]
+
+          css=r'''
+          <style id="study-note-v62-pdf-renderer-style">
+          @media(max-width:767px){
+            .study-note-shell.note-app-mode .study-note-pdf-v62-stage{
+              width:100%!important;
+              max-width:100%!important;
+              min-width:0!important;
+              min-height:240px!important;
+              display:grid!important;
+              place-items:center!important;
+              overflow:hidden!important;
+              background:#fff!important;
+              box-sizing:border-box!important;
+            }
+            .study-note-shell.note-app-mode .study-note-pdf-v62-stage canvas{
+              max-width:100%!important;
+              height:auto!important;
+              touch-action:pan-y!important;
+              pointer-events:none!important;
+            }
+            .study-note-shell.note-app-mode .study-note-pdf-nav{
+              display:flex!important;
+              align-items:center!important;
+              gap:6px!important;
+              min-width:0!important;
+            }
+            .study-note-shell.note-app-mode .study-note-pdf-nav button{
+              width:34px!important;
+              min-width:34px!important;
+              height:34px!important;
+              border:0!important;
+              border-radius:10px!important;
+              background:#f3f4f6!important;
+              color:#334155!important;
+              font-size:20px!important;
+              line-height:1!important;
+            }
+            .study-note-shell.note-app-mode .study-note-pdf-nav button:disabled{
+              opacity:.35!important;
+            }
+          }
+          </style>
+          '''
+          if "</head>" not in text:
+              raise RuntimeError("</head> missing")
+          text=text.replace("</head>",css+"\n</head>",1)
+          p.write_text(text,encoding="utf-8")
+          print("Applied V62 mobile PDF byte renderer")
+      - name: Commit fix
+        shell: bash
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No change"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Fix mobile PDF preview endless loading V62"
+          git push origin main
