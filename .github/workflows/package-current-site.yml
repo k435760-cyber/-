@@ -17,7 +17,7 @@ jobs:
       - name: Upload Cloudflare-ready site
         uses: actions/upload-artifact@v4
         with:
-          name: yougje-v60-pdf-layout
+          name: yougje-v61-pdf-preview
           path: index.html
           if-no-files-found: error
           retention-days: 7
