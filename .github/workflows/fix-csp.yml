@@ -71,3 +71,5 @@ jobs:
           git add index.html
           git commit -m 'Fix CSP hashes for current index.html'
           git push origin main
+
+# manual refresh: 2026-08-30
