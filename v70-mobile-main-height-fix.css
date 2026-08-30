@@ -1,0 +1,64 @@
+/* V70-mobile-main-height-repair
+   V69 normalized all views into #main-screen correctly, but on mobile the
+   parent switches to flex-column. flex-basis:0 then collapsed #main-screen
+   vertically, clipping the top of active views. Keep natural content height. */
+
+html:not(.nw-logged-out) body:not(.study-note-section-open) #main-screen{
+  flex:0 0 auto!important;
+  flex-basis:auto!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow:visible!important;
+  align-self:stretch!important;
+}
+
+html:not(.nw-logged-out) body:not(.study-note-section-open)
+#main-screen > section[id^="view-"]:not(.hidden){
+  display:block;
+  width:100%!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow:visible;
+}
+
+/* Parent content row is column on phones, so its child must size from content. */
+@media(max-width:767px){
+  html:not(.nw-logged-out) body:not(.study-note-section-open)
+  > .relative.z-10.flex.flex-col.min-h-screen
+  > .flex-1.max-w-7xl{
+    display:flex!important;
+    flex-direction:column!important;
+    flex:0 0 auto!important;
+    min-height:0!important;
+    height:auto!important;
+    overflow:visible!important;
+  }
+
+  html:not(.nw-logged-out) body:not(.study-note-section-open) #main-screen{
+    flex:0 0 auto!important;
+    flex-basis:auto!important;
+    min-height:0!important;
+    height:auto!important;
+    padding-top:0!important;
+    overflow:visible!important;
+  }
+
+  html:not(.nw-logged-out) body:not(.study-note-section-open)
+  #main-screen > section[id^="view-"]:not(.hidden){
+    flex:0 0 auto!important;
+    min-height:0!important;
+    height:auto!important;
+    transform:none!important;
+  }
+}
+
+/* Desktop/tablet keeps the main column flexible horizontally only. */
+@media(min-width:768px){
+  html:not(.nw-logged-out) body:not(.study-note-section-open) #main-screen{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    height:auto!important;
+  }
+}
