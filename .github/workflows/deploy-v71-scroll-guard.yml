@@ -1,0 +1,40 @@
+name: Deploy V71 scroll guard
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-v71-scroll-guard.yml"
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Patch index
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path("index.html")
+          s=p.read_text(encoding="utf-8")
+          if "./v71-scroll-guard.css" not in s:
+              s=s.replace("</head>", '<link rel="stylesheet" href="./v71-scroll-guard.css">\n</head>', 1)
+          if "./v71-scroll-guard.js" not in s:
+              s=s.replace("</body>", '<script src="./v71-scroll-guard.js" defer></script>\n</body>', 1)
+          if not s.rstrip().endswith("</html>"):
+              raise SystemExit("broken HTML")
+          p.write_text(s,encoding="utf-8")
+      - name: Validate JS
+        run: node --check v71-scroll-guard.js
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Deploy V71 real-content scroll guard"
+          git push origin main
