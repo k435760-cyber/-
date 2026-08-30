@@ -1,0 +1,23 @@
+name: Package current site ZIP
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/package-current-site.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Upload Cloudflare-ready site
+        uses: actions/upload-artifact@v4
+        with:
+          name: yougje-v60-pdf-layout
+          path: index.html
+          if-no-files-found: error
+          retention-days: 7
