@@ -1,0 +1,44 @@
+name: Debug PDF code
+on:
+  push:
+    branches: [debug-pdf-1788089712144]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Print PDF-related code context
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          text=Path("index.html").read_text(encoding="utf-8", errors="replace")
+          pats=[
+            "studyNotePdf",
+            "PDF 연결 중",
+            "PDF 삽입 완료",
+            "ensurePdfJs",
+            "createSignedUrl",
+            "pdfjs",
+            "render",
+            "attachment"
+          ]
+          lines=text.splitlines()
+          hits=[]
+          for i,l in enumerate(lines):
+            if any(p.lower() in l.lower() for p in pats):
+              hits.append(i)
+          keep=set()
+          for i in hits:
+            for j in range(max(0,i-8), min(len(lines),i+18)):
+              keep.add(j)
+          blocks=[]
+          last=-2
+          for j in sorted(keep):
+            if j!=last+1: blocks.append("\n--- BLOCK ---")
+            blocks.append(f"{j+1}: {lines[j]}")
+            last=j
+          out="\n".join(blocks)
+          print(out[:60000])
