@@ -1,0 +1,32 @@
+name: Inspect PDF ready state
+on:
+  push:
+    branches: [debug-pdf-v63-1788092505867]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Inspect ready-state code
+        shell: python
+        run: |
+          from pathlib import Path
+          t=Path("index.html").read_text(encoding="utf-8",errors="replace")
+          lines=t.splitlines()
+          for i,l in enumerate(lines):
+            if "준비" in l:
+              print(f"{i+1}: {l[:1600]}")
+          for sig in [
+            "async function handleStudyNotePdfInsert",
+            "async function renderStudyNotePdfAttachments",
+            "async function retryStudyNotePdfPreview",
+            "async function loadStudyNotePdfNativeMobile",
+            "function setStudyNoteSaveState"
+          ]:
+            i=t.find(sig)
+            print("\n====",sig,"@",i,"====\n")
+            if i>=0: print(t[i:i+22000])
