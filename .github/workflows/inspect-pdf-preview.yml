@@ -1,0 +1,32 @@
+name: Inspect PDF preview
+on:
+  push:
+    branches: [debug-pdf-preview-1788091257804]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Print preview functions and CSP
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          t=Path("index.html").read_text(encoding="utf-8",errors="replace")
+          for sig in [
+            "async function loadStudyNotePdfPreview",
+            "async function studyNotePdfResolveSource",
+            "async function retryStudyNotePdfPreview",
+            "async function renderStudyNotePdfPages",
+            "function studyNotePdfArmWatchdog",
+            "function ensurePdfJs",
+          ]:
+            i=t.find(sig)
+            print("\n====",sig,"@",i,"====\n")
+            if i>=0: print(t[max(0,i-1500):i+13000])
+          m=re.search(r'<meta\s+content="([^"]*)"\s+http-equiv="Content-Security-Policy"',t,re.I)
+          print("\n==== CSP ====\n", m.group(1) if m else "NONE")
