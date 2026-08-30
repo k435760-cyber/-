@@ -1,0 +1,227 @@
+name: Fix PDF layout shift V60
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-pdf-layout-v60.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Stabilize note layout while PDF is open
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path("index.html")
+          text=p.read_text(encoding="utf-8")
+          marker='id="study-note-v60-pdf-layout-stability"'
+          if marker in text:
+              print("V60 already applied")
+              raise SystemExit(0)
+
+          css=r'''
+          <style id="study-note-v60-pdf-layout-stability">
+          /* V60 · PDF 열림 상태에서 노트 헤더/본문/도구바가 화면 폭을 벗어나지 않게 고정 */
+          @media(max-width:640px){
+            body.study-note-app-open{
+              width:100%!important;
+              max-width:100vw!important;
+              overflow-x:hidden!important;
+            }
+
+            .study-note-shell.note-app-mode{
+              left:0!important;
+              right:0!important;
+              width:100%!important;
+              max-width:100vw!important;
+              min-width:0!important;
+              transform:none!important;
+              box-sizing:border-box!important;
+              overflow:hidden!important;
+            }
+
+            .study-note-shell.note-app-mode>div.grid,
+            .study-note-shell.note-app-mode .min-w-0.bg-slate-100\/70,
+            .study-note-shell.note-app-mode .study-note-head,
+            .study-note-shell.note-app-mode .study-note-head-main,
+            .study-note-shell.note-app-mode #study-note-paper,
+            .study-note-shell.note-app-mode .study-note-footer,
+            .study-note-shell.note-app-mode .study-note-toolbar,
+            .study-note-shell.note-app-mode .study-note-pdf-list,
+            .study-note-shell.note-app-mode .study-note-pdf-card,
+            .study-note-shell.note-app-mode .study-note-pdf-pages,
+            .study-note-shell.note-app-mode .study-note-pdf-stack,
+            .study-note-shell.note-app-mode .study-note-pdf-page{
+              box-sizing:border-box!important;
+              min-width:0!important;
+              max-width:100%!important;
+            }
+
+            .study-note-shell.note-app-mode .study-note-head{
+              width:100%!important;
+              overflow:hidden!important;
+            }
+
+            .study-note-shell.note-app-mode .study-note-head-main{
+              width:100%!important;
+              display:grid!important;
+              grid-template-columns:minmax(0,1fr) auto!important;
+              align-items:center!important;
+              gap:4px!important;
+              overflow:hidden!important;
+            }
+
+            .study-note-shell.note-app-mode .study-note-head-main>.min-w-0{
+              min-width:0!important;
+              max-width:100%!important;
+              overflow:hidden!important;
+              display:flex!important;
+              align-items:center!important;
+            }
+
+            .study-note-shell.note-app-mode #study-note-app-title{
+              display:block!important;
+              width:100%!important;
+              min-width:0!important;
+              max-width:100%!important;
+              white-space:nowrap!important;
+              overflow:hidden!important;
+              text-overflow:ellipsis!important;
+            }
+
+            .study-note-shell.note-app-mode .study-note-utility-actions{
+              min-width:max-content!important;
+              max-width:max-content!important;
+              flex:0 0 auto!important;
+              justify-self:end!important;
+            }
+
+            .study-note-shell.note-app-mode #study-note-paper,
+            .study-note-shell.note-app-mode #study-note-paper.has-pdf{
+              width:100%!important;
+              max-width:100%!important;
+              overflow-x:hidden!important;
+            }
+
+            .study-note-shell.note-app-mode .study-note-pdf-list,
+            .study-note-shell.note-app-mode .study-note-pdf-card,
+            .study-note-shell.note-app-mode .study-note-pdf-pages,
+            .study-note-shell.note-app-mode .study-note-pdf-stack,
+            .study-note-shell.note-app-mode .study-note-pdf-page{
+              width:100%!important;
+              max-width:100%!important;
+              overflow-x:hidden!important;
+            }
+
+            .study-note-shell.note-app-mode .study-note-pdf-page canvas{
+              display:block!important;
+              max-width:100%!important;
+              height:auto!important;
+              margin-inline:auto!important;
+            }
+
+            .study-note-shell.note-app-mode .study-note-footer{
+              left:0!important;
+              right:0!important;
+              width:100%!important;
+              max-width:100%!important;
+              min-width:0!important;
+              margin:0!important;
+              overflow:hidden!important;
+            }
+
+            .study-note-shell.note-app-mode .study-note-toolbar{
+              width:100%!important;
+              max-width:100%!important;
+              min-width:0!important;
+              overflow-x:auto!important;
+              overflow-y:hidden!important;
+              overscroll-behavior-x:contain!important;
+              -webkit-overflow-scrolling:touch!important;
+              scroll-behavior:auto!important;
+              padding-inline:0!important;
+            }
+
+            .study-note-shell.note-app-mode .study-note-toolbar-group,
+            .study-note-shell.note-app-mode .study-note-tools-row,
+            .study-note-shell.note-app-mode .study-note-modebar,
+            .study-note-shell.note-app-mode .study-note-format-row,
+            .study-note-shell.note-app-mode .study-note-action-row{
+              min-width:0!important;
+              max-width:none!important;
+            }
+          }
+          </style>
+          '''
+          js=r'''
+          <script>
+          (function(){
+            function nwFixPdfNoteLayout(){
+              try{
+                var shell=document.querySelector('.study-note-shell.note-app-mode');
+                if(!shell)return;
+                var paper=document.getElementById('study-note-paper');
+                var bar=shell.querySelector('.study-note-toolbar');
+                if(paper)paper.scrollLeft=0;
+                if(bar)bar.scrollLeft=0;
+                document.documentElement.scrollLeft=0;
+                document.body.scrollLeft=0;
+              }catch(e){if(window.__NW_DEBUG)console.debug(e);}
+            }
+            window.nwFixPdfNoteLayout=nwFixPdfNoteLayout;
+            function bind(){
+              var paper=document.getElementById('study-note-paper');
+              if(paper&&!paper.dataset.pdfLayoutWatch){
+                paper.dataset.pdfLayoutWatch='1';
+                var was=paper.classList.contains('has-pdf');
+                new MutationObserver(function(){
+                  var now=paper.classList.contains('has-pdf');
+                  if(now&&!was){
+                    requestAnimationFrame(nwFixPdfNoteLayout);
+                    setTimeout(nwFixPdfNoteLayout,80);
+                    setTimeout(nwFixPdfNoteLayout,350);
+                  }
+                  was=now;
+                }).observe(paper,{attributes:true,attributeFilter:['class']});
+              }
+              var input=document.getElementById('study-note-pdf-input');
+              if(input&&!input.dataset.pdfLayoutReset){
+                input.dataset.pdfLayoutReset='1';
+                input.addEventListener('change',function(){
+                  setTimeout(nwFixPdfNoteLayout,100);
+                  setTimeout(nwFixPdfNoteLayout,500);
+                });
+              }
+            }
+            if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});
+            else bind();
+            document.addEventListener('click',function(e){
+              if(e.target&&e.target.closest&&e.target.closest('#view-notes'))setTimeout(bind,0);
+            },true);
+          })();
+          </script>
+          '''
+          if "</head>" not in text or "</body>" not in text:
+              raise RuntimeError("HTML closing tags not found")
+          text=text.replace("</head>",css+"\n</head>",1)
+          text=text.replace("</body>",js+"\n</body>",1)
+          p.write_text(text,encoding="utf-8")
+          print("Applied V60 PDF layout stability fix")
+      - name: Commit fix
+        shell: bash
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No change"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Fix note toolbar layout when PDF opens"
+          git push origin main
