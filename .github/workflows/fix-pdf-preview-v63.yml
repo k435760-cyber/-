@@ -1,0 +1,137 @@
+name: Fix tablet PDF preview V63
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-pdf-preview-v63.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Route tablets to safe PDF renderer
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path("index.html")
+          text=p.read_text(encoding="utf-8")
+          marker="V63-tablet-safe-pdf-renderer"
+          if marker in text:
+              print("V63 already applied")
+              raise SystemExit(0)
+
+          sig="async function loadStudyNotePdfPreview(att,token=studyNotePdfRenderToken){"
+          pos=text.find(sig)
+          if pos<0:
+              raise RuntimeError("loadStudyNotePdfPreview not found")
+
+          helper=r'''
+          // V63-tablet-safe-pdf-renderer
+          function studyNoteUseSafePdfRenderer(){
+           try{
+            const touch=(Number(navigator.maxTouchPoints)||0)>0;
+            const w=Math.max(0,Number(window.innerWidth)||0);
+            const sw=Math.max(0,Number(screen?.width)||0);
+            const sh=Math.max(0,Number(screen?.height)||0);
+            const shortSide=Math.min(sw||w,sh||w);
+            return w<=1024 || (touch && shortSide<=1100);
+           }catch(_){return (Number(window.innerWidth)||0)<=1024}
+          }
+          '''
+          text=text[:pos]+helper+"\n"+text[pos:]
+
+          old="if((window.matchMedia?.('(max-width: 767px)')?.matches||window.innerWidth<768))return loadStudyNotePdfNativeMobile(att,token);"
+          new="if(studyNoteUseSafePdfRenderer())return loadStudyNotePdfNativeMobile(att,token);"
+          if old not in text:
+              raise RuntimeError("preview routing condition not found")
+          text=text.replace(old,new,1)
+
+          old2="const mobile=window.matchMedia?.('(max-width: 767px)')?.matches||window.innerWidth<768;"
+          if old2 not in text:
+              raise RuntimeError("attachment mobile condition not found")
+          text=text.replace(old2,"const mobile=studyNoteUseSafePdfRenderer();",1)
+
+          old_block=r'''if(mobile){
+            items.forEach(a=>{
+             const holder=document.getElementById('study-note-pdf-pages-'+a.id);
+             if(!holder)return;
+             holder.dataset.pdfStage='manual';
+             holder.innerHTML='<div class="study-note-pdf-status"><div>PDF 저장 완료 · 미리보기는 필요할 때 열어요.</div><div class="study-note-pdf-status-actions"><button type="button" class="study-note-pdf-retry" data-onclick="retryStudyNotePdfPreview('+Number(a.id)+')">미리보기 열기</button></div></div>';
+            });
+            return;
+           }'''
+          new_block=r'''if(mobile){
+            items.forEach((a,index)=>{
+             const holder=document.getElementById('study-note-pdf-pages-'+a.id);
+             if(!holder)return;
+             const big=Number(a.file_size||0)>15*1024*1024;
+             if(big){
+              holder.dataset.pdfStage='manual';
+              holder.innerHTML='<div class="study-note-pdf-status"><div>큰 PDF입니다. 필요할 때 미리보기를 열어주세요.</div><div class="study-note-pdf-status-actions"><button type="button" class="study-note-pdf-retry" data-onclick="retryStudyNotePdfPreview('+Number(a.id)+')">미리보기 열기</button></div></div>';
+              return;
+             }
+             holder.dataset.pdfStage='queued';
+             holder.innerHTML='<div class="study-note-pdf-status"><span class="study-note-pdf-loading-dot"></span>PDF 미리보기를 시작하는 중…</div>';
+             setTimeout(()=>{void loadStudyNotePdfPreview(a,studyNotePdfRenderToken);},120+Math.min(index*180,720));
+            });
+            return;
+           }'''
+          if old_block not in text:
+              raise RuntimeError("mobile attachment block not found")
+          text=text.replace(old_block,new_block,1)
+
+          # V62 tablet layout rules: the tablet safe renderer now applies up to 1024px.
+          css_marker='id="study-note-v62-pdf-renderer-style"'
+          ci=text.find(css_marker)
+          if ci>=0:
+              a=max(0,ci-100)
+              b=min(len(text),ci+6000)
+              chunk=text[a:b]
+              chunk=chunk.replace("@media(max-width:767px){","@media(max-width:1024px){",1)
+              text=text[:a]+chunk+text[b:]
+
+          # V61 legacy native-preview style should not constrain the V62 renderer, but make it tablet-safe too.
+          css_marker2='id="study-note-v61-native-pdf-preview"'
+          ci=text.find(css_marker2)
+          if ci>=0:
+              a=max(0,ci-100)
+              b=min(len(text),ci+5000)
+              chunk=text[a:b]
+              chunk=chunk.replace("@media(max-width:767px){","@media(max-width:1024px){",1)
+              text=text[:a]+chunk+text[b:]
+
+          p.write_text(text,encoding="utf-8")
+          print("Applied V63 tablet PDF renderer routing fix")
+      - name: Verify JavaScript syntax
+        shell: python
+        run: |
+          from pathlib import Path
+          import re, subprocess
+          text=Path("index.html").read_text(encoding="utf-8")
+          scripts=re.findall(r'<script\b[^>]*>(.*?)</script>',text,re.I|re.S)
+          for i,s in enumerate(scripts):
+            q=Path(f"/tmp/script-{i}.js")
+            q.write_text(s,encoding="utf-8")
+            r=subprocess.run(["node","--check",str(q)],capture_output=True,text=True)
+            if r.returncode:
+              print(r.stdout)
+              print(r.stderr)
+              raise SystemExit(f"script {i} syntax failed")
+          print("All inline JavaScript syntax OK")
+      - name: Commit fix
+        shell: bash
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No change"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Fix PDF preview stuck on tablet V63"
+          git push origin main
