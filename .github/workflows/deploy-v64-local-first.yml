@@ -1,0 +1,53 @@
+name: Deploy V64 local-first PDF preview
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-v64-local-first.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Apply V64 exact patch
+        shell: python
+        run: |
+          from pathlib import Path
+          import hashlib
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          old1 = "async function loadStudyNotePdfPreview(att,token=studyNotePdfRenderToken){\n if(studyNoteUseSafePdfRenderer())return loadStudyNotePdfNativeMobile(att,token);"
+          new1 = "async function loadStudyNotePdfPreview(att,token=studyNotePdfRenderToken){\n // V64-local-first-pdf-preview: 모든 기기에서 동일한 안전 렌더러 사용\n return loadStudyNotePdfNativeMobile(att,token);"
+          old2 = " const mobile=studyNoteUseSafePdfRenderer();\n if(mobile){"
+          new2 = " const mobile=true; // V64: 기기 판별 없이 안전 렌더러로 통일\n if(mobile){"
+
+          if text.count(old1) != 1:
+              raise SystemExit(f'V63 renderer selector occurrence mismatch: {text.count(old1)}')
+          if text.count(old2) != 1:
+              raise SystemExit(f'V63 mobile selector occurrence mismatch: {text.count(old2)}')
+
+          text = text.replace(old1, new1, 1).replace(old2, new2, 1)
+          path.write_text(text, encoding='utf-8', newline='')
+
+          digest = hashlib.sha256(path.read_bytes()).hexdigest()
+          expected = 'c2acb0dc1a18daaf6d988a5033ed6b4cde4fed64a2c92cef48aa7a0dd1ace760'
+          print('result sha256:', digest)
+          if digest != expected:
+              raise SystemExit(f'Uploaded V64 checksum mismatch: expected {expected}, got {digest}')
+
+      - name: Commit V64
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Deploy V64 local-first PDF preview'
+          git push origin main
