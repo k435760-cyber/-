@@ -1,0 +1,138 @@
+name: Fix PDF preview loading V61
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-pdf-preview-v61.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Replace mobile PDF.js preview with native blob preview
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path("index.html")
+          text=p.read_text(encoding="utf-8")
+          marker="V61-mobile-native-pdf-preview"
+          if marker in text:
+              print("V61 already applied")
+              raise SystemExit(0)
+
+          sig="async function loadStudyNotePdfPreview(att,token=studyNotePdfRenderToken){"
+          pos=text.find(sig)
+          if pos<0:
+              raise RuntimeError("loadStudyNotePdfPreview not found")
+
+          helper=r'''
+          // V61-mobile-native-pdf-preview
+          async function loadStudyNotePdfNativeMobile(att,token=studyNotePdfRenderToken){
+           const holder=document.getElementById('study-note-pdf-pages-'+att.id);
+           if(!holder||!holder.isConnected)return;
+           const seq=++studyNotePdfLoadSeq;
+           const c=getSupabase();
+           if(!c){
+            holder.dataset.pdfStage='fallback';
+            holder.innerHTML=studyNotePdfPreviewFallback(att,'','PDF 미리보기를 준비하지 못했습니다.');
+            return;
+           }
+
+           studyNotePdfStage(holder,seq,'download','<div class="study-note-pdf-status"><span class="study-note-pdf-loading-dot"></span>PDF 미리보기 파일을 준비하는 중…</div>');
+
+           try{
+            const dl=await studyNotePdfWithTimeout(
+             c.storage.from('study-note-pdfs').download(att.storage_path),
+             8500,
+             'PDF 미리보기 파일 다운로드 시간이 초과되었습니다.'
+            );
+            if(dl?.error)throw dl.error;
+            if(token!==studyNotePdfRenderToken||!holder.isConnected||holder.dataset.pdfLoadSeq!==String(seq))return;
+
+            const blob=dl?.data;
+            if(!(blob instanceof Blob))throw new Error('PDF 파일 데이터를 읽지 못했습니다.');
+
+            const key=String(att.id||att.storage_path||'');
+            const old=studyNotePdfBlobUrls.get(key);
+            if(old){try{URL.revokeObjectURL(old)}catch(_){}}
+            const blobUrl=URL.createObjectURL(blob);
+            studyNotePdfBlobUrls.set(key,blobUrl);
+
+            const safe=studyNotePdfUsableUrl(blobUrl)||blobUrl;
+            holder.dataset.pdfStage='ready';
+            holder.innerHTML=
+             '<div class="study-note-pdf-toolbar">'+
+              '<span class="study-note-pdf-count">PDF 미리보기</span>'+
+              '<div class="study-note-pdf-quick">'+
+               '<a class="study-note-pdf-open" href="'+escapeHtml(safe)+'" target="_blank" rel="noopener noreferrer" title="원본 열기">↗</a>'+
+               '<button type="button" class="study-note-pdf-remove-mini" data-onclick="removeStudyNotePdf('+Number(att.id)+')" title="PDF 삭제" aria-label="PDF 메뉴"><span class="study-note-more-dots" aria-hidden="true"><i></i><i></i><i></i></span></button>'+
+              '</div>'+
+             '</div>'+
+             '<div class="study-note-pdf-native-wrap">'+
+              '<iframe class="study-note-pdf-native-frame" src="'+escapeHtml(safe)+'" title="'+escapeHtml(att.file_name||'PDF 미리보기')+'"></iframe>'+
+             '</div>';
+            try{window.nwFixPdfNoteLayout?.()}catch(_){}
+           }catch(err){
+            if(!holder.isConnected||holder.dataset.pdfLoadSeq!==String(seq))return;
+            holder.dataset.pdfStage='fallback';
+            holder.innerHTML=studyNotePdfPreviewFallback(att,'','PDF 미리보기를 열지 못했습니다. 다시 시도해주세요.');
+            if(window.__NW_DEBUG)console.warn('[PDF] 모바일 네이티브 미리보기 실패',err);
+           }
+          }
+          '''
+
+          text=text[:pos]+helper+"\n"+text[pos:]
+          text=text.replace(
+              sig,
+              sig+"\n if((window.matchMedia?.('(max-width: 767px)')?.matches||window.innerWidth<768))return loadStudyNotePdfNativeMobile(att,token);",
+              1
+          )
+
+          css=r'''
+          <style id="study-note-v61-native-pdf-preview">
+          @media(max-width:767px){
+            .study-note-shell.note-app-mode .study-note-pdf-native-wrap{
+              width:100%!important;
+              max-width:100%!important;
+              min-width:0!important;
+              height:min(72dvh,760px)!important;
+              min-height:420px!important;
+              overflow:hidden!important;
+              background:#f8fafc!important;
+              border-top:1px solid #eef2f7!important;
+              border-bottom:1px solid #eef2f7!important;
+            }
+            .study-note-shell.note-app-mode .study-note-pdf-native-frame{
+              display:block!important;
+              width:100%!important;
+              max-width:100%!important;
+              height:100%!important;
+              border:0!important;
+              background:#fff!important;
+            }
+          }
+          </style>
+          '''
+          if "</head>" not in text:
+              raise RuntimeError("</head> missing")
+          text=text.replace("</head>",css+"\n</head>",1)
+
+          p.write_text(text,encoding="utf-8")
+          print("Applied V61 native mobile PDF preview")
+      - name: Commit fix
+        shell: bash
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No change"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Fix endless PDF preview loading on mobile"
+          git push origin main
