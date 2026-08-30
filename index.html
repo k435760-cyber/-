@@ -1692,6 +1692,31 @@ html:not(.nw-logged-out) body:not(.study-note-section-open)
 }
 </style>
 
+
+<style id="study-note-v61-native-pdf-preview">
+@media(max-width:767px){
+  .study-note-shell.note-app-mode .study-note-pdf-native-wrap{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    height:min(72dvh,760px)!important;
+    min-height:420px!important;
+    overflow:hidden!important;
+    background:#f8fafc!important;
+    border-top:1px solid #eef2f7!important;
+    border-bottom:1px solid #eef2f7!important;
+  }
+  .study-note-shell.note-app-mode .study-note-pdf-native-frame{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    height:100%!important;
+    border:0!important;
+    background:#fff!important;
+  }
+}
+</style>
+
 </head> <body class="min-h-screen text-slate-800 dark:text-slate-100 flex flex-col justify-between relative selection:bg-blue-500 selection:text-white bg-slate-50 dark:bg-slate-950 antialiased overflow-x-hidden"> <div class="aurora-bg">
 <div class="aurora-blob -top-32 -left-20 w-[550px] h-[550px] bg-blue-300 dark:bg-blue-900/30 animate-pulse"></div> <div class="aurora-blob top-1/3 -right-32 w-[600px] h-[600px] bg-sky-200 dark:bg-sky-900/20"></div> <div class="aurora-blob -bottom-20 left-1/4 w-[650px] h-[650px] bg-indigo-200 dark:bg-indigo-900/20"></div> </div>
 <div class="relative z-10 flex flex-col min-h-screen"> <header class="sticky top-0 z-10 backdrop-blur-2xl bg-white/75 dark:bg-slate-900/75 border-b border-white/80 dark:border-slate-800 shadow-[0_8px_32px_rgba(0,102,255,0.06)]"> <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-1 sm:gap-2"> <div class="flex items-center space-x-1 sm:space-x-2 min-w-0">
@@ -2865,7 +2890,63 @@ async function studyNotePdfResolveSource(att,c,holder,seq){
   return {url:blobUrl,kind:'blob'};
  }
 }
+
+// V61-mobile-native-pdf-preview
+async function loadStudyNotePdfNativeMobile(att,token=studyNotePdfRenderToken){
+ const holder=document.getElementById('study-note-pdf-pages-'+att.id);
+ if(!holder||!holder.isConnected)return;
+ const seq=++studyNotePdfLoadSeq;
+ const c=getSupabase();
+ if(!c){
+  holder.dataset.pdfStage='fallback';
+  holder.innerHTML=studyNotePdfPreviewFallback(att,'','PDF 미리보기를 준비하지 못했습니다.');
+  return;
+ }
+
+ studyNotePdfStage(holder,seq,'download','<div class="study-note-pdf-status"><span class="study-note-pdf-loading-dot"></span>PDF 미리보기 파일을 준비하는 중…</div>');
+
+ try{
+  const dl=await studyNotePdfWithTimeout(
+   c.storage.from('study-note-pdfs').download(att.storage_path),
+   8500,
+   'PDF 미리보기 파일 다운로드 시간이 초과되었습니다.'
+  );
+  if(dl?.error)throw dl.error;
+  if(token!==studyNotePdfRenderToken||!holder.isConnected||holder.dataset.pdfLoadSeq!==String(seq))return;
+
+  const blob=dl?.data;
+  if(!(blob instanceof Blob))throw new Error('PDF 파일 데이터를 읽지 못했습니다.');
+
+  const key=String(att.id||att.storage_path||'');
+  const old=studyNotePdfBlobUrls.get(key);
+  if(old){try{URL.revokeObjectURL(old)}catch(_){}}
+  const blobUrl=URL.createObjectURL(blob);
+  studyNotePdfBlobUrls.set(key,blobUrl);
+
+  const safe=studyNotePdfUsableUrl(blobUrl)||blobUrl;
+  holder.dataset.pdfStage='ready';
+  holder.innerHTML=
+   '<div class="study-note-pdf-toolbar">'+
+    '<span class="study-note-pdf-count">PDF 미리보기</span>'+
+    '<div class="study-note-pdf-quick">'+
+     '<a class="study-note-pdf-open" href="'+escapeHtml(safe)+'" target="_blank" rel="noopener noreferrer" title="원본 열기">↗</a>'+
+     '<button type="button" class="study-note-pdf-remove-mini" data-onclick="removeStudyNotePdf('+Number(att.id)+')" title="PDF 삭제" aria-label="PDF 메뉴"><span class="study-note-more-dots" aria-hidden="true"><i></i><i></i><i></i></span></button>'+
+    '</div>'+
+   '</div>'+
+   '<div class="study-note-pdf-native-wrap">'+
+    '<iframe class="study-note-pdf-native-frame" src="'+escapeHtml(safe)+'" title="'+escapeHtml(att.file_name||'PDF 미리보기')+'"></iframe>'+
+   '</div>';
+  try{window.nwFixPdfNoteLayout?.()}catch(_){}
+ }catch(err){
+  if(!holder.isConnected||holder.dataset.pdfLoadSeq!==String(seq))return;
+  holder.dataset.pdfStage='fallback';
+  holder.innerHTML=studyNotePdfPreviewFallback(att,'','PDF 미리보기를 열지 못했습니다. 다시 시도해주세요.');
+  if(window.__NW_DEBUG)console.warn('[PDF] 모바일 네이티브 미리보기 실패',err);
+ }
+}
+
 async function loadStudyNotePdfPreview(att,token=studyNotePdfRenderToken){
+ if((window.matchMedia?.('(max-width: 767px)')?.matches||window.innerWidth<768))return loadStudyNotePdfNativeMobile(att,token);
  const holder=document.getElementById('study-note-pdf-pages-'+att.id);
  if(!holder||!holder.isConnected)return;
  const seq=++studyNotePdfLoadSeq;
