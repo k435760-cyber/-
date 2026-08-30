@@ -1,4 +1,4 @@
-name: Debug PDF code
+name: Debug PDF layout
 on:
   push:
     branches: [debug-pdf-1788089712144]
@@ -9,28 +9,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Print targeted PDF code context
+        with:
+          ref: main
+      - name: Print PDF layout CSS and markup
         shell: python
         run: |
           from pathlib import Path
-          text=Path("index.html").read_text(encoding="utf-8", errors="replace")
-          pats=["studyNotePdf","PDF 연결 중","PDF 삽입 완료","ensurePdfJs","studyNoteInsert","insertPdf","pdf-preview"]
+          text=Path("index.html").read_text(encoding="utf-8",errors="replace")
+          pats=[
+            "study-note-footer",
+            "study-note-toolbar",
+            "study-note-head",
+            "study-note-editor-shell",
+            "study-note-paper",
+            "study-note-edit-wrap",
+            "study-note-pdf-list",
+            "has-pdf",
+            "position:fixed",
+            "position:sticky"
+          ]
           spans=[]
-          for p in pats:
+          for pat in pats:
             start=0
             while True:
-              i=text.lower().find(p.lower(), start)
+              i=text.find(pat,start)
               if i<0: break
-              spans.append((max(0,i-2600), min(len(text), i+5200), p, i))
-              start=i+len(p)
+              spans.append((max(0,i-1800),min(len(text),i+3800),pat))
+              start=i+len(pat)
           spans.sort()
           merged=[]
-          for a,b,p,i in spans:
+          for a,b,p in spans:
             if merged and a<=merged[-1][1]:
-              merged[-1][1]=max(merged[-1][1],b)
-              merged[-1][2].append(p)
+              merged[-1][1]=max(merged[-1][1],b); merged[-1][2].append(p)
             else:
               merged.append([a,b,[p]])
-          for n,(a,b,ps) in enumerate(merged[:20],1):
-            print(f"\n===== BLOCK {n} patterns={sorted(set(ps))} chars={a}:{b} =====\n")
+          for n,(a,b,ps) in enumerate(merged[:30],1):
+            print(f"\n===== BLOCK {n} {sorted(set(ps))} =====\n")
             print(text[a:b])
