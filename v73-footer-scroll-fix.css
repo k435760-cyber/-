@@ -1,0 +1,118 @@
+/* V73-footer-bottom-natural-scroll
+   Final layout model:
+   - body owns the viewport height
+   - app root fills remaining space without min-h-screen inflation
+   - footer sits at viewport bottom on short pages
+   - long pages scroll naturally
+   This removes the scrollable background below the footer without hard-clamping scroll. */
+
+html{
+  min-height:100%;
+  height:auto;
+}
+
+html:not(.nw-logged-out) body{
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:100dvh!important;
+  height:auto!important;
+  margin:0;
+}
+
+/* Main app shell: fill only the remaining viewport, never a second viewport. */
+html:not(.nw-logged-out) body > .relative.z-10.flex.flex-col.min-h-screen{
+  display:flex!important;
+  flex-direction:column!important;
+  flex:1 0 auto!important;
+  min-height:0!important;
+  height:auto!important;
+}
+
+/* Content row follows content height and can expand normally. */
+html:not(.nw-logged-out) body:not(.study-note-section-open)
+> .relative.z-10.flex.flex-col.min-h-screen
+> .flex-1.max-w-7xl{
+  flex:1 0 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  align-items:flex-start!important;
+}
+
+/* Main content itself stays natural-height. */
+html:not(.nw-logged-out) body:not(.study-note-section-open) #main-screen{
+  flex:1 1 auto!important;
+  flex-basis:auto!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow:visible!important;
+}
+
+/* Footer becomes the actual end of the document. */
+html:not(.nw-logged-out) body > footer{
+  flex:0 0 auto!important;
+  margin-top:auto!important;
+  margin-bottom:0!important;
+  position:relative!important;
+  inset:auto!important;
+}
+
+/* No invisible bottom padding beyond safe-area. */
+html:not(.nw-logged-out) body > footer{
+  padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important;
+}
+
+/* Hidden route views never reserve height. */
+section[id^="view-"].hidden{
+  display:none!important;
+}
+
+/* Active views use content height, not viewport height. */
+html:not(.nw-logged-out) body:not(.study-note-section-open)
+#main-screen > section[id^="view-"]:not(.hidden){
+  min-height:0!important;
+  height:auto!important;
+  max-height:none;
+  overflow:visible;
+}
+
+/* Mobile column layout: content can grow, but no extra blank screen is reserved. */
+@media(max-width:767px){
+  html:not(.nw-logged-out) body{
+    min-height:100dvh!important;
+  }
+
+  html:not(.nw-logged-out) body:not(.study-note-section-open)
+  > .relative.z-10.flex.flex-col.min-h-screen
+  > .flex-1.max-w-7xl{
+    display:flex!important;
+    flex-direction:column!important;
+    flex:1 0 auto!important;
+    min-height:0!important;
+    height:auto!important;
+  }
+
+  html:not(.nw-logged-out) body:not(.study-note-section-open) #main-screen{
+    flex:1 0 auto!important;
+    min-height:0!important;
+    height:auto!important;
+    overflow:visible!important;
+  }
+
+  html:not(.nw-logged-out) body:not(.study-note-section-open)
+  #main-screen > section[id^="view-"]:not(.hidden){
+    flex:0 0 auto!important;
+    min-height:0!important;
+    height:auto!important;
+    padding-bottom:0!important;
+  }
+}
+
+/* Tablet/desktop: sidebar is allowed to scroll internally, but not stretch document height. */
+@media(min-width:768px){
+  html:not(.nw-logged-out) #main-sidebar{
+    align-self:flex-start!important;
+    max-height:calc(100dvh - 86px)!important;
+    overflow-y:auto!important;
+    overscroll-behavior-y:contain;
+  }
+}
