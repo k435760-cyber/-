@@ -1,0 +1,217 @@
+name: Deploy V65 security hardening
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-v65-security.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Patch index.html
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re, hashlib, base64
+
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+
+          # V64 local-first PDF preview (apply only when missing)
+          if 'studyNotePdfLocalFiles=new Map()' not in s:
+              s=s.replace(
+                  "studyNotePdfSignedUrlCache=new Map();",
+                  "studyNotePdfSignedUrlCache=new Map(),studyNotePdfLocalFiles=new Map();",
+                  1
+              )
+          if "studyNotePdfAttachments.push(ins.data);\n  try{studyNotePdfLocalFiles.set(String(ins.data.id),file)}catch(_){}" not in s:
+              s=s.replace(
+                  "studyNotePdfAttachments.push(ins.data);\n  syncStudyNotePdfCacheMeta(noteId);",
+                  "studyNotePdfAttachments.push(ins.data);\n  try{studyNotePdfLocalFiles.set(String(ins.data.id),file)}catch(_){}\n  syncStudyNotePdfCacheMeta(noteId);",
+                  1
+              )
+          s=s.replace(
+              "async function loadStudyNotePdfAttachments(noteId){clearStudyNotePdfObservers();studyNotePdfAttachments=[];",
+              "async function loadStudyNotePdfAttachments(noteId){clearStudyNotePdfObservers();try{studyNotePdfLocalFiles.clear()}catch(_){}studyNotePdfAttachments=[];",
+              1
+          )
+          s=s.replace(
+              "async function loadStudyNotePdfPreview(att,token=studyNotePdfRenderToken){\n if(studyNoteUseSafePdfRenderer())return loadStudyNotePdfNativeMobile(att,token);",
+              "async function loadStudyNotePdfPreview(att,token=studyNotePdfRenderToken){\n // V64-local-first-pdf-preview: 모든 기기에서 동일한 안전 렌더러 사용\n return loadStudyNotePdfNativeMobile(att,token);",
+              1
+          )
+          s=s.replace(
+              " const mobile=studyNoteUseSafePdfRenderer();",
+              " const mobile=true; // V64: 기기 판별 없이 안전 렌더러로 통일",
+              1
+          )
+          if "try{studyNotePdfLocalFiles.delete(String(id))}catch(_){};" not in s:
+              s=s.replace(
+                  "async function removeStudyNotePdf(id){ const a=studyNotePdfAttachments.find(x=>String(x.id)===String(id));if(!a)return;",
+                  "async function removeStudyNotePdf(id){ const a=studyNotePdfAttachments.find(x=>String(x.id)===String(id));if(!a)return;try{studyNotePdfLocalFiles.delete(String(id))}catch(_){};",
+                  1
+              )
+
+          # local-first source in safe renderer
+          if "const key=String(att.id||att.storage_path||'');" not in s[s.find('async function loadStudyNotePdfNativeMobile'):s.find('async function loadStudyNotePdfPreview')]:
+              s=s.replace(
+                  " const c=getSupabase();\n let blobUrl='',pdf=null,task=null,renderTask=null,renderGen=0;",
+                  " const c=getSupabase();\n let blobUrl='',pdf=null,task=null,renderTask=null,renderGen=0;\n const key=String(att.id||att.storage_path||'');",
+                  1
+              )
+
+          old_download = """ if(!c){
+  clearTimeout(failSafe);
+  holder.dataset.pdfStage='fallback';
+  holder.innerHTML=studyNotePdfPreviewFallback(att,'','PDF 미리보기를 준비하지 못했습니다.');
+  return;
+ }
+
+ studyNotePdfStage(holder,seq,'download','<div class="study-note-pdf-status"><span class="study-note-pdf-loading-dot"></span>PDF 파일을 불러오는 중…</div>');
+
+ try{
+  const dl=await studyNotePdfWithTimeout(
+   c.storage.from('study-note-pdfs').download(att.storage_path),
+   7500,
+   'PDF 파일 다운로드 시간이 초과되었습니다.'
+  );
+  if(dl?.error)throw dl.error;
+  if(!stillCurrent())return;
+
+  const blob=dl?.data;
+  if(!(blob instanceof Blob))throw new Error('PDF 파일 데이터를 읽지 못했습니다.');
+
+  const key=String(att.id||att.storage_path||'');"""
+          new_download = """ studyNotePdfStage(holder,seq,'download','<div class="study-note-pdf-status"><span class="study-note-pdf-loading-dot"></span>PDF 미리보기를 시작하는 중…</div>');
+
+ try{
+  let blob=null;
+  try{blob=studyNotePdfLocalFiles.get(key)||null}catch(_){}
+  if(!(blob instanceof Blob)){
+   if(!c)throw new Error('PDF 연결을 준비하지 못했습니다.');
+   const dl=await studyNotePdfWithTimeout(
+    c.storage.from('study-note-pdfs').download(att.storage_path),
+    6500,
+    'PDF 파일 다운로드 시간이 초과되었습니다.'
+   );
+   if(dl?.error)throw dl.error;
+   blob=dl?.data;
+  }
+  if(!stillCurrent())return;
+  if(!(blob instanceof Blob))throw new Error('PDF 파일 데이터를 읽지 못했습니다.');"""
+          if old_download in s:
+              s=s.replace(old_download,new_download,1)
+
+          s=s.replace(" },22000);"," },12000);",1)
+          s=s.replace("   4500,\n   'PDF 파일 변환 시간이 초과되었습니다.'","   3500,\n   'PDF 파일 변환 시간이 초과되었습니다.'",1)
+          s=s.replace("   7000,\n   'PDF 미리보기 모듈 로딩 시간이 초과되었습니다.'","   5500,\n   'PDF 미리보기 모듈 로딩 시간이 초과되었습니다.'",1)
+
+          # V65 CSP/parser hardening
+          if 'V65-security-hardening' not in s:
+              funcs=set(re.findall(r'\bfunction\s+([A-Za-z_$][\w$]*)\s*\(', s))
+              funcs.update(re.findall(r'\bwindow\.([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?function\b', s))
+              for a,b in re.findall(r'\bwindow\.([A-Za-z_$][\w$]*)\s*=\s*([A-Za-z_$][\w$]*)\s*;', s):
+                  funcs.add(a)
+              for m in re.finditer(r'data-on(?:click|change|input|keydown|keyup|keypress|pointerdown|pointerup|dblclick|contextmenu|paste|drop|dragover|wheel|focus|blur|submit)=(?:"([^"]*)"|\'([^\']*)\')', s):
+                  v=m.group(1) or m.group(2) or ''
+                  for n in re.findall(r'(?<![.\w$])([A-Za-z_$][\w$]*)\s*\(', v):
+                      if n != 'if':
+                          funcs.add(n)
+              funcs -= {'eval','Function','fetch','open','postMessage','setTimeout','setInterval','requestAnimationFrame','WebSocket','XMLHttpRequest','importScripts','Worker','SharedWorker','EventSource','sendBeacon'}
+              call_list=','.join(repr(x) for x in sorted(funcs))
+
+              old_start="<script>(function () { 'use strict'; var EVENTS = ['click','change','input','keydown','keyup','keypress','pointerdown', 'pointerup','dblclick','contextmenu','paste','drop','dragover','wheel','focus','blur']; var NEST_OK = { decodeURIComponent: decodeURIComponent, encodeURIComponent: encodeURIComponent, Number: Number, String: String, parseInt: function (v) { return parseInt(v, 10); } }; var ELEM_M = { preventDefault: 1, stopPropagation: 1, stopImmediatePropagation: 1, click: 1, focus: 1, blur: 1, select: 1, remove: 1 };"
+              if old_start not in s:
+                  raise SystemExit('CSP parser start not found')
+              new_start="<script>/* V65-security-hardening */(function () { 'use strict'; var EVENTS = ['click','change','input','keydown','keyup','keypress','pointerdown', 'pointerup','dblclick','contextmenu','paste','drop','dragover','wheel','focus','blur']; var NEST_OK = { decodeURIComponent: decodeURIComponent, encodeURIComponent: encodeURIComponent, Number: Number, String: String, parseInt: function (v) { return parseInt(v, 10); } }; var ELEM_M = { preventDefault: 1, stopPropagation: 1, stopImmediatePropagation: 1, click: 1, focus: 1, blur: 1, select: 1, remove: 1 }; var CALL_OK = Object.create(null); ["+call_list+"].forEach(function(n){CALL_OK[n]=1;}); var WINDOW_READ_OK={currentViewName:1}; var ASSIGN_OK={selectedExamSubject:1,selectedWrongNoteSubject:1}; var COND_OK={activeUser:1};"
+              s=s.replace(old_start,new_start,1)
+
+              reps=[
+                ("var w = /^window\\.([A-Za-z_$][\\w$]*)$/.exec(tok); if (w) return window[w[1]];",
+                 "var w = /^window\\.([A-Za-z_$][\\w$]*)$/.exec(tok); if (w) { if (!WINDOW_READ_OK[w[1]]) { console.warn('[NW-CSP] 허용되지 않은 전역 읽기:', w[1]); return undefined; } return window[w[1]]; }"),
+                ("if (/^[A-Za-z_$][\\w$]*$/.test(cond)) { var v = !!window[cond]; return neg ? !v : v; }",
+                 "if (/^[A-Za-z_$][\\w$]*$/.test(cond)) { if (!COND_OK[cond]) { console.warn('[NW-CSP] 허용되지 않은 조건 전역:', cond); return false; } var v = !!window[cond]; return neg ? !v : v; }"),
+                ("var asn = /^([A-Za-z_$][\\w$]*)\\s*=\\s*([\\s\\S]+)$/.exec(stmt); if (asn && !/^[A-Za-z_$][\\w$]*\\s*\\(/.test(stmt)) { window[asn[1]] = evalArg(asn[2], el, ev); return; }",
+                 "var asn = /^([A-Za-z_$][\\w$]*)\\s*=\\s*([\\s\\S]+)$/.exec(stmt); if (asn && !/^[A-Za-z_$][\\w$]*\\s*\\(/.test(stmt)) { if (!ASSIGN_OK[asn[1]]) { console.warn('[NW-CSP] 허용되지 않은 전역 대입:', asn[1]); return; } window[asn[1]] = evalArg(asn[2], el, ev); return; }"),
+                ("var call = /^([A-Za-z_$][\\w$]*)\\(([\\s\\S]*)\\)$/.exec(stmt); if (call) { var fn = window[call[1]]; if (typeof fn !== 'function') { console.warn('[NW-CSP] 미정의 함수:', call[1]); return; }",
+                 "var call = /^([A-Za-z_$][\\w$]*)\\(([\\s\\S]*)\\)$/.exec(stmt); if (call) { if (!CALL_OK[call[1]]) { console.warn('[NW-CSP] 허용되지 않은 함수:', call[1]); return; } var fn = window[call[1]]; if (typeof fn !== 'function') { console.warn('[NW-CSP] 미정의 함수:', call[1]); return; }")
+              ]
+              for old,new in reps:
+                  if old not in s:
+                      raise SystemExit('security parser patch target missing')
+                  s=s.replace(old,new,1)
+
+          s=s.replace("script-src 'self' 'unsafe-eval'", "script-src 'self'", 1)
+
+          # Recompute all inline script CSP hashes
+          hashes=[]
+          for m in re.finditer(r'<script([^>]*)>([\s\S]*?)</script>',s,re.I):
+              if re.search(r'\bsrc\s*=',m.group(1),re.I):
+                  continue
+              hashes.append("'sha256-"+base64.b64encode(hashlib.sha256(m.group(2).encode('utf-8')).digest()).decode('ascii')+"'")
+
+          pos=s.find('Content-Security-Policy')
+          ms=s.rfind('<meta',0,pos+1)
+          me=s.find('/>',ms)+2
+          meta=s[ms:me]
+          cm=re.search(r'content="([^"]*)"',meta,re.S)
+          if not cm:
+              raise SystemExit('CSP meta missing')
+          parts=cm.group(1).split(';')
+          for i,x in enumerate(parts):
+              if x.startswith('script-src '):
+                  toks=[t for t in x.split() if not t.startswith("'sha256-")]
+                  parts[i]=' '.join(toks+hashes)
+          new_csp=';'.join(parts)
+          meta=meta[:cm.start(1)]+new_csp+meta[cm.end(1):]
+          s=s[:ms]+meta+s[me:]
+
+          if "'unsafe-eval'" in new_csp:
+              raise SystemExit('unsafe-eval still present')
+          if 'V65-security-hardening' not in s:
+              raise SystemExit('V65 marker missing')
+          if 'V64-local-first-pdf-preview' not in s:
+              raise SystemExit('V64 marker missing')
+          if not s.rstrip().endswith('</html>'):
+              raise SystemExit('HTML ending broken')
+          if 'https://dbneonomwrqwlbitwdtr.supabase.co' not in new_csp:
+              raise SystemExit('Supabase origin missing')
+
+          p.write_text(s,encoding='utf-8')
+          PY
+
+      - name: Validate changed parser
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text(encoding='utf-8')
+          i=s.find('V65-security-hardening')
+          a=s.rfind('<script',0,i)
+          a=s.find('>',a)+1
+          b=s.find('</script>',i)
+          Path('/tmp/v65-parser.js').write_text(s[a:b],encoding='utf-8')
+          PY
+          node --check /tmp/v65-parser.js
+
+      - name: Commit V65
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No index.html changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Harden CSP and event parser V65"
+          git push origin main
