@@ -1,0 +1,89 @@
+name: Tighten top layout gaps
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/tighten-top-layout.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch index.html top spacing
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path("index.html")
+          text = path.read_text(encoding="utf-8")
+          marker = 'id="v57-topbar-content-flush"'
+
+          if marker in text:
+              print("v57 layout patch already present")
+              raise SystemExit(0)
+
+          css = r"""
+          <style id="v57-topbar-content-flush">
+          /*
+           * V57 · 상단바 바로 아래에서 콘텐츠 시작
+           * 루트 레벨 view가 열릴 때 비어 있는 flex-1 메인 래퍼가 화면 높이를 먹던 현상 제거.
+           * 노트 화면은 기존 전용 레이아웃을 유지.
+           */
+          html:not(.nw-logged-out) body:not(.study-note-section-open)
+          > .relative.z-10.flex.flex-col.min-h-screen:has(> section[id^="view-"]:not(.hidden))
+          > .flex-1.max-w-7xl {
+            flex: 0 0 auto !important;
+            min-height: 0 !important;
+            height: auto !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            gap: 0 !important;
+          }
+
+          html:not(.nw-logged-out) body:not(.study-note-section-open)
+          > .relative.z-10.flex.flex-col.min-h-screen
+          > section[id^="view-"]:not(.hidden) {
+            margin-top: .25rem !important;
+          }
+
+          @media (max-width: 767px) {
+            html:not(.nw-logged-out) body:not(.study-note-section-open)
+            > .relative.z-10.flex.flex-col.min-h-screen
+            > section[id^="view-"]:not(.hidden) {
+              margin-top: .1rem !important;
+            }
+
+            #view-ai-chat {
+              margin-top: .1rem !important;
+            }
+          }
+          </style>
+          """
+
+          if "</head>" not in text:
+              raise RuntimeError("index.html has no </head>")
+
+          text = text.replace("</head>", css + "\n</head>", 1)
+          path.write_text(text, encoding="utf-8")
+          print("Applied v57 top layout patch")
+
+      - name: Commit patch
+        shell: bash
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Tighten content spacing below top bar"
+          git push
