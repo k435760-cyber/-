@@ -9,36 +9,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Print PDF-related code context
+      - name: Print targeted PDF code context
         shell: python
         run: |
           from pathlib import Path
-          import re
           text=Path("index.html").read_text(encoding="utf-8", errors="replace")
-          pats=[
-            "studyNotePdf",
-            "PDF 연결 중",
-            "PDF 삽입 완료",
-            "ensurePdfJs",
-            "createSignedUrl",
-            "pdfjs",
-            "render",
-            "attachment"
-          ]
-          lines=text.splitlines()
-          hits=[]
-          for i,l in enumerate(lines):
-            if any(p.lower() in l.lower() for p in pats):
-              hits.append(i)
-          keep=set()
-          for i in hits:
-            for j in range(max(0,i-8), min(len(lines),i+18)):
-              keep.add(j)
-          blocks=[]
-          last=-2
-          for j in sorted(keep):
-            if j!=last+1: blocks.append("\n--- BLOCK ---")
-            blocks.append(f"{j+1}: {lines[j]}")
-            last=j
-          out="\n".join(blocks)
-          print(out[:60000])
+          pats=["studyNotePdf","PDF 연결 중","PDF 삽입 완료","ensurePdfJs","studyNoteInsert","insertPdf","pdf-preview"]
+          spans=[]
+          for p in pats:
+            start=0
+            while True:
+              i=text.lower().find(p.lower(), start)
+              if i<0: break
+              spans.append((max(0,i-2600), min(len(text), i+5200), p, i))
+              start=i+len(p)
+          spans.sort()
+          merged=[]
+          for a,b,p,i in spans:
+            if merged and a<=merged[-1][1]:
+              merged[-1][1]=max(merged[-1][1],b)
+              merged[-1][2].append(p)
+            else:
+              merged.append([a,b,[p]])
+          for n,(a,b,ps) in enumerate(merged[:20],1):
+            print(f"\n===== BLOCK {n} patterns={sorted(set(ps))} chars={a}:{b} =====\n")
+            print(text[a:b])
