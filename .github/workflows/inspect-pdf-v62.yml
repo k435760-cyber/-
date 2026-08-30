@@ -1,0 +1,30 @@
+name: Inspect PDF timeout and insert
+on:
+  push:
+    branches: [debug-pdf-v62-1788091549036]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Print target functions
+        shell: python
+        run: |
+          from pathlib import Path
+          t=Path("index.html").read_text(encoding="utf-8",errors="replace")
+          sigs=[
+            "function studyNotePdfWithTimeout",
+            "function studyNotePdfArmWatchdog",
+            "async function handleStudyNotePdfInsert",
+            "async function loadStudyNotePdfNativeMobile",
+            "async function loadStudyNotePdfPreview",
+            "function studyNotePdfPreviewFallback"
+          ]
+          for sig in sigs:
+            i=t.find(sig)
+            print("\n====",sig,"@",i,"====\n")
+            if i>=0: print(t[max(0,i-1000):i+16000])
