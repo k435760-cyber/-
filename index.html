@@ -2786,9 +2786,22 @@ async function renderStudyNotePdfAttachments(){
 
  // 삽입 완료와 미리보기는 완전히 분리한다. idle 콜백에만 의존하지 않고
  // 짧은 setTimeout으로 반드시 실행되게 하여 "준비 중"에서 영구 정지하지 않게 한다.
+ // V59-mobile-pdf-on-demand
+ // 모바일에서는 삽입 직후 PDF.js 자동 렌더링을 하지 않는다.
+ // 큰 PDF의 캔버스 렌더가 메인 스레드를 점유해 앱이 멈추는 문제를 차단한다.
+ const mobile=window.matchMedia?.('(max-width: 767px)')?.matches||window.innerWidth<768;
+ if(mobile){
+  items.forEach(a=>{
+   const holder=document.getElementById('study-note-pdf-pages-'+a.id);
+   if(!holder)return;
+   holder.dataset.pdfStage='manual';
+   holder.innerHTML='<div class="study-note-pdf-status"><div>PDF 저장 완료 · 미리보기는 필요할 때 열어요.</div><div class="study-note-pdf-status-actions"><button type="button" class="study-note-pdf-retry" data-onclick="retryStudyNotePdfPreview('+Number(a.id)+')">미리보기 열기</button></div></div>';
+  });
+  return;
+ }
  items.forEach((a,index)=>{
   const delay=Math.min(index*180,720);
-  setTimeout(()=>{void loadStudyNotePdfPreview(a,token);},30+delay);
+  setTimeout(()=>{void loadStudyNotePdfPreview(a,token);},80+delay);
  });
 }
 async function renderStudyNotePdfPages(att,url,token=studyNotePdfRenderToken){
@@ -2846,8 +2859,8 @@ async function renderStudyNotePdfPages(att,url,token=studyNotePdfRenderToken){
    if(token!==studyNotePdfRenderToken||!el.isConnected)return;
    const b=page.getViewport({scale:1}),cssScale=Math.max(.25,Math.min(2,w/b.width)),css=page.getViewport({scale:cssScale});
    const mobile=window.innerWidth<768;
-   const dpr=Math.max(1,Math.min(window.devicePixelRatio||1,mobile?1.5:2));
-   const maxSide=mobile?1800:2200,maxPx=mobile?2600000:4200000,long=Math.max(css.width,css.height);
+   const dpr=Math.max(1,Math.min(window.devicePixelRatio||1,mobile?1.1:2));
+   const maxSide=mobile?1400:2200,maxPx=mobile?1200000:4200000,long=Math.max(css.width,css.height);
    let q=Math.max(1,Math.min(dpr,maxSide/Math.max(1,long)));
    const px=css.width*css.height*q*q;if(px>maxPx)q=Math.max(1,Math.sqrt(maxPx/(css.width*css.height)));
    const vp=page.getViewport({scale:cssScale*q}),c=document.createElement('canvas');
@@ -2878,7 +2891,7 @@ async function renderStudyNotePdfPages(att,url,token=studyNotePdfRenderToken){
     const n=Number(e.target.dataset.page);if(n!==active){active=n;count.textContent=n+' / '+total;}
    }
   }
- },{root:root||null,rootMargin:'280px 0px 360px 0px',threshold:.03});
+ },{root:root||null,rootMargin:(window.innerWidth<768?'0px':'120px 0px 180px 0px'),threshold:.05});
  studyNotePdfObservers.push(io);
  stack.querySelectorAll('.study-note-pdf-page').forEach(el=>io.observe(el));
  // 첫 페이지는 즉시 렌더하고, 4초 이상 걸려도 전체 UI를 막지 않는다.
