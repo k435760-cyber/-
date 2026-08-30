@@ -1,0 +1,148 @@
+/* V67-scroll-overflow-fix
+   Prevent accidental page-wide horizontal scrolling while preserving intentional inner scrollers. */
+
+html{
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden!important;
+  overscroll-behavior-x:none;
+}
+body{
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden!important;
+  overscroll-behavior-x:none;
+  touch-action:pan-y pinch-zoom;
+}
+
+/* Main app/view containers must never grow wider than the viewport. */
+body > *,
+body > * > *,
+section[id^="view-"],
+main,
+header,
+footer,
+[class*="min-h-screen"],
+.max-w-7xl,
+.max-w-6xl,
+.max-w-5xl,
+.max-w-4xl,
+.max-w-3xl,
+.max-w-2xl,
+.max-w-xl{
+  box-sizing:border-box;
+  min-width:0;
+  max-width:100%;
+}
+
+section[id^="view-"]{
+  width:100%!important;
+  overflow-x:clip!important;
+  contain:layout paint;
+}
+
+/* Flex/grid children are a common source of hidden viewport overflow. */
+.flex > *,
+.grid > *,
+[class*="flex"] > *,
+[class*="grid"] > *{
+  min-width:0;
+}
+
+/* Media/content should shrink to its container instead of stretching the page. */
+img,
+video,
+canvas,
+svg,
+iframe{
+  max-width:100%;
+}
+
+/* Long text must wrap instead of increasing layout width. */
+p,
+span,
+div,
+button,
+a,
+label,
+h1,h2,h3,h4,h5,h6{
+  overflow-wrap:anywhere;
+}
+
+/* Keep deliberate horizontal scrollers usable. */
+#v66-ai-quick,
+.study-note-toolbar-scroll,
+.study-note-tabs,
+[role="tablist"],
+.overflow-x-auto,
+.overflow-x-scroll{
+  max-width:100%;
+  overflow-x:auto!important;
+  overscroll-behavior-x:contain;
+  touch-action:pan-x pan-y;
+}
+
+/* Tables/code may scroll internally, never the whole page. */
+pre,
+code,
+table{
+  max-width:100%;
+}
+pre,
+.table-scroll,
+.table-wrap{
+  overflow-x:auto;
+  overscroll-behavior-x:contain;
+}
+
+/* Fixed overlays/modals must fit inside the visual viewport. */
+[role="dialog"],
+.fixed,
+#v66-status-hud,
+#v66-undo,
+#v66-mobile-dock{
+  max-width:calc(100vw - 16px)!important;
+}
+
+/* V66 home additions */
+#v66-home-focus,
+.v66-home-focus-grid,
+.v66-home-focus-btn,
+.v66-empty-actions{
+  width:auto;
+  max-width:100%;
+  min-width:0;
+}
+
+/* Notes/PDF area */
+.study-note-card,
+.study-note-paper,
+.study-note-pdf-card,
+.study-note-pdf-pages,
+.study-note-pdf-preview,
+.study-note-gallery,
+.study-note-gallery-grid{
+  max-width:100%!important;
+  min-width:0!important;
+}
+
+/* Extra mobile clamp seen in recording. */
+@media(max-width:900px){
+  body{
+    position:relative;
+  }
+  section[id^="view-"],
+  main,
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl,
+  .max-w-4xl{
+    width:100%!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+  .absolute:not(.allow-horizontal-overflow),
+  .fixed:not(.allow-horizontal-overflow){
+    box-sizing:border-box;
+  }
+}
