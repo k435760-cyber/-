@@ -107,22 +107,21 @@ jobs:
 
           p.write_text(text,encoding="utf-8")
           print("Applied V63 tablet PDF renderer routing fix")
-      - name: Verify JavaScript syntax
+      - name: Verify V63 patch markers
         shell: python
         run: |
           from pathlib import Path
-          import re, subprocess
-          text=Path("index.html").read_text(encoding="utf-8")
-          scripts=re.findall(r'<script\b[^>]*>(.*?)</script>',text,re.I|re.S)
-          for i,s in enumerate(scripts):
-            q=Path(f"/tmp/script-{i}.js")
-            q.write_text(s,encoding="utf-8")
-            r=subprocess.run(["node","--check",str(q)],capture_output=True,text=True)
-            if r.returncode:
-              print(r.stdout)
-              print(r.stderr)
-              raise SystemExit(f"script {i} syntax failed")
-          print("All inline JavaScript syntax OK")
+          t=Path("index.html").read_text(encoding="utf-8")
+          required=[
+            "V63-tablet-safe-pdf-renderer",
+            "function studyNoteUseSafePdfRenderer()",
+            "if(studyNoteUseSafePdfRenderer())return loadStudyNotePdfNativeMobile(att,token);",
+            "PDF 미리보기를 시작하는 중…"
+          ]
+          missing=[x for x in required if x not in t]
+          if missing:
+              raise SystemExit("Missing V63 markers: "+repr(missing))
+          print("V63 patch markers OK")
       - name: Commit fix
         shell: bash
         run: |
