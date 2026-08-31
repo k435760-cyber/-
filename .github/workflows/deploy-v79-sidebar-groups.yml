@@ -1,0 +1,110 @@
+name: Deploy V79 exact sidebar groups
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-v79-sidebar-groups.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Validate V79 assets
+        run: |
+          node --check v79-sidebar-groups.js
+          test -s v79-sidebar-groups.css
+          test -s v79-sidebar-template.html
+
+      - name: Replace sidebar grouping only
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          p=Path("index.html")
+          s=p.read_text(encoding="utf-8")
+
+          needle='id="main-sidebar"'
+          if s.count(needle) != 1:
+              raise SystemExit(f"Expected one main-sidebar, got {s.count(needle)}")
+          pos=s.index(needle)
+          start=s.rfind("<aside ",0,pos)
+          end=s.find("</aside>",pos)
+          if start<0 or end<0:
+              raise SystemExit("Sidebar bounds not found")
+          end += len("</aside>")
+
+          sidebar=Path("v79-sidebar-template.html").read_text(encoding="utf-8").strip()
+          s=s[:start]+sidebar+s[end:]
+
+          # Remove V78 route-merging layer. Individual features remain standalone.
+          s=re.sub(r'\s*<link rel="stylesheet" href="\./v78-feature-merge\.css[^"]*">\s*','\n',s)
+          s=re.sub(r'\s*<script src="\./v78-feature-merge\.js[^"]*" defer></script>\s*','\n',s)
+
+          css='<link rel="stylesheet" href="./v79-sidebar-groups.css?v=1">'
+          js='<script src="./v79-sidebar-groups.js?v=1" defer></script>'
+          if css not in s:
+              s=s.replace("</head>",css+"\n</head>",1)
+          if js not in s:
+              s=s.replace("</body>",js+"\n</body>",1)
+
+          expected={
+              'today':4,'exam':6,'tools':7,'ai':3,'record':5,'social':11
+          }
+          for key,count in expected.items():
+              block=re.search(rf'<div class="v79-group" data-v79-group="{key}">(.*?)</div>\s*</div>',sidebar,re.S)
+              if not block:
+                  raise SystemExit("Missing group "+key)
+
+          if sidebar.count('data-v79-route=') != 36:
+              raise SystemExit(f"Expected 36 sidebar functions, got {sidebar.count('data-v79-route=')}")
+
+          routes=[
+              'timetable','meal','supplies','notice',
+              'problems','wrong-notes','exam-maker','v21-qgen','v21-grading','v21-mockexam',
+              'notes','concepts','study','timer','focus-sounds','resources','learning-path',
+              'ai-chat','ai-tutor-phase1','ai-analysis',
+              'goals','journal','weekly-stats','streak','calendar',
+              'new-features','board','school-newsroom','notifications','chat','appeal','feedback','qa','study-group','friend-feed','poll'
+          ]
+          for route in routes:
+              if f'id="view-{route}"' not in s:
+                  raise SystemExit("Feature view missing: "+route)
+
+          # Preserve all other feature views. This release only changes navigation grouping.
+          if s.count('section id="view-') < 100:
+              raise SystemExit("Unexpected feature-view loss")
+
+          if 'v78-feature-merge.js' in s:
+              raise SystemExit("V78 route merge still linked")
+          if './v79-sidebar-groups.js?v=1' not in s:
+              raise SystemExit("V79 JS missing")
+          if './v74-scroll-clean.css' not in s:
+              raise SystemExit("V74 scroll base missing")
+          if './v74-pdf-ui-scroll-fix.js' not in s:
+              raise SystemExit("PDF UI fix missing")
+          if "https://dbneonomwrqwlbitwdtr.supabase.co" not in s:
+              raise SystemExit("Supabase origin missing")
+          if not s.rstrip().endswith("</html>"):
+              raise SystemExit("HTML ending broken")
+
+          p.write_text(s,encoding="utf-8")
+
+      - name: Commit V79
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Deploy V79 exact six-group sidebar"
+          git push origin main
