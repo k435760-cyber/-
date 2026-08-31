@@ -1,0 +1,145 @@
+/* V74-scroll-core
+   Consolidated scroll/layout fix. Replaces V67/V68/V69/V71/V73 cascade. */
+
+html{
+  width:100%;
+  min-height:100%;
+  overflow-x:hidden;
+}
+
+body{
+  width:100%;
+  min-height:100dvh;
+  margin:0;
+  overflow-x:hidden;
+}
+
+/* Decorative background must never affect document geometry. */
+.aurora-bg{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+}
+
+/* Normal logged-in app layout */
+html:not(.nw-logged-out) body:not(.study-note-app-open){
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:100dvh!important;
+  height:auto!important;
+}
+
+html:not(.nw-logged-out) body:not(.study-note-app-open)
+> .relative.z-10.flex.flex-col.min-h-screen{
+  display:flex!important;
+  flex-direction:column!important;
+  flex:1 0 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  width:100%!important;
+}
+
+html:not(.nw-logged-out) body:not(.study-note-section-open):not(.study-note-app-open)
+> .relative.z-10.flex.flex-col.min-h-screen
+> .flex-1.max-w-7xl{
+  display:flex!important;
+  flex:1 0 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  width:100%!important;
+  align-items:flex-start!important;
+}
+
+html:not(.nw-logged-out) body:not(.study-note-section-open):not(.study-note-app-open)
+#main-screen{
+  flex:1 1 auto!important;
+  flex-basis:auto!important;
+  min-width:0!important;
+  min-height:0!important;
+  width:100%!important;
+  height:auto!important;
+  overflow:visible!important;
+}
+
+/* Hidden routes have zero geometry. */
+section[id^="view-"].hidden{
+  display:none!important;
+}
+
+/* Active route sizes only to its real content. */
+html:not(.nw-logged-out) body:not(.study-note-section-open):not(.study-note-app-open)
+#main-screen > section[id^="view-"]:not(.hidden){
+  position:relative!important;
+  inset:auto!important;
+  display:block;
+  width:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none;
+  margin-top:0;
+  margin-bottom:0;
+  overflow:visible;
+}
+
+/* Footer is the document end; short pages pin it to viewport bottom naturally. */
+html:not(.nw-logged-out) body:not(.study-note-app-open) > footer{
+  flex:0 0 auto!important;
+  margin-top:0!important;
+  margin-bottom:0!important;
+  position:relative!important;
+  inset:auto!important;
+  padding-bottom:max(10px,env(safe-area-inset-bottom,0px))!important;
+}
+
+/* Prevent width-based accidental scroll. */
+img,video,canvas,svg,iframe{max-width:100%}
+.flex > *,.grid > *{min-width:0}
+pre,.overflow-x-auto,.overflow-x-scroll,[role="tablist"],#v66-ai-quick{
+  max-width:100%;
+}
+
+/* Tablet/desktop sidebar never determines whole-document height. */
+@media(min-width:768px){
+  html:not(.nw-logged-out) body:not(.study-note-app-open) #main-sidebar{
+    position:sticky!important;
+    top:74px!important;
+    align-self:flex-start!important;
+    height:auto!important;
+    max-height:calc(100dvh - 86px)!important;
+    overflow-y:auto!important;
+    overscroll-behavior-y:contain;
+  }
+}
+
+/* Mobile: natural document scroll, no flex-basis collapse and no extra viewport. */
+@media(max-width:767px){
+  html:not(.nw-logged-out) body:not(.study-note-section-open):not(.study-note-app-open)
+  > .relative.z-10.flex.flex-col.min-h-screen
+  > .flex-1.max-w-7xl{
+    flex-direction:column!important;
+    flex:1 0 auto!important;
+    min-height:0!important;
+    height:auto!important;
+  }
+
+  html:not(.nw-logged-out) body:not(.study-note-section-open):not(.study-note-app-open)
+  #main-screen{
+    flex:1 0 auto!important;
+    flex-basis:auto!important;
+    min-height:0!important;
+    height:auto!important;
+    overflow:visible!important;
+  }
+
+  html:not(.nw-logged-out) body:not(.study-note-section-open):not(.study-note-app-open)
+  #main-screen > section[id^="view-"]:not(.hidden){
+    flex:0 0 auto!important;
+    min-height:0!important;
+    height:auto!important;
+    padding-bottom:0!important;
+  }
+}
