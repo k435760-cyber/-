@@ -59,7 +59,8 @@ jobs:
               s=re.sub(pat,'\n',s)
 
           css='<link rel="stylesheet" href="./v78-feature-merge.css?v=1">'
-          js='<script src="./v78-feature-merge.js?v=1" defer></script>'
+          s=s.replace('./v78-feature-merge.js?v=1','./v78-feature-merge.js?v=2')
+          js='<script src="./v78-feature-merge.js?v=2" defer></script>'
           if css not in s:
               s=s.replace("</head>",css+"\n</head>",1)
           if js not in s:
@@ -71,7 +72,7 @@ jobs:
               raise SystemExit("Unexpected V78 group count")
           if 'v75-feature-unify.js' in s or 'v77-feature-consolidate.js' in s:
               raise SystemExit("Old menu JS still linked")
-          if './v78-feature-merge.js?v=1' not in s:
+          if './v78-feature-merge.js?v=2' not in s:
               raise SystemExit("V78 JS missing")
           if './v74-scroll-clean.css' not in s:
               raise SystemExit("V74 clean scroll base missing")
