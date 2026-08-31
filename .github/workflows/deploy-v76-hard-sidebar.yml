@@ -1,0 +1,87 @@
+name: Deploy V76 hard sidebar integration
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-v76-hard-sidebar.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Validate sidebar JS
+        run: node --check v75-feature-unify.js
+
+      - name: Replace sidebar HTML directly
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p=Path("index.html")
+          s=p.read_text(encoding="utf-8")
+
+          needle='id="main-sidebar"'
+          if s.count(needle) != 1:
+              raise SystemExit(f"Expected one main-sidebar, got {s.count(needle)}")
+
+          pos=s.index(needle)
+          start=s.rfind("<aside ",0,pos)
+          end=s.find("</aside>",pos)
+          if start<0 or end<0:
+              raise SystemExit("Sidebar bounds not found")
+          end += len("</aside>")
+
+          sidebar=r'''<aside class="hidden md:flex md:w-60 lg:w-64 shrink-0 flex-col gap-3 transition-all duration-300 z-30 overflow-y-auto no-scrollbar pb-4" id="main-sidebar">
+<div class="backdrop-blur-2xl bg-white/95 dark:bg-slate-900 border border-white/90 dark:border-slate-800 rounded-3xl p-3 shadow-[0_10px_30px_rgba(0,102,255,0.04)]">
+<div class="flex items-center justify-between px-2 mb-2">
+<span class="text-[10px] font-extrabold text-blue-900/60 dark:text-blue-400/70 uppercase tracking-widest">간단 메뉴</span>
+<button type="button" data-v75-collapse="1" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-white/80 dark:hover:bg-slate-800 transition-colors" title="사이드바 접기">‹</button>
+</div>
+<nav class="v75-simple-nav" data-v75-unified="1">
+<button type="button" id="nav-home" data-v75-route="home" class="v75-nav-btn v75-nav-home"><span class="v75-nav-ico">⌂</span><span class="v75-nav-copy"><span class="v75-nav-title">홈</span><span class="v75-nav-sub">오늘 정보만 한눈에</span></span><span class="v75-nav-chevron">›</span></button>
+<button type="button" data-v75-hub="공부" class="v75-nav-btn v75-nav-primary"><span class="v75-nav-ico">📚</span><span class="v75-nav-copy"><span class="v75-nav-title">공부하기</span><span class="v75-nav-sub">노트 · 문제 · 시험</span></span><span class="v75-nav-chevron">›</span></button>
+<button type="button" data-v75-hub="AI" class="v75-nav-btn"><span class="v75-nav-ico">✨</span><span class="v75-nav-copy"><span class="v75-nav-title">AI 도움</span><span class="v75-nav-sub">질문 · 채점 · 분석</span></span><span class="v75-nav-chevron">›</span></button>
+<button type="button" data-v75-hub="학교" class="v75-nav-btn"><span class="v75-nav-ico">🏫</span><span class="v75-nav-copy"><span class="v75-nav-title">학교 · 소통</span><span class="v75-nav-sub">시간표 · 급식 · 친구</span></span><span class="v75-nav-chevron">›</span></button>
+<button type="button" data-v75-hub="성장" class="v75-nav-btn"><span class="v75-nav-ico">📈</span><span class="v75-nav-copy"><span class="v75-nav-title">성장 · 기록</span><span class="v75-nav-sub">목표 · 통계 · 레벨</span></span><span class="v75-nav-chevron">›</span></button>
+<button type="button" data-v75-hub="게임" class="v75-nav-btn"><span class="v75-nav-ico">🎮</span><span class="v75-nav-copy"><span class="v75-nav-title">게임 · 보상</span><span class="v75-nav-sub">게임 · 상점 · 이벤트</span></span><span class="v75-nav-chevron">›</span></button>
+<button type="button" data-v75-hub="" class="v75-nav-btn"><span class="v75-nav-ico">☰</span><span class="v75-nav-copy"><span class="v75-nav-title">전체 기능</span><span class="v75-nav-sub">필요한 기능 검색</span></span><span class="v75-nav-chevron">›</span></button>
+</nav>
+</div>
+</aside>'''
+
+          s=s[:start]+sidebar+s[end:]
+
+          s=s.replace('./v75-feature-unify.css?v=2','./v75-feature-unify.css?v=3')
+          s=s.replace('./v75-feature-unify.js?v=2','./v75-feature-unify.js?v=3')
+          s=s.replace('./v75-feature-unify.css"','./v75-feature-unify.css?v=3"')
+          s=s.replace('./v75-feature-unify.js"','./v75-feature-unify.js?v=3"')
+
+          if 'data-v75-unified="1"' not in s:
+              raise SystemExit("Static unified sidebar missing")
+          if '놀이터 &amp; 리워드' in s[start:start+12000]:
+              raise SystemExit("Legacy sidebar still present")
+          if './v75-feature-unify.js?v=3' not in s:
+              raise SystemExit("V75 JS v3 not linked")
+          if not s.rstrip().endswith("</html>"):
+              raise SystemExit("HTML ending broken")
+
+          p.write_text(s,encoding="utf-8")
+
+      - name: Commit V76
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Deploy V76 static unified sidebar"
+          git push origin main
