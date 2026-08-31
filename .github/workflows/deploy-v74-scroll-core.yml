@@ -1,0 +1,60 @@
+name: Deploy V74 consolidated scroll fix
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-v74-scroll-core.yml"
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Consolidate scroll fixes
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          p=Path("index.html")
+          s=p.read_text(encoding="utf-8")
+
+          # Remove previous experimental scroll layers to avoid cascade conflicts.
+          refs=[
+            "v67-scroll-fix.css",
+            "v68-scroll-height-fix.css",
+            "v69-scroll-fix.css",
+            "v69-scroll-fix.js",
+            "v71-scroll-guard.css",
+            "v71-scroll-guard.js",
+            "v73-footer-scroll-fix.css",
+            "v70-mobile-main-height-fix.css",
+          ]
+          for name in refs:
+              s=re.sub(r'\s*<link[^>]+href=["\']\./'+re.escape(name)+r'["\'][^>]*>\s*', '\n', s, flags=re.I)
+              s=re.sub(r'\s*<script[^>]+src=["\']\./'+re.escape(name)+r'["\'][^>]*>\s*</script>\s*', '\n', s, flags=re.I)
+
+          if "./v74-scroll-core.css" not in s:
+              s=s.replace("</head>", '<link rel="stylesheet" href="./v74-scroll-core.css">\n</head>', 1)
+          if "./v74-scroll-core.js" not in s:
+              s=s.replace("</body>", '<script src="./v74-scroll-core.js" defer></script>\n</body>', 1)
+
+          if not s.rstrip().endswith("</html>"):
+              raise SystemExit("broken HTML")
+          p.write_text(s,encoding="utf-8")
+
+      - name: Validate V74 JS
+        run: node --check v74-scroll-core.js
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Deploy V74 consolidated scroll fix"
+          git push origin main
