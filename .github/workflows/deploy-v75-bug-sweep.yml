@@ -27,6 +27,9 @@ jobs:
           p=Path("index.html")
           s=p.read_text(encoding="utf-8")
 
+          # Remove the older consolidated scroll sheet; V74 clean is the sole scroll layout source.
+          s=s.replace('<link rel="stylesheet" href="./v74-scroll-core.css">\n','')
+
           # Root cause repair: old workflows inserted host scripts at the first
           # </body>, which was inside NEON_DRIVE_HTML. Rebuild that embedded
           # game's tail and discard every host fragment that leaked into it.
@@ -97,6 +100,8 @@ jobs:
               raise SystemExit("required Supabase origin missing from CSP")
           if "V65-security-hardening" not in s:
               raise SystemExit("V65 security parser missing")
+          if "v74-scroll-core.css" in s:
+              raise SystemExit("legacy scroll core stylesheet still linked")
           if not s.rstrip().endswith("</html>"):
               raise SystemExit("HTML ending broken")
           for name in ["v66-ux.js","v74-view-normalizer.js","v75-runtime-fixes.js"]:
