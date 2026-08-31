@@ -1,0 +1,206 @@
+/* ==========================================================================
+   V74 · PDF 미리보기 멈춤 + 하단 바 흔들림 + 과도한 스크롤 통합 수정
+   (V66~V73 위에 얹는 마지막 레이어. 기존 파일은 수정하지 않음)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1) 노트 에디터 "빈 스크롤" 제거
+   원인: #view-notes #study-note-paper{min-height:74vh}
+         #view-notes #study-note-edit-wrap{min-height:66vh}
+         #view-notes #study-note-body{min-height:60vh}
+   이 세 규칙이 ID 2개 특이도라서, 앱 모드용
+   `.study-note-shell.note-app-mode ...`(ID 1개) 규칙을 항상 이겨버린다.
+   → ID 2개 + class 2개로 다시 눌러준다.
+   -------------------------------------------------------------------------- */
+#view-notes .study-note-shell.note-app-mode #study-note-paper,
+#view-notes .study-note-shell.note-app-mode #study-note-paper.has-pdf{
+  min-height:0!important;
+  height:auto!important;
+  flex:1 1 auto!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  /* 툴바 높이 + 안전영역만큼만 남긴다 (기존 74px 고정 패딩 대체) */
+  padding-bottom:calc(var(--v74-footer-h, 56px) + env(safe-area-inset-bottom, 0px))!important;
+}
+
+#view-notes .study-note-shell.note-app-mode #study-note-edit-wrap{
+  min-height:0!important;
+  height:auto!important;
+}
+
+#view-notes .study-note-shell.note-app-mode #study-note-body{
+  min-height:180px!important;
+  height:auto!important;
+}
+
+/* PDF가 붙은 노트는 본문 입력칸을 더 작게 (PDF가 주인공) */
+#view-notes .study-note-shell.note-app-mode #study-note-paper.has-pdf #study-note-edit-wrap{
+  min-height:0!important;
+  padding-top:6px!important;
+  padding-bottom:10px!important;
+}
+#view-notes .study-note-shell.note-app-mode #study-note-paper.has-pdf #study-note-body{
+  min-height:88px!important;
+}
+
+/* 가상 페이지(용지) 레이어가 PDF 노트에서 560~980px짜리 빈 종이를
+   그대로 남겨두는 문제. has-pdf일 때는 레이어를 내용 높이에 맞춘다. */
+#view-notes #study-note-paper.has-pdf #study-note-edit-wrap{
+  --study-note-paged-height:auto!important;
+  --study-note-body-paged-height:auto!important;
+}
+#view-notes #study-note-paper.has-pdf #study-note-page-bg-layer{
+  max-height:100%!important;
+}
+#view-notes #study-note-paper.has-pdf #study-note-edit-wrap.study-note-paged{
+  height:auto!important;
+  min-height:0!important;
+}
+#view-notes #study-note-paper.has-pdf #study-note-page-pull-zone{
+  display:none!important;
+}
+
+/* 자동 수식 영역이 비어 있으면 자리 차지하지 않게 */
+#view-notes .study-note-auto-math:empty,
+#view-notes #study-note-auto-math:empty{ display:none!important; padding:0!important; }
+
+/* --------------------------------------------------------------------------
+   2) 하단 바가 움직이는 문제
+   원인 A: #v66-mobile-dock(고정 dock)과 .study-note-footer(툴바)가
+           동시에 화면 하단에 겹쳐 있고, v66이 footer에 padding-bottom:72px을
+           덧붙여 툴바가 위아래로 튄다.
+   → 노트 에디터에서는 dock을 완전히 끈다. (dock 기능 4개는 헤더/툴바에 이미 존재)
+   -------------------------------------------------------------------------- */
+#v66-mobile-dock{ display:none!important; }
+body.study-note-section-open.study-note-app-open #v66-mobile-dock,
+body.study-note-section-open #v66-mobile-dock{ display:none!important; }
+
+body.study-note-section-open.study-note-app-open .study-note-footer,
+body.study-note-app-open .study-note-footer{
+  padding-bottom:calc(6px + env(safe-area-inset-bottom, 0px))!important;
+}
+
+/* 원인 B: 툴바가 fixed/absolute 사이에서 흔들리고, 가로 스크롤이 스스로 움직임 */
+#view-notes .study-note-shell.note-app-mode .study-note-footer{
+  position:absolute!important;
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  top:auto!important;
+  width:100%!important;
+  max-width:100%!important;
+  margin:0!important;
+  transform:none!important;
+  transition:none!important;
+  will-change:auto!important;
+  contain:layout paint!important;
+  overflow-anchor:none!important;
+}
+
+#view-notes .study-note-shell.note-app-mode .study-note-toolbar{
+  overflow-anchor:none!important;
+  scroll-behavior:auto!important;
+  overscroll-behavior-x:contain!important;
+  scroll-snap-type:none!important;
+}
+#view-notes .study-note-shell.note-app-mode .study-note-toolbar > *{
+  scroll-snap-align:none!important;
+}
+
+/* 원인 C: 키보드가 열려도 shell이 100dvh 그대로라 툴바가 키보드 밑으로 숨는다.
+   실제 보이는 영역(visualViewport)에 맞춘다. 키보드가 열렸을 때만 적용. */
+body.nw-kb-open .study-note-shell.note-app-mode,
+body.nw-kb-open #study-note-editor-shell.study-note-shell.note-app-mode{
+  height:var(--nw-vv-height, 100dvh)!important;
+  max-height:var(--nw-vv-height, 100dvh)!important;
+  bottom:auto!important;
+}
+body.nw-kb-open .study-note-shell.note-app-mode .study-note-footer{
+  padding-bottom:6px!important;
+}
+
+/* 원인 D: 떠 있는 상태 알림/실행취소 바가 툴바 위에서 나타났다 사라지며 겹침 */
+body.study-note-app-open #v66-status-hud{
+  bottom:calc(var(--v74-footer-h, 56px) + 14px + env(safe-area-inset-bottom, 0px))!important;
+  z-index:2000000900!important;
+}
+body.study-note-app-open #v66-undo{
+  bottom:calc(var(--v74-footer-h, 56px) + 14px + env(safe-area-inset-bottom, 0px))!important;
+  z-index:2000000950!important;
+}
+body.nw-kb-open #v66-status-hud,
+body.nw-kb-open #v66-undo{ display:none!important; }
+
+/* PDF 카드 안의 sticky 툴바가 스크롤 중 깜빡이며 떠는 문제 */
+#view-notes .study-note-pdf-toolbar{
+  position:sticky!important;
+  top:0!important;
+  overflow-anchor:none!important;
+  contain:layout paint!important;
+}
+
+/* --------------------------------------------------------------------------
+   3) 노트 목록(갤러리)에서 아래로 너무 많이 스크롤되는 문제
+   .study-note-gallery(padding-bottom 132px) + .study-note-gallery-grid(126px)
+   + #view-notes(padding 78px) 가 전부 더해져 260px 이상 빈 공간이 생긴다.
+   -------------------------------------------------------------------------- */
+body.study-note-section-open:not(.study-note-app-open) #view-notes{
+  padding-bottom:0!important;
+  min-height:100dvh!important;
+  height:100dvh!important;
+  overscroll-behavior:contain!important;
+}
+body.study-note-section-open .study-note-gallery{
+  padding-bottom:calc(96px + env(safe-area-inset-bottom, 0px))!important;
+}
+body.study-note-section-open .study-note-gallery-grid{
+  padding-bottom:0!important;
+}
+
+/* --------------------------------------------------------------------------
+   4) 앱 전체: 푸터 아래로 이어지는 빈 스크롤 제거 (V73 마무리)
+   -------------------------------------------------------------------------- */
+html:not(.nw-logged-out) body:not(.study-note-section-open){
+  overflow-x:hidden!important;
+  overscroll-behavior-y:contain;
+}
+html:not(.nw-logged-out) body:not(.study-note-section-open) > footer{
+  margin-top:auto!important;
+  margin-bottom:0!important;
+  padding-bottom:max(8px, env(safe-area-inset-bottom, 0px))!important;
+}
+html:not(.nw-logged-out) body:not(.study-note-section-open) > footer ~ *{
+  display:none!important;
+}
+html:not(.nw-logged-out) body:not(.study-note-section-open)
+#main-screen > section[id^="view-"]:not(.hidden){
+  padding-bottom:0!important;
+  margin-bottom:0!important;
+}
+
+/* --------------------------------------------------------------------------
+   5) PDF 미리보기 상태 UI 정리 (스켈레톤이 영구히 남는 것 방지 + 복구 버튼)
+   -------------------------------------------------------------------------- */
+.study-note-pdf-pages[data-pdf-stage="ready"] .v66-pdf-skeleton,
+.study-note-pdf-pages[data-pdf-stage="ready"] .v66-pdf-progress,
+.study-note-pdf-pages[data-pdf-stage="fallback"] .v66-pdf-skeleton,
+.study-note-pdf-pages[data-pdf-stage="fallback"] .v66-pdf-progress,
+.study-note-pdf-pages[data-pdf-stage="manual"] .v66-pdf-skeleton,
+.study-note-pdf-pages[data-pdf-stage="manual"] .v66-pdf-progress{
+  display:none!important;
+}
+
+.study-note-pdf-status[data-pdf-fallback="1"]{
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  background:#fafafa;
+  padding:16px 14px;
+}
+.v74-pdf-hint{
+  display:block;
+  margin-top:8px;
+  font-size:10px;
+  line-height:1.6;
+  color:#94a3b8;
+}
