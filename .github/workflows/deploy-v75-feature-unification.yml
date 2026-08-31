@@ -1,0 +1,63 @@
+name: Deploy V75 feature unification
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-v75-feature-unification.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Validate V75 assets
+        run: |
+          node --check v75-feature-unify.js
+          test -s v75-feature-unify.css
+          test -s v75-feature-unify.js
+
+      - name: Patch index
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path("index.html")
+          s=p.read_text(encoding="utf-8")
+
+          css='<link rel="stylesheet" href="./v75-feature-unify.css">'
+          js='<script src="./v75-feature-unify.js" defer></script>'
+
+          if css not in s:
+              s=s.replace("</head>", css+"\n</head>", 1)
+          if js not in s:
+              s=s.replace("</body>", js+"\n</body>", 1)
+
+          if "./v74-scroll-clean.css" not in s:
+              raise SystemExit("V74 clean scroll base missing")
+          if "./v74-pdf-ui-scroll-fix.css" not in s or "./v74-pdf-ui-scroll-fix.js" not in s:
+              raise SystemExit("V74 PDF UI fix missing")
+          if "https://dbneonomwrqwlbitwdtr.supabase.co" not in s:
+              raise SystemExit("Supabase origin missing")
+          if "'unsafe-eval'" in s[s.rfind("<meta",0,s.find("Content-Security-Policy")):s.find("/>",s.find("Content-Security-Policy"))]:
+              raise SystemExit("unsafe-eval returned")
+          if not s.rstrip().endswith("</html>"):
+              raise SystemExit("HTML ending broken")
+
+          p.write_text(s,encoding="utf-8")
+
+      - name: Commit V75
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Deploy V75 unified feature navigation"
+          git push origin main
