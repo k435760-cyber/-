@@ -103,6 +103,7 @@
   function isUnifiedSidebar(){
     var aside=document.getElementById('main-sidebar');if(!aside)return false;
     var nav=aside.querySelector('nav');if(!nav)return false;
+    if(nav.dataset.v77Unified==='1') return true;
     return nav.classList.contains('v75-simple-nav') &&
       nav.dataset.v75Unified==='1' &&
       nav.querySelectorAll(':scope > .v75-nav-btn').length===GROUPS.length+2;
@@ -111,6 +112,7 @@
   function simplifySidebar(){
     var aside=document.getElementById('main-sidebar');if(!aside)return false;
     var nav=aside.querySelector('nav');if(!nav)return false;
+    if(nav.dataset.v77Unified==='1') return true;
     if(isUnifiedSidebar()){bindStaticSidebar();return true;}
 
     nav.innerHTML='';
