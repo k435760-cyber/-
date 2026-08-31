@@ -82,8 +82,9 @@ jobs:
                   raise SystemExit("Feature view missing: "+route)
 
           # Preserve all other feature views. This release only changes navigation grouping.
-          if s.count('section id="view-') < 100:
-              raise SystemExit("Unexpected feature-view loss")
+          view_count=len(re.findall(r'<section\\b[^>]*\\bid="view-',s,re.I))
+          if view_count < 100:
+              raise SystemExit(f"Unexpected feature-view loss: {view_count}")
 
           if 'v78-feature-merge.js' in s:
               raise SystemExit("V78 route merge still linked")
