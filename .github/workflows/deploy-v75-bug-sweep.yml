@@ -1,0 +1,165 @@
+name: Deploy V75 full bug sweep
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-v75-bug-sweep.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  audit-and-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Repair host HTML and CSP
+        shell: python
+        run: |
+          from pathlib import Path
+          import re, hashlib, base64, subprocess, json, tempfile
+
+          p=Path("index.html")
+          s=p.read_text(encoding="utf-8")
+
+          # Root cause repair: old workflows inserted host scripts at the first
+          # </body>, which was inside NEON_DRIVE_HTML. Rebuild that embedded
+          # game's tail and discard every host fragment that leaked into it.
+          a=s.find('const NEON_DRIVE_HTML = "')
+          if a < 0:
+              raise SystemExit("NEON_DRIVE_HTML start missing")
+          inner=s.find('<\\/script>\\n',a)
+          if inner < 0:
+              raise SystemExit("NEON embedded script close missing")
+          inner_end=inner+len('<\\/script>\\n')
+          close=s.find('"; const ICE_PENGUIN_HTML = "',inner_end)
+          if close < 0:
+              raise SystemExit("ICE_PENGUIN_HTML boundary missing")
+          s=s[:inner_end]+'</body>\\n</html>'+s[close:]
+
+          # External runtime scripts belong in the real host head only.
+          for name in ["v66-ux.js","v74-view-normalizer.js","v75-runtime-fixes.js"]:
+              s=re.sub(
+                  r'\s*<script\s+src=["\']\./'+re.escape(name)+r'["\']\s+defer\s*>\s*</script>\s*',
+                  '\n',s,flags=re.I
+              )
+          s=s.replace('<!-- V75-HOST-ASSETS -->\n','')
+
+          assets=(
+              '<!-- V75-HOST-ASSETS -->\n'
+              '<script src="./v66-ux.js" defer></script>\n'
+              '<script src="./v74-view-normalizer.js" defer></script>\n'
+              '<script src="./v75-runtime-fixes.js" defer></script>\n'
+          )
+          head_close=s.find('</head>')
+          if head_close < 0:
+              raise SystemExit("host head close missing")
+          s=s[:head_close]+assets+s[head_close:]
+
+          # Recompute all inline script hashes after repairing the arcade script.
+          hashes=[]
+          inline=[]
+          for m in re.finditer(r'<script([^>]*)>([\s\S]*?)</script>',s,re.I):
+              if re.search(r'\bsrc\s*=',m.group(1),re.I):
+                  continue
+              code=m.group(2)
+              inline.append(code)
+              hashes.append("'sha256-"+base64.b64encode(hashlib.sha256(code.encode("utf-8")).digest()).decode("ascii")+"'")
+
+          pos=s.find("Content-Security-Policy")
+          ms=s.rfind("<meta",0,pos+1)
+          me=s.find("/>",ms)+2
+          if pos < 0 or ms < 0 or me < 2:
+              raise SystemExit("CSP meta missing")
+          meta=s[ms:me]
+          cm=re.search(r'content="([^"]*)"',meta,re.S)
+          if not cm:
+              raise SystemExit("CSP content missing")
+          parts=cm.group(1).split(";")
+          for i,x in enumerate(parts):
+              if x.startswith("script-src "):
+                  toks=[t for t in x.split() if not t.startswith("'sha256-")]
+                  parts[i]=" ".join(toks+hashes)
+          new_csp=";".join(parts)
+          meta=meta[:cm.start(1)]+new_csp+meta[cm.end(1):]
+          s=s[:ms]+meta+s[me:]
+
+          # Security / structural invariants.
+          script_dir=next((x for x in new_csp.split(";") if x.startswith("script-src ")),"")
+          if "'unsafe-eval'" in script_dir or "'unsafe-inline'" in script_dir:
+              raise SystemExit("unsafe script CSP directive detected")
+          if "https://dbneonomwrqwlbitwdtr.supabase.co" not in new_csp:
+              raise SystemExit("required Supabase origin missing from CSP")
+          if "V65-security-hardening" not in s:
+              raise SystemExit("V65 security parser missing")
+          if not s.rstrip().endswith("</html>"):
+              raise SystemExit("HTML ending broken")
+          for name in ["v66-ux.js","v74-view-normalizer.js","v75-runtime-fixes.js"]:
+              if s.count("./"+name) != 1:
+                  raise SystemExit(name+" reference count is not 1")
+              if s.find("./"+name) > s.find("</head>"):
+                  raise SystemExit(name+" is not in host head")
+
+          # Exact CSP hash-set verification.
+          expected=set(hashes)
+          got=set(re.findall(r"'sha256-[A-Za-z0-9+/=]+'",script_dir))
+          if expected != got:
+              raise SystemExit(f"CSP hash mismatch expected={len(expected)} got={len(got)}")
+
+          # Every host inline script must parse.
+          for i,code in enumerate(inline):
+              fp=Path(f"/tmp/v75-inline-{i}.js")
+              fp.write_text(code,encoding="utf-8")
+              r=subprocess.run(["node","--check",str(fp)],capture_output=True,text=True)
+              if r.returncode:
+                  raise SystemExit(f"inline JS #{i} syntax error: {r.stderr}")
+
+          # Both embedded arcade documents must decode and their internal JS parse.
+          dec=json.JSONDecoder()
+          for label,prefix in [
+              ("NEON",'const NEON_DRIVE_HTML = '),
+              ("ICE",'const ICE_PENGUIN_HTML = ')
+          ]:
+              i=s.find(prefix)
+              if i < 0:
+                  raise SystemExit(label+" constant missing")
+              game,_=dec.raw_decode(s[i+len(prefix):])
+              if "v66-ux.js" in game or "v74-view-normalizer.js" in game or "v75-runtime-fixes.js" in game:
+                  raise SystemExit(label+" still contains leaked host assets")
+              for j,m in enumerate(re.finditer(r'<script([^>]*)>([\s\S]*?)</script>',game,re.I)):
+                  if re.search(r'\bsrc\s*=',m.group(1),re.I):
+                      continue
+                  fp=Path(f"/tmp/v75-{label}-{j}.js")
+                  fp.write_text(m.group(2),encoding="utf-8")
+                  r=subprocess.run(["node","--check",str(fp)],capture_output=True,text=True)
+                  if r.returncode:
+                      raise SystemExit(f"{label} embedded JS #{j} syntax error: {r.stderr}")
+
+          p.write_text(s,encoding="utf-8")
+          print("host inline scripts:",len(inline))
+          print("CSP hashes:",len(hashes))
+
+      - name: Validate external JS
+        run: |
+          node --check v66-ux.js
+          node --check v74-view-normalizer.js
+          node --check v75-runtime-fixes.js
+          grep -q "v66UndoCommit" v66-ux.js
+          grep -q "nwFixPdfNoteLayout" v75-runtime-fixes.js
+
+      - name: Commit repaired site
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "No index changes"
+            exit 0
+          fi
+          git commit -m "Deploy V75 full bug sweep"
+          git push origin main
