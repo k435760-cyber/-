@@ -1,0 +1,52 @@
+/* V79 — sidebar grouping only. No feature deletion / no route merging. */
+#main-sidebar{overscroll-behavior-y:contain}
+#main-sidebar .v79-shell{background:rgba(255,255,255,.95);border:1px solid rgba(255,255,255,.9);border-radius:24px;padding:12px;box-shadow:0 10px 30px rgba(0,102,255,.04);backdrop-filter:blur(18px)}
+.dark #main-sidebar .v79-shell{background:rgba(15,23,42,.96);border-color:#1e293b}
+
+#main-sidebar .v79-search{width:100%;display:flex;align-items:center;gap:9px;padding:10px 11px;margin-bottom:10px;border-radius:14px;background:#f8fafc;border:1px solid #eef2f7;color:#64748b;font-size:10px;font-weight:850;text-align:left}
+.dark #main-sidebar .v79-search{background:#111827;border-color:#263244;color:#cbd5e1}
+#main-sidebar .v79-search:hover{background:#eff6ff;color:#2563eb}.dark #main-sidebar .v79-search:hover{background:#172554;color:#bfdbfe}
+
+#main-sidebar .v79-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 3px 8px}
+#main-sidebar .v79-head-title{font-size:10px;font-weight:950;color:#64748b;letter-spacing:.08em}
+#main-sidebar .v79-head-actions{display:flex;align-items:center;gap:4px}
+#main-sidebar .v79-mini{width:31px;height:31px;display:grid;place-items:center;border-radius:10px;color:#64748b;background:transparent;font-size:15px;font-weight:900}
+#main-sidebar .v79-mini:hover{background:#f1f5f9;color:#2563eb}.dark #main-sidebar .v79-mini:hover{background:#1e293b;color:#93c5fd}
+
+#main-sidebar .v79-nav{display:grid;gap:7px}
+#main-sidebar .v79-group{border:1px solid #edf2f7;border-radius:17px;background:rgba(248,250,252,.72);overflow:hidden}
+.dark #main-sidebar .v79-group{border-color:#263244;background:rgba(17,24,39,.72)}
+#main-sidebar .v79-group-btn{width:100%;display:flex;align-items:center;gap:9px;padding:11px 10px;text-align:left;color:#475569}
+.dark #main-sidebar .v79-group-btn{color:#d1d5db}
+#main-sidebar .v79-group-btn:hover{background:rgba(255,255,255,.88)}.dark #main-sidebar .v79-group-btn:hover{background:#172033}
+#main-sidebar .v79-group-icon{width:31px;height:31px;display:grid;place-items:center;border-radius:11px;background:rgba(59,130,246,.08);font-size:16px;flex:0 0 auto}
+#main-sidebar .v79-group-copy{min-width:0;flex:1}
+#main-sidebar .v79-group-title{display:block;font-size:11px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#main-sidebar .v79-group-sub{display:block;margin-top:2px;font-size:8px;font-weight:700;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#main-sidebar .v79-count{min-width:23px;height:23px;padding:0 7px;display:grid;place-items:center;border-radius:999px;background:#fff;color:#2563eb;border:1px solid #dbeafe;font-size:9px;font-weight:950;flex:0 0 auto}
+.dark #main-sidebar .v79-count{background:#0f172a;border-color:#1e3a8a;color:#93c5fd}
+#main-sidebar .v79-chevron{font-size:13px;color:#94a3b8;transition:transform .18s ease;flex:0 0 auto}
+#main-sidebar .v79-group.v79-open .v79-chevron{transform:rotate(90deg)}
+
+#main-sidebar .v79-items{display:none;padding:2px 7px 8px}
+#main-sidebar .v79-group.v79-open .v79-items{display:grid;gap:3px}
+#main-sidebar .v79-item{width:100%;display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:12px;text-align:left;color:#64748b;font-size:9px;font-weight:800;transition:background .12s ease,color .12s ease,transform .12s ease}
+.dark #main-sidebar .v79-item{color:#cbd5e1}
+#main-sidebar .v79-item:hover{background:#fff;color:#2563eb}.dark #main-sidebar .v79-item:hover{background:#1e293b;color:#93c5fd}
+#main-sidebar .v79-item:active{transform:scale(.985)}
+#main-sidebar .v79-item.v79-active{background:#eff6ff;color:#1d4ed8}.dark #main-sidebar .v79-item.v79-active{background:#172554;color:#bfdbfe}
+#main-sidebar .v79-item-icon{width:20px;text-align:center;font-size:12px;flex:0 0 auto}
+#main-sidebar .v79-item-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Hide numeric notification clutter inside the sidebar, except requested group counts. */
+#main-sidebar [id*="badge"]:not(.v79-count),
+#main-sidebar [class*="badge"]:not(.v79-count),
+#main-sidebar [id*="count"]:not(.v79-count),
+#main-sidebar [class*="count"]:not(.v79-count){display:none!important}
+
+@media(max-width:767px){
+  #main-sidebar .v79-shell{border-radius:20px}
+}
+@media(prefers-reduced-motion:reduce){
+  #main-sidebar .v79-chevron,#main-sidebar .v79-item{transition:none!important}
+}
