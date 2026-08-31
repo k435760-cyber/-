@@ -1,0 +1,134 @@
+name: Deploy V80 real sidebar grouping
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-v80-real-sidebar.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Patch actual NW300 sidebar builder
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          p=Path("index.html")
+          s=p.read_text(encoding="utf-8")
+
+          old_sections="""var SECTIONS = [ { k: 'daily', t: '오늘 할 일', i: 'target', v: [] }, { k: 'notes', t: '노트', i: 'notebook-pen', v: [] }, { k: 'quiz', t: '문제 · 시험', i: 'file-check', v: [] }, { k: 'study', t: '공부 도구', i: 'book-open', v: [] }, { k: 'ai', t: 'AI 도우미', i: 'sparkles', v: [] }, { k: 'stats', t: '기록 · 분석', i: 'bar-chart-3', v: [] }, { k: 'social', t: '친구 · 소통', i: 'users-round', v: [] }, { k: 'game', t: '게임 · 보상', i: 'gamepad-2', v: [] }, { k: 'school', t: '학교 · 설정', i: 'settings-2', v: [] } ];"""
+          new_sections="""var SECTIONS = [
+          { k: 'daily', t: '오늘 할 일', i: 'target', v: ['nw-today','timetable','meal','supplies'] },
+          { k: 'quiz', t: '문제 ○ 시험', i: 'file-check', v: ['problems','wrong-notes','exam-maker','v21-qgen','v21-grading','v21-mockexam'] },
+          { k: 'study', t: '공부도구', i: 'book-open', v: ['notes','concepts','nw-textbook','resources','timer','focus-sounds','learning-path'] },
+          { k: 'ai', t: 'AI도우미', i: 'sparkles', v: ['ai-chat','ai-tutor-phase1','ai-analysis'] },
+          { k: 'stats', t: '기록 • 분석', i: 'bar-chart-3', v: ['goals','journal','weekly-stats','calendar','streak'] },
+          { k: 'social', t: '친구 • 소통', i: 'users-round', v: ['new-features','friend-feed','study-group','board','chat','qa','school-newsroom','notifications','appeal','feedback','poll'] }
+          ];"""
+          if old_sections not in s:
+              raise SystemExit("NW300 SECTIONS target missing")
+          s=s.replace(old_sections,new_sections,1)
+
+          old_add="""NW.addNav = function (secKey, list) { var sec = SEC_BY_K[secKey]; if (!sec) { return; }
+          list.forEach(function (it) { if (typeof it === 'string') { sec.v.push(it); return; }
+          LEGACY[it[0]] = { title: it[1], emoji: it[2] || '', legacy: true }; sec.v.push(it[0]); }); };"""
+          new_add="""NW.addNav = function (secKey, list) { list.forEach(function (it) {
+          if (typeof it === 'string') { return; }
+          LEGACY[it[0]] = { title: it[1], emoji: it[2] || '', legacy: true };
+          }); };"""
+          if old_add not in s:
+              raise SystemExit("NW.addNav target missing")
+          s=s.replace(old_add,new_add,1)
+
+          old_pins="""if (pins.length) { h += '<p class="px-2 mb-1.5 text-[10px] font-extrabold text-amber-500 ' + 'uppercase tracking-wider">고정</p><div class="space-y-1 mb-3">'; pins.forEach(function (n) { h += navItem(n, true); }); h += '</div>'; }
+          if (recent.length) { h += '<p class="px-2 mb-1.5 text-[10px] font-extrabold text-slate-400 ' + 'uppercase tracking-wider">최근</p><div class="space-y-1 mb-3">'; recent.forEach(function (n) { h += navItem(n, false); }); h += '</div>'; }"""
+          if old_pins not in s:
+              raise SystemExit("Pinned/recent block missing")
+          s=s.replace(old_pins,"",1)
+
+          orphan_start=s.find("var known = {}; SECTIONS.forEach(function (sec)")
+          orphan_end=s.find("h += '</nav></div>'; return h;",orphan_start)
+          if orphan_start<0 or orphan_end<0:
+              raise SystemExit("Orphan navigation block missing")
+          s=s[:orphan_start]+s[orphan_end:]
+
+          old_header="""'<span class="text-[10px] font-extrabold text-slate-400">' + (Object.keys(VIEWS).length + Object.keys(LEGACY).length) + '</span>'"""
+          new_header="""'<span class="text-[10px] font-extrabold text-slate-400">6개 그룹</span>'"""
+          if old_header not in s:
+              raise SystemExit("NW300 header count target missing")
+          s=s.replace(old_header,new_header,1)
+
+          # Let NW300 own the real sidebar; remove the external V79 replacement layer.
+          needle='id="main-sidebar"'
+          if s.count(needle)!=1:
+              raise SystemExit(f"Expected one main-sidebar, got {s.count(needle)}")
+          pos=s.index(needle)
+          a=s.rfind("<aside ",0,pos)
+          b=s.find("</aside>",pos)
+          if a<0 or b<0:
+              raise SystemExit("Sidebar bounds missing")
+          b+=len("</aside>")
+          shell='<aside class="hidden md:flex md:w-60 lg:w-64 shrink-0 flex-col gap-3 transition-all duration-300 z-30 overflow-y-auto no-scrollbar pb-4" id="main-sidebar"></aside>'
+          s=s[:a]+shell+s[b:]
+
+          s=re.sub(r'\s*<link rel="stylesheet" href="\./v79-sidebar-groups\.css[^"]*">\s*','\n',s)
+          s=re.sub(r'\s*<script src="\./v79-sidebar-groups\.js[^"]*" defer></script>\s*','\n',s)
+
+          marker='<meta name="yougje-ui-version" content="V80-real-sidebar-6groups">'
+          if marker not in s:
+              s=s.replace("</head>",marker+"\n</head>",1)
+
+          # Validate exact requested visible counts.
+          expected={
+            'daily':4,'quiz':6,'study':7,'ai':3,'stats':5,'social':11
+          }
+          sec_block=s[s.index("var SECTIONS = ["):s.index("];",s.index("var SECTIONS = ["))+2]
+          for key,count in expected.items():
+              m=re.search(rf"k: '{key}'.*?v: \[(.*?)\]",sec_block,re.S)
+              if not m:
+                  raise SystemExit("Missing curated section "+key)
+              items=[x for x in m.group(1).split(',') if x.strip()]
+              if len(items)!=count:
+                  raise SystemExit(f"Wrong count {key}: {len(items)}")
+
+          if "'game'" in sec_block or "'school'" in sec_block or "k: 'notes'" in sec_block:
+              raise SystemExit("Old sidebar groups still present")
+          if 'var orphan =' in s[s.index("function navHtml()"):s.index("function navItem(",s.index("function navHtml()"))]:
+              raise SystemExit("Orphan group still visible")
+          if '고정</p>' in s[s.index("function navHtml()"):s.index("function navItem(",s.index("function navHtml()"))]:
+              raise SystemExit("Pinned section still visible")
+          if '최근</p>' in s[s.index("function navHtml()"):s.index("function navItem(",s.index("function navHtml()"))]:
+              raise SystemExit("Recent section still visible")
+          if "Object.keys(VIEWS).concat(Object.keys(LEGACY))" not in s:
+              raise SystemExit("Full feature search was lost")
+          if "NW.view = function" not in s or "LEGACY[it[0]]" not in s:
+              raise SystemExit("Feature registry was damaged")
+          if './v79-sidebar-groups.js' in s:
+              raise SystemExit("V79 external sidebar still linked")
+          if "https://dbneonomwrqwlbitwdtr.supabase.co" not in s:
+              raise SystemExit("Supabase origin missing")
+          if not s.rstrip().endswith("</html>"):
+              raise SystemExit("HTML ending broken")
+
+          p.write_text(s,encoding="utf-8")
+
+      - name: Commit V80
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Deploy V80 actual six-group NW300 sidebar"
+          git push origin main
