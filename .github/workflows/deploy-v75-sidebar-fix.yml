@@ -1,0 +1,50 @@
+name: Deploy V75 sidebar integration fix
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-v75-sidebar-fix.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Validate sidebar fix
+        run: node --check v75-feature-unify.js
+
+      - name: Cache bust V75 assets
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path("index.html")
+          s=p.read_text(encoding="utf-8")
+          s=s.replace('./v75-feature-unify.css?v=1','./v75-feature-unify.css?v=2')
+          s=s.replace('./v75-feature-unify.js?v=1','./v75-feature-unify.js?v=2')
+          s=s.replace('./v75-feature-unify.css"','./v75-feature-unify.css?v=2"')
+          s=s.replace('./v75-feature-unify.js"','./v75-feature-unify.js?v=2"')
+          if './v75-feature-unify.js?v=2' not in s:
+              raise SystemExit("V75 JS cache-bust failed")
+          if './v75-feature-unify.css?v=2' not in s:
+              raise SystemExit("V75 CSS cache-bust failed")
+          if not s.rstrip().endswith("</html>"):
+              raise SystemExit("HTML ending broken")
+          p.write_text(s,encoding="utf-8")
+
+      - name: Commit sidebar deployment
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Deploy V75 sidebar integration fix"
+          git push origin main
