@@ -1,0 +1,107 @@
+/* V74-scroll-clean
+   Clean replacement for V67-V73 scroll patches.
+   Normal browser vertical scrolling, no hard clamps, no duplicate viewport height. */
+
+html{
+  min-height:100%;
+  height:auto;
+  overflow-x:hidden;
+}
+
+body{
+  min-height:100dvh!important;
+  height:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:flex-start!important;
+  overflow-x:hidden!important;
+}
+
+/* Main shell fills only the space above the footer. */
+body > .relative.z-10.flex.flex-col{
+  flex:1 0 auto!important;
+  min-height:0!important;
+  height:auto!important;
+}
+
+/* Header + content row remain in normal document flow. */
+body > .relative.z-10.flex.flex-col > .flex-1.max-w-7xl{
+  flex:1 0 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  align-items:flex-start;
+}
+
+/* Main view area must grow from real content. */
+#main-screen{
+  min-width:0!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow:visible!important;
+}
+
+#main-screen > section[id^="view-"].hidden{
+  display:none!important;
+}
+
+#main-screen > section[id^="view-"]:not(.hidden){
+  width:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none;
+}
+
+/* Footer is the actual end of the page. */
+body > footer{
+  flex:0 0 auto!important;
+  margin-top:0!important;
+  margin-bottom:0!important;
+}
+
+/* Sidebar never determines the total page height on wide screens. */
+@media(min-width:768px){
+  #main-sidebar{
+    align-self:flex-start!important;
+    position:sticky!important;
+    top:80px!important;
+    max-height:calc(100dvh - 96px)!important;
+    overflow-y:auto!important;
+    overscroll-behavior-y:contain;
+  }
+}
+
+/* Mobile: natural content flow only. */
+@media(max-width:767px){
+  body > .relative.z-10.flex.flex-col > .flex-1.max-w-7xl{
+    display:flex!important;
+    flex-direction:column!important;
+    flex:1 0 auto!important;
+    min-height:0!important;
+    height:auto!important;
+  }
+
+  #main-screen{
+    flex:0 0 auto!important;
+    width:100%!important;
+    min-height:0!important;
+    height:auto!important;
+    overflow:visible!important;
+  }
+
+  #main-screen > section[id^="view-"]:not(.hidden){
+    min-height:0!important;
+    height:auto!important;
+  }
+}
+
+/* Keep only intentional inner horizontal scrollers. */
+#v66-ai-quick,
+.study-note-toolbar-scroll,
+.study-note-tabs,
+[role="tablist"],
+.overflow-x-auto,
+.overflow-x-scroll{
+  max-width:100%;
+  overscroll-behavior-x:contain;
+}
