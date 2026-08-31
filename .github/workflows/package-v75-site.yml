@@ -1,0 +1,42 @@
+name: Package V75 site
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/package-v75-site.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Validate package inputs
+        run: |
+          test -f index.html
+          test -f v66-ux.css
+          test -f v66-ux.js
+          test -f v74-scroll-clean.css
+          test -f v74-view-normalizer.js
+          test -f v75-runtime-fixes.js
+          node --check v66-ux.js
+          node --check v74-view-normalizer.js
+          node --check v75-runtime-fixes.js
+      - name: Upload Cloudflare Pages bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: yougje-v75-full-bug-sweep
+          if-no-files-found: error
+          retention-days: 7
+          path: |
+            index.html
+            v66-ux.css
+            v66-ux.js
+            v74-scroll-clean.css
+            v74-view-normalizer.js
+            v75-runtime-fixes.js
