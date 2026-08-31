@@ -1,0 +1,96 @@
+name: Deploy V78 actual feature merge
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-v78-feature-merge.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Validate V78 assets
+        run: |
+          node --check v78-feature-merge.js
+          test -s v78-feature-merge.css
+          test -s v78-feature-merge.js
+
+      - name: Replace old menu experiments and merge features
+        shell: python
+        env:
+          V78_SIDEBAR_B64: PGFzaWRlIGNsYXNzPSJoaWRkZW4gbWQ6ZmxleCBtZDp3LTYwIGxnOnctNjQgc2hyaW5rLTAgZmxleC1jb2wgZ2FwLTMgdHJhbnNpdGlvbi1hbGwgZHVyYXRpb24tMzAwIHotMzAgb3ZlcmZsb3cteS1hdXRvIG5vLXNjcm9sbGJhciBwYi00IiBpZD0ibWFpbi1zaWRlYmFyIj4KPGRpdiBjbGFzcz0iYmFja2Ryb3AtYmx1ci0yeGwgYmctd2hpdGUvOTUgZGFyazpiZy1zbGF0ZS05MDAgYm9yZGVyIGJvcmRlci13aGl0ZS85MCBkYXJrOmJvcmRlci1zbGF0ZS04MDAgcm91bmRlZC0zeGwgcC0zIHNoYWRvdy1bMF8xMHB4XzMwcHhfcmdiYSgwLDEwMiwyNTUsMC4wNCldIj4KPGRpdiBjbGFzcz0iZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIHB4LTIgbWItMiI+CjxzcGFuIGNsYXNzPSJ0ZXh0LVsxMHB4XSBmb250LWV4dHJhYm9sZCB0ZXh0LWJsdWUtOTAwLzYwIGRhcms6dGV4dC1ibHVlLTQwMC83MCB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXN0Ij7thrXtlakg66mU64m0PC9zcGFuPgo8YnV0dG9uIHR5cGU9ImJ1dHRvbiIgZGF0YS12NzgtY29sbGFwc2U9IjEiIGNsYXNzPSJ0ZXh0LXNsYXRlLTQwMCBob3Zlcjp0ZXh0LXNsYXRlLTcwMCBkYXJrOmhvdmVyOnRleHQtc2xhdGUtMjAwIHAtMS41IHJvdW5kZWQtbGcgaG92ZXI6Ymctd2hpdGUvODAgZGFyazpob3ZlcjpiZy1zbGF0ZS04MDAgdHJhbnNpdGlvbi1jb2xvcnMiIHRpdGxlPSLsgqzsnbTrk5zrsJQg7KCR6riwIj7igLk8L2J1dHRvbj4KPC9kaXY+CjxuYXYgY2xhc3M9InY3OC1zaW1wbGUtbmF2IiBkYXRhLXY3OC11bmlmaWVkPSIxIj4KPGJ1dHRvbiB0eXBlPSJidXR0b24iIGlkPSJuYXYtaG9tZSIgZGF0YS12NzgtaG9tZT0iMSIgY2xhc3M9InY3OC1uYXYtYnRuIj48c3BhbiBjbGFzcz0idjc4LW5hdi1pY29uIj7ijII8L3NwYW4+PHNwYW4gY2xhc3M9InY3OC1uYXYtY29weSI+PHNwYW4gY2xhc3M9InY3OC1uYXYtdGl0bGUiPu2ZhDwvc3Bhbj48c3BhbiBjbGFzcz0idjc4LW5hdi1zdWIiPuyYpOuKmCDtlaAg7J287KeA66eMIOuztOq4sDwvc3Bhbj48L3NwYW4+PHNwYW4gY2xhc3M9InY3OC1uYXYtY2hldnJvbiI+4oC6PC9zcGFuPjwvYnV0dG9uPgo8YnV0dG9uIHR5cGU9ImJ1dHRvbiIgZGF0YS12NzgtZ3JvdXA9InN0dWR5IiBjbGFzcz0idjc4LW5hdi1idG4gdjc4LW5hdi1wcmltYXJ5Ij48c3BhbiBjbGFzcz0idjc4LW5hdi1pY29uIj7wn5OaPC9zcGFuPjxzcGFuIGNsYXNzPSJ2NzgtbmF2LWNvcHkiPjxzcGFuIGNsYXNzPSJ2NzgtbmF2LXRpdGxlIj7qs7XrtoA8L3NwYW4+PHNwYW4gY2xhc3M9InY3OC1uYXYtc3ViIj7rhbjtirggwrcg66y47KCcIMK3IOyLnO2XmDwvc3Bhbj48L3NwYW4+PHNwYW4gY2xhc3M9InY3OC1uYXYtY2hldnJvbiI+4oC6PC9zcGFuPjwvYnV0dG9uPgo8YnV0dG9uIHR5cGU9ImJ1dHRvbiIgZGF0YS12NzgtZ3JvdXA9ImFpIiBjbGFzcz0idjc4LW5hdi1idG4iPjxzcGFuIGNsYXNzPSJ2NzgtbmF2LWljb24iPuKcqDwvc3Bhbj48c3BhbiBjbGFzcz0idjc4LW5hdi1jb3B5Ij48c3BhbiBjbGFzcz0idjc4LW5hdi10aXRsZSI+QUkg7ZWZ7Iq1PC9zcGFuPjxzcGFuIGNsYXNzPSJ2NzgtbmF2LXN1YiI+7KeI66y4IMK3IOusuOygnCDCtyDruYTshJ08L3NwYW4+PC9zcGFuPjxzcGFuIGNsYXNzPSJ2NzgtbmF2LWNoZXZyb24iPuKAujwvc3Bhbj48L2J1dHRvbj4KPGJ1dHRvbiB0eXBlPSJidXR0b24iIGRhdGEtdjc4LWdyb3VwPSJzY2hvb2wiIGNsYXNzPSJ2NzgtbmF2LWJ0biI+PHNwYW4gY2xhc3M9InY3OC1uYXYtaWNvbiI+8J+Pqzwvc3Bhbj48c3BhbiBjbGFzcz0idjc4LW5hdi1jb3B5Ij48c3BhbiBjbGFzcz0idjc4LW5hdi10aXRsZSI+7ZWZ6rWQPC9zcGFuPjxzcGFuIGNsYXNzPSJ2NzgtbmF2LXN1YiI+7Jik64qYIMK3IOqzteyngCDCtyDshozthrU8L3NwYW4+PC9zcGFuPjxzcGFuIGNsYXNzPSJ2NzgtbmF2LWNoZXZyb24iPuKAujwvc3Bhbj48L2J1dHRvbj4KPGJ1dHRvbiB0eXBlPSJidXR0b24iIGRhdGEtdjc4LWdyb3VwPSJteSIgY2xhc3M9InY3OC1uYXYtYnRuIj48c3BhbiBjbGFzcz0idjc4LW5hdi1pY29uIj7wn4yxPC9zcGFuPjxzcGFuIGNsYXNzPSJ2NzgtbmF2LWNvcHkiPjxzcGFuIGNsYXNzPSJ2NzgtbmF2LXRpdGxlIj7rgpjsnZgg6rO17KeAPC9zcGFuPjxzcGFuIGNsYXNzPSJ2NzgtbmF2LXN1YiI+6riw66GdIMK3IOyEseyepeKAjCDCtCDruzTsg4E8L3NwYW4+PC9zcGFuPjxzcGFuIGNsYXNzPSJ2NzgtbmF2LWNoZXZyb24iPuKAujwvc3Bhbj48L2J1dHRvbj4KPC9uYXY+CjwvZGl2Pgo8L2FzaWRlPg==
+        run: |
+          from pathlib import Path
+          import os, base64, re
+
+          p=Path("index.html")
+          s=p.read_text(encoding="utf-8")
+
+          needle='id="main-sidebar"'
+          if s.count(needle) != 1:
+              raise SystemExit(f"Expected one main-sidebar, got {s.count(needle)}")
+
+          pos=s.index(needle)
+          start=s.rfind("<aside ",0,pos)
+          end=s.find("</aside>",pos)
+          if start<0 or end<0:
+              raise SystemExit("Sidebar bounds not found")
+          end += len("</aside>")
+
+          sidebar=base64.b64decode(os.environ["V78_SIDEBAR_B64"]).decode("utf-8")
+          s=s[:start]+sidebar+s[end:]
+
+          # V75/V77 were menu-only experiments. V78 replaces them completely.
+          patterns=[
+              r'\s*<link rel="stylesheet" href="\./v75-feature-unify\.css[^"]*">\s*',
+              r'\s*<script src="\./v75-feature-unify\.js[^"]*" defer></script>\s*',
+              r'\s*<link rel="stylesheet" href="\./v77-feature-consolidate\.css[^"]*">\s*',
+              r'\s*<script src="\./v77-feature-consolidate\.js[^"]*" defer></script>\s*',
+          ]
+          for pat in patterns:
+              s=re.sub(pat,'\n',s)
+
+          css='<link rel="stylesheet" href="./v78-feature-merge.css?v=1">'
+          js='<script src="./v78-feature-merge.js?v=1" defer></script>'
+          if css not in s:
+              s=s.replace("</head>",css+"\n</head>",1)
+          if js not in s:
+              s=s.replace("</body>",js+"\n</body>",1)
+
+          if 'data-v78-unified="1"' not in s:
+              raise SystemExit("V78 sidebar missing")
+          if s.count('data-v78-group=') != 4:
+              raise SystemExit("Unexpected V78 group count")
+          if 'v75-feature-unify.js' in s or 'v77-feature-consolidate.js' in s:
+              raise SystemExit("Old menu JS still linked")
+          if './v78-feature-merge.js?v=1' not in s:
+              raise SystemExit("V78 JS missing")
+          if './v74-scroll-clean.css' not in s:
+              raise SystemExit("V74 clean scroll base missing")
+          if './v74-pdf-ui-scroll-fix.js' not in s:
+              raise SystemExit("PDF fix missing")
+          if "https://dbneonomwrqwlbitwdtr.supabase.co" not in s:
+              raise SystemExit("Supabase origin missing")
+          if not s.rstrip().endswith("</html>"):
+              raise SystemExit("HTML ending broken")
+
+          p.write_text(s,encoding="utf-8")
+
+      - name: Commit V78
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Deploy V78 actual feature merge"
+          git push origin main
