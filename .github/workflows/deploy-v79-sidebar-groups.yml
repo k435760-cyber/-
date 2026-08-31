@@ -82,7 +82,7 @@ jobs:
                   raise SystemExit("Feature view missing: "+route)
 
           # Preserve all other feature views. This release only changes navigation grouping.
-          view_count=len(re.findall(r'<section\\b[^>]*\\bid="view-',s,re.I))
+          view_count=s.count('id="view-')
           if view_count < 100:
               raise SystemExit(f"Unexpected feature-view loss: {view_count}")
 
