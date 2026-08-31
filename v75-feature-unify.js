@@ -79,6 +79,27 @@
 
   function navBtn(icon,title,sub,handler,extra){var b=create('button','v75-nav-btn'+(extra?' '+extra:''));b.type='button';b.innerHTML='<span class="v75-nav-ico"></span><span class="v75-nav-copy"><span class="v75-nav-title"></span><span class="v75-nav-sub"></span></span><span class="v75-nav-chevron">›</span>';b.querySelector('.v75-nav-ico').textContent=icon;b.querySelector('.v75-nav-title').textContent=title;b.querySelector('.v75-nav-sub').textContent=sub;b.addEventListener('click',handler);return b}
 
+  function bindStaticSidebar(){
+    var aside=document.getElementById('main-sidebar');if(!aside)return;
+    aside.querySelectorAll('[data-v75-route]').forEach(function(b){
+      if(b.dataset.v75Bound)return;
+      b.dataset.v75Bound='1';
+      b.addEventListener('click',function(){go(b.dataset.v75Route)});
+    });
+    aside.querySelectorAll('[data-v75-hub]').forEach(function(b){
+      if(b.dataset.v75Bound)return;
+      b.dataset.v75Bound='1';
+      b.addEventListener('click',function(){openHub(b.dataset.v75Hub||'')});
+    });
+    aside.querySelectorAll('[data-v75-collapse]').forEach(function(b){
+      if(b.dataset.v75Bound)return;
+      b.dataset.v75Bound='1';
+      b.addEventListener('click',function(){
+        try{if(typeof window.toggleSidebar==='function')window.toggleSidebar()}catch(_){}
+      });
+    });
+  }
+
   function isUnifiedSidebar(){
     var aside=document.getElementById('main-sidebar');if(!aside)return false;
     var nav=aside.querySelector('nav');if(!nav)return false;
@@ -90,7 +111,7 @@
   function simplifySidebar(){
     var aside=document.getElementById('main-sidebar');if(!aside)return false;
     var nav=aside.querySelector('nav');if(!nav)return false;
-    if(isUnifiedSidebar())return true;
+    if(isUnifiedSidebar()){bindStaticSidebar();return true;}
 
     nav.innerHTML='';
     nav.className='v75-simple-nav';
@@ -112,6 +133,7 @@
 
     nav.appendChild(navBtn('☰','전체 기능','필요할 때만 모두 보기',function(){openHub('')},''));
     aside.dataset.v75Simple='1';
+    bindStaticSidebar();
     return true;
   }
 
@@ -151,7 +173,7 @@
 
   function removeV66HomeFocus(){var el=document.getElementById('v66-home-focus');if(el)el.remove()}
 
-  function boot(){simplifySidebar();watchSidebar();removeV66HomeFocus();simplifyHome();ensureHub();try{if(window.lucide&&window.lucide.createIcons)window.lucide.createIcons()}catch(_){} }
+  function boot(){simplifySidebar();bindStaticSidebar();watchSidebar();removeV66HomeFocus();simplifyHome();ensureHub();try{if(window.lucide&&window.lucide.createIcons)window.lucide.createIcons()}catch(_){} }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
   window.addEventListener('load',function(){boot();setTimeout(boot,400)},{once:true});
   window.addEventListener('pageshow',function(){setTimeout(simplifySidebar,50)});
