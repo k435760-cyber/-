@@ -1,0 +1,82 @@
+name: Deploy uploaded V74 PDF UI fix
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-uploaded-v74-pdf-ui.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Assemble uploaded assets
+        run: |
+          cat .deploy/v74_pdf_css2_*.b64 | tr -d '[:space:]' | base64 -d > v74-pdf-ui-scroll-fix.css
+          cat .deploy/v74_pdf_js_*.b64   | tr -d '[:space:]' | base64 -d > v74-pdf-ui-scroll-fix.js
+
+          echo "bdfad5815d919d028b727997c03cb2baffde096076e5c6093f6e9b8a30858111  v74-pdf-ui-scroll-fix.css" | sha256sum -c -
+          echo "779dae4d6fe60c72c398c30c24d21357079db94f45004b2c0682e0a6e02bfa3c  v74-pdf-ui-scroll-fix.js" | sha256sum -c -
+          node --check v74-pdf-ui-scroll-fix.js
+
+      - name: Merge into current clean V74
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p=Path("index.html")
+          s=p.read_text(encoding="utf-8")
+
+          if "./v74-scroll-clean.css" not in s or "./v74-view-normalizer.js" not in s:
+              raise SystemExit("Current clean V74 base is missing")
+
+          old_refs = [
+              "v67-scroll-fix.css",
+              "v68-scroll-height-fix.css",
+              "v69-scroll-fix.css",
+              "v69-scroll-fix.js",
+              "v71-scroll-guard.css",
+              "v71-scroll-guard.js",
+              "v73-footer-scroll-fix.css",
+          ]
+          for ref in old_refs:
+              if ref in s:
+                  raise SystemExit("Old scroll patch unexpectedly linked: " + ref)
+
+          css='<link rel="stylesheet" href="./v74-pdf-ui-scroll-fix.css">'
+          js='<script src="./v74-pdf-ui-scroll-fix.js" defer></script>'
+
+          if css not in s:
+              s=s.replace("</head>", css+"\n</head>", 1)
+          if js not in s:
+              s=s.replace("</body>", js+"\n</body>", 1)
+
+          if "https://dbneonomwrqwlbitwdtr.supabase.co" not in s:
+              raise SystemExit("Supabase origin missing")
+          if "'unsafe-eval'" in s[s.rfind("<meta",0,s.find("Content-Security-Policy")):s.find("/>",s.find("Content-Security-Policy"))]:
+              raise SystemExit("unsafe-eval returned")
+          if not s.rstrip().endswith("</html>"):
+              raise SystemExit("HTML ending broken")
+
+          p.write_text(s,encoding="utf-8")
+
+      - name: Remove transfer staging
+        run: rm -f .deploy/v74_pdf*.b64
+
+      - name: Commit deployment
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit -m "Deploy uploaded V74 PDF UI fix"
+          git push origin main
