@@ -6,9 +6,9 @@
     study:{
       icon:'📚',title:'공부',desc:'정리·문제·시험을 세 화면으로 통합',
       modes:[
-        {key:'notes',title:'노트',desc:'노트 작성과 PDF 학습',route:'notes'},
         {key:'practice',title:'문제·복습',desc:'문제풀이와 오답 복습을 한 화면에서',sections:[['problems','문제풀이'],['wrong-notes','오답 복습']]},
-        {key:'plan',title:'시험·계획',desc:'시험 만들기와 공부 계획을 한 화면에서',sections:[['exam-maker','시험 만들기'],['study','공부 계획']]}
+        {key:'plan',title:'시험·계획',desc:'시험 만들기와 공부 계획을 한 화면에서',sections:[['exam-maker','시험 만들기'],['study','공부 계획']]},
+        {key:'notes',title:'노트',desc:'노트 작성과 PDF 학습',route:'notes'}
       ]
     },
     ai:{
@@ -114,6 +114,7 @@
   async function mountSection(route,label,container){
     callNative(route);
     await wait(35);
+    for(var mi=0;mi<mounted.length;mi++)mounted[mi].node.classList.remove('hidden');
     var node=document.getElementById('view-'+route);
     if(!node){
       var miss=el('div','v78-retired-note','이 기능은 통합 과정에서 제거되었어요.');
