@@ -1,0 +1,86 @@
+name: Deploy V77 deep feature consolidation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-v77-feature-consolidation.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Validate V77 assets
+        run: |
+          node --check v75-feature-unify.js
+          node --check v77-feature-consolidate.js
+          test -s v77-feature-consolidate.css
+
+      - name: Consolidate navigation
+        shell: python
+        env:
+          V77_SIDEBAR_B64: PGFzaWRlIGNsYXNzPSJoaWRkZW4gbWQ6ZmxleCBtZDp3LTYwIGxnOnctNjQgc2hyaW5rLTAgZmxleC1jb2wgZ2FwLTMgdHJhbnNpdGlvbi1hbGwgZHVyYXRpb24tMzAwIHotMzAgb3ZlcmZsb3cteS1hdXRvIG5vLXNjcm9sbGJhciBwYi00IiBpZD0ibWFpbi1zaWRlYmFyIj4KPGRpdiBjbGFzcz0iYmFja2Ryb3AtYmx1ci0yeGwgYmctd2hpdGUvOTUgZGFyazpiZy1zbGF0ZS05MDAgYm9yZGVyIGJvcmRlci13aGl0ZS85MCBkYXJrOmJvcmRlci1zbGF0ZS04MDAgcm91bmRlZC0zeGwgcC0zIHNoYWRvdy1bMF8xMHB4XzMwcHhfcmdiYSgwLDEwMiwyNTUsMC4wNCldIj4KPGRpdiBjbGFzcz0iZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIHB4LTIgbWItMiI+CjxzcGFuIGNsYXNzPSJ0ZXh0LVsxMHB4XSBmb250LWV4dHJhYm9sZCB0ZXh0LWJsdWUtOTAwLzYwIGRhcms6dGV4dC1ibHVlLTQwMC83MCB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXN0Ij7thrXtlakg66mU64m0PC9zcGFuPgo8YnV0dG9uIHR5cGU9ImJ1dHRvbiIgZGF0YS12NzUtY29sbGFwc2U9IjEiIGNsYXNzPSJ0ZXh0LXNsYXRlLTQwMCBob3Zlcjp0ZXh0LXNsYXRlLTcwMCBkYXJrOmhvdmVyOnRleHQtc2xhdGUtMjAwIHAtMS41IHJvdW5kZWQtbGcgaG92ZXI6Ymctd2hpdGUvODAgZGFyazpob3ZlcjpiZy1zbGF0ZS04MDAgdHJhbnNpdGlvbi1jb2xvcnMiIHRpdGxlPSLsgqzsnbTrk5zrsJQg7KCR6riwIj7igLk8L2J1dHRvbj4KPC9kaXY+CjxuYXYgY2xhc3M9InY3Ny1zaW1wbGUtbmF2IiBkYXRhLXY3Ny11bmlmaWVkPSIxIj4KPGJ1dHRvbiB0eXBlPSJidXR0b24iIGlkPSJuYXYtaG9tZSIgZGF0YS12NzUtcm91dGU9ImhvbWUiIGNsYXNzPSJ2NzctbmF2LWJ0biI+PHNwYW4gY2xhc3M9InY3Ny1uYXYtaWNvbiI+4oyCPC9zcGFuPjxzcGFuIGNsYXNzPSJ2NzctbmF2LWNvcHkiPjxzcGFuIGNsYXNzPSJ2NzctbmF2LXRpdGxlIj7tmYg8L3NwYW4+PHNwYW4gY2xhc3M9InY3Ny1uYXYtc3ViIj7smKTripgg7ZWgIOydvOunjCDrs7TquLA8L3NwYW4+PC9zcGFuPjxzcGFuIGNsYXNzPSJ2NzctbmF2LWNoZXZyb24iPuKAujwvc3Bhbj48L2J1dHRvbj4KPGJ1dHRvbiB0eXBlPSJidXR0b24iIGRhdGEtdjc3LWdyb3VwPSJzdHVkeSIgY2xhc3M9InY3Ny1uYXYtYnRuIHY3Ny1uYXYtcHJpbWFyeSI+PHNwYW4gY2xhc3M9InY3Ny1uYXYtaWNvbiI+8J+Tmjwvc3Bhbj48c3BhbiBjbGFzcz0idjc3LW5hdi1jb3B5Ij48c3BhbiBjbGFzcz0idjc3LW5hdi10aXRsZSI+6rO167aAPC9zcGFuPjxzcGFuIGNsYXNzPSJ2NzctbmF2LXN1YiI+64W47Yq4IMK3IOusuOygnCDCtyDsi5ztl5g8L3NwYW4+PC9zcGFuPjxzcGFuIGNsYXNzPSJ2NzctbmF2LWNoZXZyb24iPuKAujwvc3Bhbj48L2J1dHRvbj4KPGJ1dHRvbiB0eXBlPSJidXR0b24iIGRhdGEtdjc3LWdyb3VwPSJhaSIgY2xhc3M9InY3Ny1uYXYtYnRuIj48c3BhbiBjbGFzcz0idjc3LW5hdi1pY29uIj7inKg8L3NwYW4+PHNwYW4gY2xhc3M9InY3Ny1uYXYtY29weSI+PHNwYW4gY2xhc3M9InY3Ny1uYXYtdGl0bGUiPkFJIO2VmeyKtTwvc3Bhbj48c3BhbiBjbGFzcz0idjc3LW5hdi1zdWIiPuyniOusuCDCtyDssYTsoJAgwrcg67aE7ISdPC9zcGFuPjwvc3Bhbj48c3BhbiBjbGFzcz0idjc3LW5hdi1jaGV2cm9uIj7igLo8L3NwYW4+PC9idXR0b24+CjxidXR0b24gdHlwZT0iYnV0dG9uIiBkYXRhLXY3Ny1ncm91cD0ic2Nob29sIiBjbGFzcz0idjc3LW5hdi1idG4iPjxzcGFuIGNsYXNzPSJ2NzctbmF2LWljb24iPvCfj6s8L3NwYW4+PHNwYW4gY2xhc3M9InY3Ny1uYXYtY29weSI+PHNwYW4gY2xhc3M9InY3Ny1uYXYtdGl0bGUiPu2Vmeq1kDwvc3Bhbj48c3BhbiBjbGFzcz0idjc3LW5hdi1zdWIiPuyLnOqwhO2RnCDCtyDquInsi50gwrcg7IaM7Ya1PC9zcGFuPjwvc3Bhbj48c3BhbiBjbGFzcz0idjc3LW5hdi1jaGV2cm9uIj7igLo8L3NwYW4+PC9idXR0b24+CjxidXR0b24gdHlwZT0iYnV0dG9uIiBkYXRhLXY3Ny1ncm91cD0ibXkiIGNsYXNzPSJ2NzctbmF2LWJ0biI+PHNwYW4gY2xhc3M9InY3Ny1uYXYtaWNvbiI+8J+MsTwvc3Bhbj48c3BhbiBjbGFzcz0idjc3LW5hdi1jb3B5Ij48c3BhbiBjbGFzcz0idjc3LW5hdi10aXRsZSI+64KY7J2YIOqzteqwhDwvc3Bhbj48c3BhbiBjbGFzcz0idjc3LW5hdi1zdWIiPuq4sOuhnSDCtyDthrXqs4Qgwrcg67O07IOBPC9zcGFuPjwvc3Bhbj48c3BhbiBjbGFzcz0idjc3LW5hdi1jaGV2cm9uIj7igLo8L3NwYW4+PC9idXR0b24+CjxidXR0b24gdHlwZT0iYnV0dG9uIiBkYXRhLXY3Ny1tb3JlPSIxIiBjbGFzcz0idjc3LW5hdi1idG4iPjxzcGFuIGNsYXNzPSJ2NzctbmF2LWljb24iPuKYsDwvc3Bhbj48c3BhbiBjbGFzcz0idjc3LW5hdi1jb3B5Ij48c3BhbiBjbGFzcz0idjc3LW5hdi10aXRsZSI+642U67O06riwPC9zcGFuPjxzcGFuIGNsYXNzPSJ2NzctbmF2LXN1YiI+7ZWE7JqU7ZWcIOq4sOuKpSDqsoDsg4k8L3NwYW4+PC9zcGFuPjxzcGFuIGNsYXNzPSJ2NzctbmF2LWNoZXZyb24iPuKAujwvc3Bhbj48L2J1dHRvbj4KPC9uYXY+CjwvZGl2Pgo8L2FzaWRlPg==
+        run: |
+          from pathlib import Path
+          import base64, os
+
+          p=Path("index.html")
+          s=p.read_text(encoding="utf-8")
+
+          needle='id="main-sidebar"'
+          if s.count(needle) != 1:
+              raise SystemExit(f"Expected one main-sidebar, got {s.count(needle)}")
+
+          pos=s.index(needle)
+          start=s.rfind("<aside ",0,pos)
+          end=s.find("</aside>",pos)
+          if start<0 or end<0:
+              raise SystemExit("Sidebar bounds not found")
+          end += len("</aside>")
+
+          sidebar=base64.b64decode(os.environ["V77_SIDEBAR_B64"]).decode("utf-8")
+          s=s[:start]+sidebar+s[end:]
+
+          css='<link rel="stylesheet" href="./v77-feature-consolidate.css?v=1">'
+          js='<script src="./v77-feature-consolidate.js?v=1" defer></script>'
+          if css not in s:
+              s=s.replace("</head>",css+"\n</head>",1)
+          if js not in s:
+              s=s.replace("</body>",js+"\n</body>",1)
+
+          for old in ('?v=1','?v=2','?v=3'):
+              s=s.replace('./v75-feature-unify.css'+old,'./v75-feature-unify.css?v=4')
+              s=s.replace('./v75-feature-unify.js'+old,'./v75-feature-unify.js?v=4')
+          s=s.replace('./v75-feature-unify.css"','./v75-feature-unify.css?v=4"')
+          s=s.replace('./v75-feature-unify.js"','./v75-feature-unify.js?v=4"')
+
+          if 'data-v77-unified="1"' not in s:
+              raise SystemExit("V77 sidebar missing")
+          if s.count('data-v77-group=') != 4:
+              raise SystemExit("Unexpected V77 group count")
+          if './v77-feature-consolidate.js?v=1' not in s:
+              raise SystemExit("V77 JS missing")
+          if "https://dbneonomwrqwlbitwdtr.supabase.co" not in s:
+              raise SystemExit("Supabase origin missing")
+          if not s.rstrip().endswith("</html>"):
+              raise SystemExit("HTML ending broken")
+
+          p.write_text(s,encoding="utf-8")
+
+      - name: Commit V77
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Deploy V77 deep feature consolidation"
+          git push origin main
