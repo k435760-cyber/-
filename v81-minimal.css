@@ -1,0 +1,76 @@
+/* V81 minimal monochrome shell.
+   Loaded after the base styles. Flattens the visual language (no glass, glow,
+   gradients or blue tint) without touching any view logic or markup.
+   The blue/sky/indigo/violet/purple/cyan/slate/gray Tailwind palettes are remapped to
+   neutral greys in the tailwind.config inline script. */
+
+:root{
+  --m-bg:#fafaf9; --m-surface:#ffffff; --m-sunken:#f4f4f5;
+  --m-line:#e4e4e7; --m-line-strong:#d4d4d8;
+  --m-ink:#18181b; --m-ink-2:#52525b; --m-ink-3:#a1a1aa;
+  --m-radius:12px; --m-radius-sm:8px;
+}
+.dark{
+  --m-bg:#0b0b0c; --m-surface:#111113; --m-sunken:#18181b;
+  --m-line:#27272a; --m-line-strong:#3f3f46;
+  --m-ink:#fafafa; --m-ink-2:#a1a1aa; --m-ink-3:#71717a;
+}
+
+html,body{
+  background:var(--m-bg)!important;
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","Segoe UI",system-ui,sans-serif;
+  letter-spacing:-.005em;
+}
+
+/* Background decoration off */
+.aurora-bg,.aurora-blob{display:none!important}
+
+/* No glass, no glow */
+[class*="backdrop-blur"]{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.shadow-2xs,.shadow-xs,.shadow-sm,.shadow,.shadow-md,.shadow-lg,.shadow-xl,[class*="shadow-["],[class*="shadow-blue"],[class*="shadow-sky"],[class*="shadow-indigo"]{box-shadow:none!important}
+.shadow-2xl{box-shadow:0 8px 28px rgba(0,0,0,.14)!important} /* modals only */
+
+/* Gradients -> flat */
+[class*="bg-gradient-to"]{background-image:none!important;background-color:var(--m-ink)!important;color:var(--m-bg)!important}
+.dark [class*="bg-gradient-to"]{background-color:#e4e4e7!important;color:#18181b!important}
+.bg-clip-text,.bg-clip-text[class*="bg-gradient-to"]{background:none!important;background-color:transparent!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;-webkit-text-fill-color:currentColor!important;color:var(--m-ink)!important}
+
+/* Shape & weight */
+.rounded-3xl{border-radius:var(--m-radius)!important}
+.rounded-2xl{border-radius:10px!important}
+.rounded-xl{border-radius:var(--m-radius-sm)!important}
+.font-black{font-weight:700!important}
+.font-extrabold{font-weight:650!important}
+.animate-pulse{animation:none!important}
+
+/* Header */
+header.sticky{background:var(--m-bg)!important;border-bottom:1px solid var(--m-line)!important}
+header.sticky .bg-clip-text{font-weight:700}
+
+/* Cards / panels: flat surface with hairline */
+main .bg-white\/80,main .bg-white\/85,main .bg-white\/90,main .bg-white\/95,main .bg-white\/75,
+#main-sidebar .bg-white\/95{background:var(--m-surface)!important}
+.dark main .dark\:bg-slate-900\/85,.dark main .dark\:bg-slate-900\/90,.dark main .dark\:bg-slate-900,
+.dark #main-sidebar .dark\:bg-slate-900{background:var(--m-surface)!important}
+main [class*="border-white"],#main-sidebar [class*="border-white"]{border-color:var(--m-line)!important}
+
+/* Sidebar */
+#main-sidebar #nw300-nav-root{border-radius:var(--m-radius)!important;padding:12px!important}
+#main-sidebar #nw300-nav-root span.uppercase{color:var(--m-ink-3)!important;letter-spacing:.06em!important}
+#main-sidebar button{transition:background-color .12s,color .12s}
+#main-sidebar #nw300-nav-root .border-l-2{border-color:var(--m-line)!important}
+#main-sidebar #nw300-nav-root input{border-radius:var(--m-radius-sm)!important;background:var(--m-sunken)!important;border-color:transparent!important}
+#main-sidebar #nw300-nav-root input:focus{box-shadow:none!important;border-color:var(--m-line-strong)!important;outline:0}
+
+/* Inputs & focus */
+input,select,textarea{border-radius:var(--m-radius-sm)}
+:focus-visible{outline:2px solid var(--m-ink);outline-offset:2px}
+[class*="focus:ring"]:focus{--tw-ring-color:var(--m-line-strong)!important;--tw-ring-shadow:0 0 0 1px var(--m-line-strong)!important}
+
+/* Selection */
+::selection{background:var(--m-ink);color:var(--m-bg)}
+
+/* Overlays: dim, don't blur */
+.bg-slate-900\/40{background:rgba(9,9,11,.45)!important}
+
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
