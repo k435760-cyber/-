@@ -1,0 +1,2170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Galaxy OS 1.0</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:radial-gradient(1200px 800px at 30% 20%,#2a2f45,#0b0c10 70%);font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;display:flex;align-items:center;justify-content:center;overflow:hidden;user-select:none;-webkit-user-select:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,textarea,select{font:inherit;color:inherit;user-select:text;-webkit-user-select:text}
+svg{display:block}
+
+/* ---------- device frame ---------- */
+.device{position:relative;width:392px;height:850px;border-radius:56px;background:#0d0d0f;padding:11px;box-shadow:0 0 0 2px #34343a,0 0 0 5px #141416,0 40px 90px rgba(0,0,0,.6);transform-origin:center;flex:none}
+.device .hw{position:absolute;right:-7px;width:5px;background:#2c2c32;border-radius:0 3px 3px 0}
+.device .hw.vol{top:170px;height:96px}
+.device .hw.power{top:290px;height:66px;cursor:pointer}
+.device .hw.power:active{background:#45454c}
+.phone{--bg:#f4f4f6;--surface:#fff;--surface2:#ececf0;--text:#111114;--sub:#6e6e75;--line:rgba(0,0,0,.08);--accent:#3c74f0;--danger:#e5484d;--ok:#22b45a;--kb-bg:#e6e7eb;--key:#fff;--key-fn:#d2d4da;--key-text:#16161a;--shade:rgba(244,244,246,.94);--chip:#fff;
+  position:relative;width:100%;height:100%;border-radius:45px;overflow:hidden;background:#000;color:var(--text);isolation:isolate}
+.phone[data-theme=dark]{--bg:#000;--surface:#171719;--surface2:#232327;--text:#f2f2f4;--sub:#9b9ba3;--line:rgba(255,255,255,.1);--accent:#5f8fff;--kb-bg:#141416;--key:#38383d;--key-fn:#26262a;--key-text:#f2f2f2;--shade:rgba(18,18,20,.94);--chip:#26262a}
+@media (max-width:520px),(max-height:640px){
+  body{display:block}
+  .device{width:100vw;height:100vh;height:100dvh;border-radius:0;padding:0;box-shadow:none;transform:none!important}
+  .device .hw,.punch{display:none}
+  .phone{border-radius:0}
+}
+#wall{position:absolute;inset:0;background-size:cover;background-position:center;transition:background .4s}
+#dim{position:absolute;inset:0;background:#000;pointer-events:none;z-index:95;opacity:0}
+
+/* ---------- stage ---------- */
+.stage{position:absolute;inset:0;display:flex;flex-direction:column;padding-top:34px}
+.content{position:relative;flex:1;min-height:0}
+.layer{position:absolute;inset:0}
+
+.statusbar{position:absolute;top:0;left:0;right:0;height:34px;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 26px;font-size:13px;font-weight:600;color:#fff;cursor:pointer;touch-action:none;transition:color .2s}
+.phone.in-app .statusbar{background:var(--bg);color:var(--text)}
+.phone.light-ui .statusbar{color:#111}
+.statusbar .l,.statusbar .r{display:flex;align-items:center;gap:5px}
+.statusbar svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.statusbar .nicons svg{width:13px;height:13px;opacity:.85}
+.batt{display:flex;align-items:center;gap:3px;font-size:12px}
+.batt i{position:relative;width:22px;height:11px;border:1.5px solid currentColor;border-radius:3px;display:block}
+.batt i::after{content:"";position:absolute;right:-4px;top:2.5px;width:2px;height:4px;background:currentColor;border-radius:0 1px 1px 0}
+.batt b{position:absolute;left:1px;top:1px;bottom:1px;background:currentColor;border-radius:1px}
+.punch{position:absolute;top:10px;left:50%;width:13px;height:13px;margin-left:-6.5px;border-radius:50%;background:#050506;z-index:200;box-shadow:inset 0 0 0 2px #121216;pointer-events:none}
+
+.navbar{height:46px;flex:none;display:flex;align-items:center;justify-content:space-around;padding:0 30px;color:#fff;position:relative;z-index:30;transition:background .2s,color .2s}
+.phone.in-app .navbar{background:var(--bg);color:var(--text)}
+.phone.kb-open .navbar{background:var(--kb-bg);color:var(--text)}
+.navbar button{width:64px;height:40px;display:grid;place-items:center;border-radius:20px}
+.navbar button:active{background:rgba(128,128,128,.25)}
+.navbar svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- icons ---------- */
+.ic{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.35);cursor:pointer;min-width:0}
+.ic span{max-width:76px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sq{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.18);flex:none;transition:transform .12s}
+.ic:active .sq{transform:scale(.9)}
+.sq svg{width:29px;height:29px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sq.sm{width:36px;height:36px;border-radius:12px}.sq.sm svg{width:19px;height:19px}
+.sq.xs{width:22px;height:22px;border-radius:7px;box-shadow:none}.sq.xs svg{width:13px;height:13px;stroke-width:2.2}
+
+/* ---------- home ---------- */
+#home{display:flex;flex-direction:column;padding:0 14px 4px;touch-action:none}
+.widget{color:#fff;padding:30px 10px 6px;text-shadow:0 1px 10px rgba(0,0,0,.3)}
+.widget .t{font-size:66px;font-weight:250;letter-spacing:-2px;line-height:1}
+.widget .d{font-size:15px;margin-top:8px;opacity:.92}
+.widget .w{font-size:13px;margin-top:4px;opacity:.75}
+.hgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 4px;align-content:start;flex:1;padding-top:26px}
+.drawer-hint{align-self:center;color:#fff;opacity:.8;padding:4px 20px}
+.drawer-hint svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round}
+.dock{display:grid;grid-template-columns:repeat(4,1fr);padding:10px 0 4px}
+.dock .ic span{display:none}
+
+/* ---------- drawer ---------- */
+#drawer{background:rgba(10,10,16,.45);backdrop-filter:blur(26px) saturate(1.2);-webkit-backdrop-filter:blur(26px) saturate(1.2);transform:translateY(100%);opacity:0;transition:transform .32s cubic-bezier(.2,.8,.2,1),opacity .25s;display:flex;flex-direction:column;z-index:5;visibility:hidden}
+#drawer.open{transform:none;opacity:1;visibility:visible}
+.dr-head{padding:14px 18px 10px;touch-action:none}
+.dr-search{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.18);border-radius:24px;padding:0 14px;color:#fff}
+.dr-search svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;flex:none}
+.dr-search input{flex:1;border:0;outline:0;background:none;color:#fff;font-size:15px;padding:11px 0}
+.dr-search input::placeholder{color:rgba(255,255,255,.7)}
+.dr-grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:22px 4px;align-content:start;padding:12px 14px 20px;touch-action:pan-y;overscroll-behavior:contain}
+.dr-empty{grid-column:1/-1;text-align:center;color:rgba(255,255,255,.75);padding:40px 0;font-size:14px}
+
+/* ---------- apps ---------- */
+#apps{z-index:10;pointer-events:none}
+.app{position:absolute;inset:0;background:var(--bg);color:var(--text);display:none;pointer-events:auto;overflow:hidden}
+.app.active{display:block}
+.app.opening{animation:appIn .28s cubic-bezier(.2,.8,.2,1)}
+.app.closing{animation:appOut .22s ease-in forwards}
+@keyframes appIn{from{transform:scale(.88);opacity:0;border-radius:30px}to{transform:none;opacity:1}}
+@keyframes appOut{to{transform:scale(.86);opacity:0;border-radius:30px}}
+.view{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;isolation:isolate}
+.view.pushin{animation:pushIn .26s cubic-bezier(.2,.8,.2,1)}
+.view.popout{animation:popOut .2s ease-in forwards}
+@keyframes pushIn{from{transform:translateX(40%);opacity:0}to{transform:none;opacity:1}}
+@keyframes popOut{to{transform:translateX(40%);opacity:0}}
+.pg-head{padding:34px 22px 14px;display:flex;align-items:flex-end;gap:4px;min-height:118px;flex:none}
+.pg-head .grow{flex:1;min-width:0}
+.pg-head h1{font-size:30px;font-weight:600;letter-spacing:-.5px}
+.pg-head .sub{font-size:13px;color:var(--sub);margin-top:4px}
+.bar{height:56px;display:flex;align-items:center;padding:0 6px;gap:2px;flex:none}
+.bar .title{flex:1;font-size:19px;font-weight:600;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pg-body{flex:1;overflow-y:auto;padding:0 14px 24px;overscroll-behavior:contain;position:relative}
+.ibtn{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;flex:none;color:var(--text)}
+.ibtn:active{background:var(--surface2)}
+.ibtn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.card{background:var(--surface);border-radius:24px;overflow:hidden;margin-bottom:12px}
+.card-t{font-size:13px;color:var(--sub);padding:14px 22px 2px;font-weight:600}
+.row{display:flex;align-items:center;gap:14px;padding:14px 20px;min-height:58px;cursor:pointer;position:relative}
+.row+.row::before{content:"";position:absolute;top:0;left:20px;right:20px;height:1px;background:var(--line)}
+.row:active{background:var(--surface2)}
+.row .tx{flex:1;min-width:0}
+.row .tx b{display:block;font-weight:500;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .tx small{display:block;color:var(--sub);font-size:13px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .meta{font-size:12px;color:var(--sub);flex:none}
+.switch{width:46px;height:27px;border-radius:14px;background:#b9b9c0;position:relative;flex:none;transition:background .2s}
+.switch::after{content:"";position:absolute;left:3px;top:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.switch.on{background:var(--accent)}.switch.on::after{transform:translateX(19px)}
+.fab{position:absolute;right:20px;bottom:20px;width:58px;height:58px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;box-shadow:0 6px 16px rgba(0,0,0,.25);z-index:3}
+.fab svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round}
+.field{width:100%;border:0;outline:0;background:var(--surface);border-radius:16px;padding:13px 16px;font-size:16px;color:var(--text)}
+.field:focus{box-shadow:0 0 0 2px var(--accent) inset}
+textarea.field{resize:none;line-height:1.5}
+.pill{background:var(--accent);color:#fff;border-radius:24px;padding:11px 22px;font-weight:600;font-size:15px}
+.pill.ghost{background:var(--surface2);color:var(--text)}
+.pill.red{background:var(--danger)}
+.tabbar{display:flex;flex:none;background:var(--bg);border-top:1px solid var(--line)}
+.tabbar button{flex:1;padding:14px 0 12px;font-size:14px;color:var(--sub);font-weight:500}
+.tabbar button.on{color:var(--text);font-weight:700}
+.empty{color:var(--sub);text-align:center;padding:50px 10px;font-size:14px;line-height:1.6}
+.av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:600;font-size:17px;flex:none}
+.av.lg{width:96px;height:96px;font-size:40px}
+.seg{display:flex;background:var(--surface2);border-radius:20px;padding:3px;gap:2px}
+.seg button{flex:1;border-radius:17px;padding:8px 0;font-size:14px;color:var(--sub)}
+.seg button.on{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+
+/* ---------- keyboard ---------- */
+#kb{display:none;background:var(--kb-bg);color:var(--key-text);padding:0 4px 2px;touch-action:none;flex:none;position:relative;z-index:30}
+#kb.show{display:block}
+.kb-tool{height:42px;display:flex;align-items:center;gap:2px;padding:0 4px}
+.kb-tool button{width:42px;height:34px;border-radius:10px;display:grid;place-items:center;color:var(--key-text)}
+.kb-tool button.on{background:var(--key-fn)}
+.kb-tool svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.kb-tool .lbl{flex:1;text-align:center;font-size:12px;color:var(--sub);opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 6px}
+.kb-rows{display:flex;flex-direction:column;gap:8px;padding:2px 0 6px}
+.kb-row{display:flex;gap:5px}
+.kb-sp{flex:.5}
+.key{flex:1;height:43px;border-radius:7px;background:var(--key);color:var(--key-text);font-size:20px;display:grid;place-items:center;position:relative;box-shadow:0 1px 0 rgba(0,0,0,.18);cursor:pointer;min-width:0}
+.key.fn{background:var(--key-fn);font-size:14px;font-weight:500}
+.key.wide{flex:1.45}.key.space{flex:4;font-size:12px;color:var(--sub)}
+.key svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.key.down{filter:brightness(.82)}
+.phone[data-theme=dark] .key.down{filter:brightness(1.35)}
+.key.ch.down::after{content:attr(data-c);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);min-width:46px;height:54px;padding:0 6px;border-radius:12px;background:var(--key);color:var(--key-text);display:grid;place-items:center;font-size:28px;box-shadow:0 4px 16px rgba(0,0,0,.28);pointer-events:none;z-index:5}
+.key.shift.on{color:var(--accent)}
+.key.shift.lock svg{fill:var(--accent);stroke:var(--accent)}
+.key.enter{background:var(--accent);color:#fff}
+.key small{font-size:10px;opacity:.7;position:absolute;bottom:3px;right:6px}
+.kb-panel{overflow-y:auto;touch-action:pan-y;overscroll-behavior:contain}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);padding:2px}
+.emoji-grid button{font-size:25px;height:44px;border-radius:8px}
+.emoji-grid button:active{background:var(--key-fn)}
+.clip-head{display:flex;align-items:center;justify-content:space-between;padding:4px 8px 8px;font-size:13px;color:var(--sub)}
+.clip-head button{color:var(--accent);font-size:13px;font-weight:600}
+.clip-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 2px 6px}
+.clip-item{background:var(--key);border-radius:12px;padding:10px 26px 10px 11px;font-size:13px;height:78px;overflow:hidden;text-align:left;position:relative;line-height:1.35;word-break:break-all;color:var(--key-text)}
+.clip-item .acts{position:absolute;top:4px;right:3px;display:flex;flex-direction:column;gap:2px}
+.clip-item .acts span{width:22px;height:22px;display:grid;place-items:center;border-radius:6px;color:var(--sub)}
+.clip-item .acts span.on{color:var(--accent)}
+.clip-item svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.kb-bottom{display:flex;gap:5px;padding:4px 0 6px}
+
+/* ---------- overlays ---------- */
+#shade{position:absolute;inset:0;z-index:60;background:var(--shade);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);transform:translateY(-102%);transition:transform .32s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;color:var(--text)}
+#shade.open{transform:none}
+.sh-top{padding:40px 22px 8px;display:flex;align-items:flex-end;justify-content:space-between;touch-action:none}
+.sh-top .t{font-size:34px;font-weight:300}
+.sh-top .d{font-size:13px;color:var(--sub)}
+.qs{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 8px;padding:14px 18px}
+.qs button{display:flex;flex-direction:column;align-items:center;gap:7px;font-size:11.5px;color:var(--text)}
+.qs .q{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--surface2);color:var(--text);transition:background .2s}
+.qs .on .q{background:var(--accent);color:#fff}
+.qs svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bright{display:flex;align-items:center;gap:12px;margin:4px 18px 10px;background:var(--surface);border-radius:28px;padding:10px 18px}
+.bright svg{width:20px;height:20px;stroke:var(--sub);fill:none;stroke-width:2;flex:none}
+.sh-list{flex:1;overflow-y:auto;padding:4px 14px 10px;touch-action:pan-y}
+.noti{background:var(--surface);border-radius:20px;padding:13px 16px;margin-bottom:8px;display:flex;gap:12px;cursor:pointer}
+.noti .tx{flex:1;min-width:0}.noti b{font-size:14px;display:block}.noti p{font-size:13.5px;color:var(--sub);margin-top:2px;word-break:break-all}
+.noti .tm{font-size:11px;color:var(--sub);flex:none}
+.sh-foot{display:flex;justify-content:space-between;align-items:center;padding:6px 20px 16px;touch-action:none}
+.sh-foot .handle{width:40px;height:5px;border-radius:3px;background:var(--sub);opacity:.5;margin:0 auto}
+#headsup{position:absolute;top:40px;left:10px;right:10px;z-index:70;transform:translateY(-140%);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+#headsup.show{transform:none}
+#headsup .noti{box-shadow:0 8px 28px rgba(0,0,0,.25);margin:0}
+#toast{position:absolute;left:50%;bottom:70px;transform:translate(-50%,20px);background:rgba(40,40,44,.94);color:#fff;font-size:14px;padding:11px 20px;border-radius:22px;z-index:90;opacity:0;transition:.25s;pointer-events:none;white-space:nowrap;max-width:88%;overflow:hidden;text-overflow:ellipsis}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#ctx{position:absolute;z-index:85;display:none;background:var(--surface);color:var(--text);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.28);padding:3px;white-space:nowrap}
+#ctx.show{display:flex}
+#ctx button{padding:10px 12px;font-size:14px;border-radius:11px}
+#ctx button:active{background:var(--surface2)}
+#dialog{position:absolute;inset:0;z-index:88;background:rgba(0,0,0,.4);display:none;align-items:flex-end;padding:0 12px 70px}
+#dialog.show{display:flex}
+.dlg{background:var(--surface);color:var(--text);border-radius:28px;padding:24px 22px 14px;width:100%;animation:pushUp .22s cubic-bezier(.2,.8,.2,1)}
+@keyframes pushUp{from{transform:translateY(30px);opacity:0}}
+.dlg h3{font-size:19px;font-weight:600;text-align:center}
+.dlg p{font-size:14.5px;color:var(--sub);text-align:center;margin-top:10px;line-height:1.5}
+.dlg .btns{display:flex;margin-top:18px}
+.dlg .btns button{flex:1;padding:12px;font-size:16px;font-weight:600;border-radius:14px}
+.dlg .btns button:active{background:var(--surface2)}
+.dlg .btns .ok{color:var(--accent)}.dlg .btns .warn{color:var(--danger)}
+
+/* recents */
+#recents{z-index:20;background:rgba(0,0,0,.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:none;flex-direction:column}
+#recents.open{display:flex;animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0}}
+.rc-list{flex:1;display:flex;gap:16px;overflow-x:auto;padding:26px 15%;align-items:center;scroll-snap-type:x mandatory;touch-action:pan-x}
+.rc-card{flex:none;width:70%;height:86%;display:flex;flex-direction:column;gap:10px;scroll-snap-align:center;transition:transform .2s,opacity .2s}
+.rc-card .hd{display:flex;align-items:center;gap:8px;color:#fff;font-size:14px;font-weight:600}
+.rc-card .hd .x{margin-left:auto;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center}
+.rc-card .hd .x svg{width:14px;height:14px;stroke:#fff;stroke-width:2.6;fill:none;stroke-linecap:round}
+.rc-prev{flex:1;border-radius:22px;overflow:hidden;position:relative;background:var(--bg);cursor:pointer}
+.rc-prev>.app{display:block!important;pointer-events:none;transform-origin:0 0;inset:auto;left:0;top:0}
+.rc-foot{text-align:center;padding:6px 0 18px}
+.rc-foot button{color:#fff;background:rgba(255,255,255,.18);border-radius:22px;padding:10px 26px;font-size:14px;font-weight:600}
+.rc-empty{color:rgba(255,255,255,.8);margin:auto;font-size:15px}
+
+/* lock & boot & off */
+#lock{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;color:#fff;touch-action:none;transition:transform .3s,opacity .3s;cursor:grab}
+#lock.hide{transform:translateY(-100%);opacity:0;pointer-events:none}
+#lock.gone{display:none}
+#lock .lbg{position:absolute;inset:0;background:inherit;z-index:-1}
+.lk-clock{margin-top:96px;font-size:84px;font-weight:200;letter-spacing:-3px;line-height:1;text-shadow:0 2px 14px rgba(0,0,0,.3)}
+.lk-date{font-size:17px;margin-top:10px;opacity:.95;text-shadow:0 1px 8px rgba(0,0,0,.3)}
+.lk-notis{width:100%;padding:28px 16px 0;display:flex;flex-direction:column;gap:8px}
+.lk-notis .noti{background:rgba(255,255,255,.88);color:#111}
+.lk-notis .noti p,.lk-notis .noti .tm{color:#555}
+.lk-bottom{margin-top:auto;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 26px 40px}
+.lk-sc{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.15);display:grid;place-items:center;color:#fff}
+.lk-sc svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.lk-hint{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;opacity:.9;color:#fff}
+.lk-hint span{animation:bob 2.2s ease-in-out infinite}
+.lk-hint svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@keyframes bob{50%{transform:translateY(-6px)}}
+#off{position:absolute;inset:0;background:#000;z-index:99;display:none;cursor:pointer}
+#off.show{display:block}
+#boot{position:absolute;inset:0;background:#000;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;transition:opacity .6s}
+#boot.done{opacity:0;pointer-events:none}
+#boot .logo{font-size:40px;font-weight:300;letter-spacing:14px;padding-left:14px;animation:bootIn 1.6s ease both}
+#boot .ver{font-size:13px;letter-spacing:6px;opacity:.6;margin-top:14px;animation:bootIn 1.6s .3s ease both}
+#boot .ring{width:30px;height:30px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;margin-top:60px;animation:spin .9s linear infinite}
+@keyframes bootIn{from{opacity:0;letter-spacing:30px}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- app specific ---------- */
+.dial-top{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding:0 20px 10px;min-height:0}
+.dial-num{font-size:34px;font-weight:400;letter-spacing:1px;min-height:46px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dial-hint{font-size:14px;color:var(--accent);min-height:20px;margin-top:4px}
+.dialpad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 18px;padding:6px 40px 4px}
+.dialpad button{height:62px;border-radius:31px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:28px;line-height:1}
+.dialpad button:active{background:var(--surface2)}
+.dialpad small{font-size:10px;color:var(--sub);letter-spacing:1px;margin-top:3px;min-height:12px}
+.dial-act{display:grid;grid-template-columns:repeat(3,1fr);padding:8px 40px 14px;align-items:center;justify-items:center}
+.callbtn{width:64px;height:64px;border-radius:50%;background:var(--ok);display:grid;place-items:center}
+.callbtn svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.callbtn.end{background:var(--danger)}
+.call{position:absolute;inset:0;z-index:5;background:linear-gradient(180deg,#1f2a44,#0d1220);color:#fff;display:flex;flex-direction:column;align-items:center;padding:80px 30px 40px}
+.call .nm{font-size:30px;margin-top:18px}.call .st{font-size:15px;opacity:.75;margin-top:8px}
+.call .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:auto;margin-bottom:46px}
+.call .opts button{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;opacity:.9}
+.call .opts span{width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.12);display:grid;place-items:center}
+.call .opts .on span{background:#fff;color:#111}
+.call .opts svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.chat{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:6px;overscroll-behavior:contain}
+.bub{max-width:78%;padding:10px 14px;border-radius:20px;font-size:15px;line-height:1.4;word-break:break-word;white-space:pre-wrap;align-self:flex-start;background:var(--surface);user-select:text;-webkit-user-select:text}
+.bub.me{align-self:flex-end;background:var(--accent);color:#fff}
+.bub-t{font-size:11px;color:var(--sub);align-self:flex-start;margin:-2px 6px 2px}
+.bub-t.me{align-self:flex-end}
+.chat-day{align-self:center;font-size:12px;color:var(--sub);padding:8px}
+.composer{display:flex;align-items:flex-end;gap:6px;padding:8px 10px;flex:none}
+.composer .field{border-radius:24px;padding:11px 16px}
+.send{width:44px;height:44px;border-radius:50%;background:var(--accent);display:grid;place-items:center;flex:none}
+.send svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linejoin:round}
+.notes-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.note-card{background:var(--surface);border-radius:20px;padding:14px;height:150px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.note-card b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note-card p{font-size:13px;color:var(--sub);flex:1;overflow:hidden;white-space:pre-wrap;word-break:break-all;line-height:1.45}
+.note-card small{font-size:11px;color:var(--sub)}
+.note-ed{flex:1;display:flex;flex-direction:column;padding:0 16px 10px;gap:6px;min-height:0}
+.note-ed input{font-size:22px;font-weight:600;border:0;outline:0;background:none;padding:8px 4px;color:var(--text)}
+.note-ed textarea{flex:1;border:0;outline:0;background:none;resize:none;font-size:16px;line-height:1.6;padding:4px;color:var(--text)}
+.calc-disp{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-end;padding:20px 26px 8px;min-height:0;gap:6px}
+.calc-expr{font-size:38px;font-weight:300;word-break:break-all;text-align:right;line-height:1.15;max-height:100%;overflow:hidden}
+.calc-res{font-size:22px;color:var(--sub);min-height:28px}
+.calc-tools{display:flex;justify-content:space-between;padding:0 18px 6px;border-bottom:1px solid var(--line);margin:0 8px}
+.calc-pad{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px 18px 16px}
+.calc-pad button{height:66px;border-radius:33px;background:var(--surface);font-size:26px;font-weight:400}
+.calc-pad button:active{filter:brightness(.88)}
+.calc-pad .op{color:var(--ok);font-size:30px}
+.calc-pad .cl{color:var(--danger)}
+.calc-pad .eq{background:var(--ok);color:#fff;font-size:30px}
+.calc-hist{position:absolute;left:0;right:0;top:0;bottom:0;background:var(--bg);overflow-y:auto;padding:10px 26px;z-index:2}
+.calc-hist div{text-align:right;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.calc-hist small{color:var(--sub);display:block}
+.big-time{font-size:62px;font-weight:200;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:-1px}
+.laps{flex:1;overflow-y:auto;padding:0 30px;font-variant-numeric:tabular-nums}
+.laps div{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+.ctl{display:flex;justify-content:center;gap:16px;padding:16px}
+.ctl .pill{min-width:120px}
+.spin{display:flex;justify-content:center;align-items:center;gap:8px;padding:20px 0}
+.spin .col{display:flex;flex-direction:column;align-items:center}
+.spin .v{font-size:52px;font-weight:300;font-variant-numeric:tabular-nums;width:86px;text-align:center}
+.spin .col small{color:var(--sub);font-size:12px}
+.spin .sep{font-size:44px;font-weight:200;color:var(--sub);padding-bottom:22px}
+.presets{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:0 16px}
+.presets button{background:var(--surface);border-radius:20px;padding:9px 16px;font-size:14px}
+.ring{position:relative;width:240px;height:240px;margin:20px auto}
+.ring svg{width:240px;height:240px;transform:rotate(-90deg)}
+.ring .big-time{position:absolute;inset:0;display:grid;place-items:center;font-size:48px}
+.cal-head{display:flex;align-items:center;padding:0 10px}
+.cal-head .title{flex:1;font-size:20px;font-weight:600;text-align:center}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);padding:4px 10px;text-align:center}
+.cal-grid .dw{font-size:12px;color:var(--sub);padding:6px 0}
+.cal-grid .dw:first-child,.cal-grid .sun{color:var(--danger)}
+.cal-grid .sat,.cal-grid .dw:last-child{color:var(--accent)}
+.cal-grid button{height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:15px;border-radius:22px;position:relative}
+.cal-grid button.mut{opacity:.3}
+.cal-grid button.today span{background:var(--accent);color:#fff;border-radius:50%;width:30px;height:30px;display:grid;place-items:center}
+.cal-grid button.sel{background:var(--surface2)}
+.cal-grid button i{position:absolute;bottom:4px;width:5px;height:5px;border-radius:50%;background:var(--ok)}
+.ev{display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:16px;padding:12px 14px;margin-bottom:8px}
+.ev::before{content:"";width:4px;align-self:stretch;border-radius:2px;background:var(--ok)}
+.ev span{flex:1}
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.gal div{aspect-ratio:1;background-size:cover;background-position:center;cursor:pointer;border-radius:4px}
+.viewer{position:absolute;inset:0;background:#000;z-index:4;display:flex;flex-direction:column}
+.viewer .img{flex:1;background-size:contain;background-repeat:no-repeat;background-position:center}
+.viewer .bar .ibtn,.viewer .bar .title{color:#fff}
+.viewer .acts{display:flex;justify-content:space-around;padding:10px 0 16px}
+.viewer .acts button{color:#fff;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px}
+.viewer .acts svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.cam{position:absolute;inset:0;background:#000;display:flex;flex-direction:column;color:#fff}
+.cam video{flex:1;width:100%;object-fit:cover;min-height:0;background:#111}
+.cam .msg{flex:1;display:grid;place-items:center;text-align:center;padding:30px;font-size:14px;opacity:.8;line-height:1.6;background:radial-gradient(circle at 50% 40%,#2a2a33,#000)}
+.cam .ctlr{display:flex;align-items:center;justify-content:space-around;padding:22px 0 26px}
+.shutter{width:72px;height:72px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px #000,0 0 0 7px #fff}
+.shutter:active{transform:scale(.92)}
+.cam .thumb{width:46px;height:46px;border-radius:50%;background:#333 center/cover;border:2px solid #fff}
+.cam .ibtn{color:#fff;background:rgba(255,255,255,.15)}
+.cam .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .25s}
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:8px 18px 18px}
+.swatches button{aspect-ratio:9/16;border-radius:14px;background-size:cover;border:3px solid transparent}
+.swatches button.on{border-color:var(--accent)}
+.web{flex:1;border:0;width:100%;background:#fff;min-height:0}
+.urlbar{display:flex;gap:6px;padding:6px 10px;align-items:center;flex:none}
+.urlbar .field{border-radius:22px;padding:10px 16px;font-size:14px}
+.clipapp-item{background:var(--surface);border-radius:18px;padding:14px 16px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.clipapp-item p{flex:1;font-size:14.5px;line-height:1.45;white-space:pre-wrap;word-break:break-all;max-height:88px;overflow:hidden}
+.clipapp-item small{display:block;font-size:11px;color:var(--sub);margin-top:6px}
+.clipapp-item .ibtn{width:34px;height:34px}.clipapp-item .ibtn svg{width:17px;height:17px}
+.clipapp-item .ibtn.on{color:var(--accent)}
+.wc{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border-radius:20px;padding:16px 20px;margin-bottom:8px}
+.wc b{font-size:17px;font-weight:500}.wc small{display:block;color:var(--sub);font-size:12.5px;margin-top:3px}
+.wc .tm{font-size:32px;font-weight:300}
+.alarm{display:flex;align-items:center;background:var(--surface);border-radius:20px;padding:16px 20px;margin-bottom:8px;gap:12px}
+.alarm .tm{font-size:34px;font-weight:300;flex:1}
+.alarm .tm small{font-size:14px;color:var(--sub);margin-left:4px}
+.alarm.off .tm{opacity:.45}
+</style>
+</head>
+<body>
+<div class="device" id="device">
+  <div class="hw vol"></div>
+  <div class="hw power" id="powerBtn" title="전원 버튼"></div>
+  <div class="phone" id="phone" data-theme="light">
+    <div id="wall"></div>
+    <div class="punch"></div>
+    <div class="statusbar" id="statusbar">
+      <div class="l"><span id="sbTime">00:00</span><span class="nicons" id="sbNotis"></span></div>
+      <div class="r" id="sbRight"></div>
+    </div>
+    <div class="stage">
+      <div class="content" id="content">
+        <div class="layer" id="home"></div>
+        <div class="layer" id="drawer"></div>
+        <div class="layer" id="apps"></div>
+        <div class="layer" id="recents"></div>
+      </div>
+      <div id="kb" aria-label="Galaxy 키보드"></div>
+      <div class="navbar" id="navbar">
+        <button data-nav="recents" aria-label="최근 앱"><svg viewBox="0 0 24 24"><path d="M7 6v12M12 6v12M17 6v12"/></svg></button>
+        <button data-nav="home" aria-label="홈"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="4.5"/></svg></button>
+        <button data-nav="back" aria-label="뒤로"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+      </div>
+    </div>
+    <div id="lock" class="gone"></div>
+    <div id="shade"></div>
+    <div id="headsup"></div>
+    <div id="ctx"></div>
+    <div id="dialog"></div>
+    <div id="toast"></div>
+    <div id="dim"></div>
+    <div id="off"></div>
+    <div id="boot"><div class="logo">GALAXY</div><div class="ver">OS 1.0</div><div class="ring"></div></div>
+  </div>
+</div>
+<script>
+'use strict';
+/* ==========================================================================
+   Galaxy OS 1.0 — core
+   ========================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+function h(tag, a, ...kids) {
+  const el = document.createElement(tag);
+  if (a) for (const k in a) {
+    const v = a[k];
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k === 'style') el.style.cssText = v;
+    else if (k === 'html') el.innerHTML = v;
+    else if (k === 'value') el.value = v;
+    else if (k === 'ctx') { el._ctx = v; el.setAttribute('data-ctx', ''); }
+    else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2).toLowerCase(), v);
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of kids.flat(Infinity)) if (c != null && c !== false) el.append(c instanceof Node ? c : document.createTextNode(c));
+  return el;
+}
+const pad2 = n => String(n).padStart(2, '0');
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
+const fmtHM = d => pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+const fmtDate = d => `${d.getMonth() + 1}월 ${d.getDate()}일 ${DAYS[d.getDay()]}요일`;
+function fmtAgo(t) {
+  const s = (Date.now() - t) / 1000;
+  if (s < 60) return '방금';
+  if (s < 3600) return Math.floor(s / 60) + '분 전';
+  const d = new Date(t), n = new Date();
+  if (d.toDateString() === n.toDateString()) return fmtHM(d);
+  return `${d.getMonth() + 1}/${d.getDate()}`;
+}
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('gos.' + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem('gos.' + k, JSON.stringify(v)); } catch {} },
+};
+const bus = new EventTarget();
+const on = (n, f) => bus.addEventListener(n, e => f(e.detail));
+const emit = (n, d) => bus.dispatchEvent(new CustomEvent(n, { detail: d }));
+
+/* ---------- icons ---------- */
+const P = {
+  phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+  msg: '<path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3.5 20.5l1.4-4.6A8.5 8.5 0 1 1 21 11.5z"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  note: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/>',
+  calc: '<rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  cal: '<rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  img: '<rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/>',
+  cam: '<path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.8"/>',
+  gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  clip: '<rect x="8" y="2.5" width="8" height="4" rx="1"/><path d="M16 4.5h2a2 2 0 0 1 2 2V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6.5a2 2 0 0 1 2-2h2M8.5 12h7M8.5 16h5"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  back: '<path d="M15 5l-7 7 7 7"/>',
+  chevD: '<path d="M6 9l6 6 6-6"/>',
+  chevU: '<path d="M6 15l6-6 6 6"/>',
+  chevL: '<path d="M15 6l-6 6 6 6"/>',
+  chevR: '<path d="M9 6l6 6-6 6"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  minus: '<path d="M5 12h14"/>',
+  more: '<circle cx="12" cy="5" r=".9"/><circle cx="12" cy="12" r=".9"/><circle cx="12" cy="19" r=".9"/>',
+  trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>',
+  pin: '<path d="M9 3h6l-1 6 4 4H6l4-4zM12 13v8"/>',
+  x: '<path d="M6 6l12 12M18 6L6 18"/>',
+  check: '<path d="M5 12l5 5 9-10"/>',
+  send: '<path d="M4 12l16-8-6 16-3-7z"/>',
+  shift: '<path d="M12 4l8 8h-4v7H8v-7H4z"/>',
+  bksp: '<path d="M9 5h11a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9l-6-7z"/><path d="M12 9l5 6M17 9l-5 6"/>',
+  smile: '<circle cx="12" cy="12" r="9"/><path d="M8 14a5 5 0 0 0 8 0M9 9.5h.01M15 9.5h.01"/>',
+  kb: '<rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M9 10h.01M12 10h.01M15 10h.01M18 10h.01M8 14h8"/>',
+  wifi: '<path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><path d="M12 19.5h.01"/>',
+  bt: '<path d="M7 7l10 10-5 4V3l5 4L7 17"/>',
+  plane: '<path d="M21 15.5v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0v5l-8 5v2l8-2.5v5.5l-2 1.5v1.5l3.5-1 3.5 1V20l-2-1.5V13z"/>',
+  moon: '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  mute: '<path d="M8.6 3.9A6 6 0 0 1 18 8c0 4 1 6.4 2 7.6M17 17H3.5S6 15 6 8c0-.6.1-1.2.3-1.7M3 3l18 18M10 21a2.3 2.3 0 0 0 4 0"/>',
+  bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2.3 2.3 0 0 0 4 0"/>',
+  torch: '<path d="M8 2h8v4l-2 4v12h-4V10L8 6zM8 6h8M12 13v3"/>',
+  rotate: '<path d="M3 12a9 9 0 0 1 15.5-6.2L21 8M21 3v5h-5M21 12a9 9 0 0 1-15.5 6.2L3 16M3 21v-5h5"/>',
+  lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>',
+  edit: '<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+  refresh: '<path d="M20 12a8 8 0 1 1-2.3-5.7L20 8.5M20 3.5v5h-5"/>',
+  flip: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><path d="M9 13.5a3 3 0 0 1 5.2-2.1l.8.8M15 13.5a3 3 0 0 1-5.2 2.1l-.8-.8"/>',
+  play: '<path d="M7 4l13 8-13 8z"/>',
+  pause: '<path d="M8 4v16M16 4v16"/>',
+  flag: '<path d="M5 21V4h11l-2 4 2 4H5"/>',
+  endcall: '<path d="M3 15.5c5-5 13-5 18 0l-2 3-4-2v-3a10 10 0 0 0-6 0v3l-4 2z"/>',
+  micoff: '<path d="M9 9v3a3 3 0 0 0 5 2.2M15 10V5a3 3 0 0 0-5.9-.8M5 11a7 7 0 0 0 11.5 5.4M19 11a7 7 0 0 1-.5 2.5M12 18v3M3 3l18 18"/>',
+  speaker: '<path d="M4 9h4l5-4v14l-5-4H4zM17 9a4 4 0 0 1 0 6M19.5 6.5a8 8 0 0 1 0 11"/>',
+  keypad: '<path d="M6 5h.01M12 5h.01M18 5h.01M6 10h.01M12 10h.01M18 10h.01M6 15h.01M12 15h.01M18 15h.01M12 20h.01" stroke-width="3"/>',
+  enter: '<path d="M20 5v7a3 3 0 0 1-3 3H5M9 11l-4 4 4 4"/>',
+  history: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2"/>',
+  home: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+  star: '<path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1 6.2L12 17.4 6.5 20.3l1-6.2L3 9.7l6.2-.9z"/>',
+  wall: '<rect x="4" y="2" width="16" height="20" rx="3"/><path d="M4 16l5-5 4 4 2-2 5 5"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>',
+  share: '<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/>',
+};
+const svg = (n, extra = '') => `<svg viewBox="0 0 24 24" ${extra}>${P[n] || ''}</svg>`;
+const iconBtn = (n, onclick, label) => h('button', { class: 'ibtn', onclick, 'aria-label': label || n, title: label || '', html: svg(n) });
+
+/* ---------- settings ---------- */
+const DEFAULTS = { dark: false, wall: 0, wallCustom: '', bright: 100, numRow: true, kbVib: true, kbSound: false, lang: 'ko', wifi: true, bt: false, silent: false, air: false, torch: false, rotate: true, kbPreview: true };
+const S = Object.assign({}, DEFAULTS, store.get('settings', {}));
+function setS(k, v) { S[k] = v; store.set('settings', S); applySettings(); emit('settings', k); }
+const WALLS = [
+  'radial-gradient(120% 70% at 85% 5%,#8a63ff 0%,transparent 60%),radial-gradient(110% 70% at 0% 100%,#00b8ff 0%,transparent 58%),linear-gradient(165deg,#1d2150,#090b1c)',
+  'linear-gradient(165deg,#ffb199 0%,#ff6a88 45%,#8f4bf4 100%)',
+  'radial-gradient(110% 60% at 50% 105%,#18e0a0,transparent 70%),linear-gradient(180deg,#0b2a3a,#05121a)',
+  'linear-gradient(200deg,#f9d976,#f39f86)',
+  'radial-gradient(80% 50% at 25% 30%,#3a7bd5,transparent),radial-gradient(80% 60% at 75% 80%,#a050c0,transparent),#0f0f18',
+  'linear-gradient(180deg,#2c3e50,#4ca1af)',
+  'linear-gradient(160deg,#c9d6ff,#e2e2e2)',
+  '#141416',
+];
+const phone = $('#phone');
+function wallCss() { return S.wallCustom ? `url("${S.wallCustom}") center/cover` : WALLS[S.wall] || WALLS[0]; }
+function applySettings() {
+  phone.dataset.theme = S.dark ? 'dark' : 'light';
+  $('#wall').style.background = wallCss();
+  $('#dim').style.opacity = ((100 - S.bright) / 100 * 0.75).toFixed(3);
+  updateChrome();
+  renderStatus();
+}
+
+/* ---------- audio / haptics ---------- */
+let actx = null;
+function tone(freq = 880, dur = 0.08, vol = 0.08, type = 'sine') {
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = type; o.frequency.value = freq; g.gain.value = vol;
+    o.connect(g); g.connect(actx.destination);
+    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + dur);
+    o.start(); o.stop(actx.currentTime + dur);
+  } catch {}
+}
+function vibrate(ms) { try { navigator.vibrate && navigator.vibrate(ms); } catch {} }
+function alertSound() { if (S.silent) { vibrate([200, 100, 200]); return; } [0, 180, 360].forEach(t => setTimeout(() => tone(988, 0.14, 0.12, 'triangle'), t)); }
+
+/* ---------- scale ---------- */
+let SCALE = 1;
+function fit() {
+  const d = $('#device');
+  if (innerWidth <= 520 || innerHeight <= 640) { SCALE = 1; d.style.transform = ''; return; }
+  SCALE = Math.min(1, (innerHeight - 24) / 850, (innerWidth - 24) / 392);
+  d.style.transform = SCALE < 1 ? `scale(${SCALE})` : '';
+}
+addEventListener('resize', fit); fit();
+// Scroll only the nearest scrollable list (Element.scrollIntoView would also shift the fixed phone layers).
+function scrollInto(el, block = 'nearest') {
+  let p = el.parentElement;
+  while (p && p !== phone) { const o = getComputedStyle(p).overflowY; if ((o === 'auto' || o === 'scroll') && p.scrollHeight > p.clientHeight) break; p = p.parentElement; }
+  if (!p || p === phone) return;
+  const r = el.getBoundingClientRect(), pr = p.getBoundingClientRect();
+  if (block === 'start') p.scrollTo({ top: p.scrollTop + (r.top - pr.top) / SCALE - 8, behavior: 'smooth' });
+  else if (r.bottom > pr.bottom) p.scrollTop += (r.bottom - pr.bottom) / SCALE + 8;
+  else if (r.top < pr.top) p.scrollTop -= (pr.top - r.top) / SCALE + 8;
+}
+// containers with overflow:hidden must never scroll (focusing a field can scroll them)
+document.addEventListener('scroll', e => {
+  const t = e.target;
+  if (t instanceof Element && phone.contains(t) && getComputedStyle(t).overflowY === 'hidden' && (t.scrollTop || t.scrollLeft)) { t.scrollTop = 0; t.scrollLeft = 0; }
+}, true);
+function localPt(e) { const r = phone.getBoundingClientRect(); return { x: (e.clientX - r.left) / SCALE, y: (e.clientY - r.top) / SCALE, w: r.width / SCALE, h: r.height / SCALE }; }
+
+/* drag helper: vertical gestures */
+function drag(el, { start, move, end, filter }) {
+  el.addEventListener('pointerdown', e => {
+    if (e.button > 0 || (filter && !filter(e))) return;
+    const x0 = e.clientX, y0 = e.clientY; let moved = false;
+    if (start && start(e) === false) return;
+    const mv = ev => { const dx = (ev.clientX - x0) / SCALE, dy = (ev.clientY - y0) / SCALE; if (Math.abs(dy) > 8 || Math.abs(dx) > 8) moved = true; move && move(dx, dy, ev); };
+    const up = ev => {
+      removeEventListener('pointermove', mv); removeEventListener('pointerup', up); removeEventListener('pointercancel', up);
+      const dx = (ev.clientX - x0) / SCALE, dy = (ev.clientY - y0) / SCALE;
+      if (moved) { const kill = c => { c.stopPropagation(); c.preventDefault(); }; addEventListener('click', kill, { capture: true, once: true }); setTimeout(() => removeEventListener('click', kill, true), 50); }
+      end && end(dx, dy, moved, ev);
+    };
+    addEventListener('pointermove', mv); addEventListener('pointerup', up); addEventListener('pointercancel', up);
+  });
+}
+
+/* ---------- toast / dialog ---------- */
+let toastT;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2000); }
+const Dialog = {
+  get open() { return $('#dialog').classList.contains('show'); },
+  show(title, msg, buttons) {
+    return new Promise(res => {
+      const d = $('#dialog');
+      const done = v => { d.classList.remove('show'); d.innerHTML = ''; Dialog._res = null; res(v); };
+      Dialog._res = done;
+      d.innerHTML = '';
+      d.append(h('div', { class: 'dlg', onclick: e => e.stopPropagation() },
+        h('h3', null, title), msg ? h('p', null, msg) : null,
+        h('div', { class: 'btns' }, buttons.map(b => h('button', { class: b.cls || '', onclick: () => done(b.v) }, b.label)))));
+      d.onclick = () => done(false);
+      d.classList.add('show');
+    });
+  },
+  confirm(title, msg, ok = '확인', warn) { return this.show(title, msg, [{ label: '취소', v: false }, { label: ok, v: true, cls: warn ? 'warn' : 'ok' }]); },
+  alert(title, msg) { return this.show(title, msg, [{ label: '확인', v: true, cls: 'ok' }]); },
+  close() { Dialog._res && Dialog._res(false); },
+};
+
+/* ==========================================================================
+   Clipboard
+   ========================================================================== */
+const Clip = {
+  items: store.get('clip', [
+    { id: 'c1', text: 'Galaxy OS 1.0에 오신 것을 환영합니다!', t: Date.now() - 3600e3, pin: true },
+    { id: 'c2', text: '010-1234-5678', t: Date.now() - 7200e3, pin: false },
+  ]),
+  save() { store.set('clip', this.items); emit('clip'); },
+  sorted() { return [...this.items].sort((a, b) => (b.pin - a.pin) || (b.t - a.t)); },
+  latest() { const it = [...this.items].sort((a, b) => b.t - a.t)[0]; return it ? it.text : ''; },
+  add(text, { system = true, quiet = false } = {}) {
+    text = String(text ?? ''); if (!text) return;
+    const ex = this.items.find(i => i.text === text);
+    if (ex) { ex.t = Date.now(); } else this.items.unshift({ id: uid(), text, t: Date.now(), pin: false });
+    const unpinned = this.items.filter(i => !i.pin).sort((a, b) => b.t - a.t);
+    if (unpinned.length > 30) { const drop = new Set(unpinned.slice(30).map(i => i.id)); this.items = this.items.filter(i => !drop.has(i.id)); }
+    this.save();
+    if (system) { try { navigator.clipboard && navigator.clipboard.writeText(text).catch(() => {}); } catch {} }
+    if (!quiet) toast('클립보드에 복사됨');
+  },
+  use(id) { const it = this.items.find(i => i.id === id); if (it) { it.t = Date.now(); this.save(); } return it ? it.text : ''; },
+  remove(id) { this.items = this.items.filter(i => i.id !== id); this.save(); },
+  pin(id) { const it = this.items.find(i => i.id === id); if (it) { it.pin = !it.pin; this.save(); } },
+  clear() { this.items = this.items.filter(i => i.pin); this.save(); },
+};
+// capture copies/cuts/pastes made with a physical keyboard or the browser menu
+function selText() {
+  const a = document.activeElement;
+  if (a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA')) return a.value.slice(a.selectionStart, a.selectionEnd);
+  return String(window.getSelection() || '');
+}
+document.addEventListener('copy', () => { const t = selText(); if (t) Clip.add(t, { system: false }); });
+document.addEventListener('cut', () => { const t = selText(); if (t) Clip.add(t, { system: false, quiet: true }); });
+document.addEventListener('paste', e => { const t = e.clipboardData && e.clipboardData.getData('text'); if (t) Clip.add(t, { system: false, quiet: true }); });
+
+/* ==========================================================================
+   Hangul composition (두벌식)
+   ========================================================================== */
+const Hangul = (() => {
+  const CHO = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
+  const JUNG = 'ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ';
+  const JONG = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+  const VV = { 'ㅗㅏ': 'ㅘ', 'ㅗㅐ': 'ㅙ', 'ㅗㅣ': 'ㅚ', 'ㅜㅓ': 'ㅝ', 'ㅜㅔ': 'ㅞ', 'ㅜㅣ': 'ㅟ', 'ㅡㅣ': 'ㅢ' };
+  const CC = { 'ㄱㅅ': 'ㄳ', 'ㄴㅈ': 'ㄵ', 'ㄴㅎ': 'ㄶ', 'ㄹㄱ': 'ㄺ', 'ㄹㅁ': 'ㄻ', 'ㄹㅂ': 'ㄼ', 'ㄹㅅ': 'ㄽ', 'ㄹㅌ': 'ㄾ', 'ㄹㅍ': 'ㄿ', 'ㄹㅎ': 'ㅀ', 'ㅂㅅ': 'ㅄ' };
+  const SPLIT = Object.fromEntries(Object.entries(CC).map(([k, v]) => [v, [k[0], k[1]]]));
+  const isVowel = j => JUNG.includes(j);
+  const isJamo = j => j && j.length === 1 && (CHO.includes(j) || JUNG.includes(j));
+  function render(s) {
+    if (!s) return '';
+    if (s.cho && s.jung) return String.fromCharCode(0xAC00 + (CHO.indexOf(s.cho) * 21 + JUNG.indexOf(s.jung)) * 28 + JONG.indexOf(s.jong || ''));
+    return s.cho || s.jung || '';
+  }
+  // returns { update: new state for the current syllable, next: a new syllable that starts after it }
+  function feed(s, j) {
+    if (!isVowel(j)) {
+      if (!s || !s.cho || !s.jung) return { next: { cho: j } };
+      if (!s.jong) return JONG.includes(j) ? { update: { ...s, jong: j } } : { next: { cho: j } };
+      return CC[s.jong + j] ? { update: { ...s, jong: CC[s.jong + j] } } : { next: { cho: j } };
+    }
+    if (!s) return { next: { jung: j } };
+    if (s.cho && !s.jung) return { update: { ...s, jung: j } };
+    if (!s.jong) return VV[s.jung + j] ? { update: { ...s, jung: VV[s.jung + j] } } : { next: { jung: j } };
+    if (SPLIT[s.jong]) { const [a, b] = SPLIT[s.jong]; return { update: { ...s, jong: a }, next: { cho: b, jung: j } }; }
+    return { update: { ...s, jong: '' }, next: { cho: s.jong, jung: j } };
+  }
+  // initial-consonant string for 초성 search
+  function chosung(str) {
+    return [...str].map(c => { const k = c.charCodeAt(0) - 0xAC00; return k >= 0 && k < 11172 ? CHO[Math.floor(k / 588)] : c; }).join('');
+  }
+  return { feed, render, isJamo, chosung, CHO };
+})();
+</script>
+<script>
+'use strict';
+/* ==========================================================================
+   Galaxy Keyboard
+   ========================================================================== */
+const KB = (() => {
+  const root = $('#kb');
+  let field = null, mode = 'keys', layout = S.lang, prevLetter = S.lang, shift = 0, lastShift = 0, comp = null, panelH = 0, dirty = false;
+  const NUM = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+  const LAY = {
+    ko: [['ㅂ', 'ㅈ', 'ㄷ', 'ㄱ', 'ㅅ', 'ㅛ', 'ㅕ', 'ㅑ', 'ㅐ', 'ㅔ'], ['ㅁ', 'ㄴ', 'ㅇ', 'ㄹ', 'ㅎ', 'ㅗ', 'ㅓ', 'ㅏ', 'ㅣ'], ['⇧', 'ㅋ', 'ㅌ', 'ㅊ', 'ㅍ', 'ㅠ', 'ㅜ', 'ㅡ', '⌫']],
+    en: [['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'], ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'], ['⇧', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '⌫']],
+    sym1: [['+', '×', '÷', '=', '/', '_', '<', '>', '[', ']'], ['!', '@', '#', '₩', '%', '^', '&', '*', '(', ')'], ['1/2', '-', "'", '"', ':', ';', '~', '?', '⌫']],
+    sym2: [['`', '|', '\\', '{', '}', '€', '£', '¥', '$', '°'], ['•', '○', '●', '□', '■', '♤', '♡', '◇', '♧', '☆'], ['2/2', '▪', '¤', '《', '》', '¡', '¿', '…', '⌫']],
+  };
+  const KO_SH = { 'ㅂ': 'ㅃ', 'ㅈ': 'ㅉ', 'ㄷ': 'ㄸ', 'ㄱ': 'ㄲ', 'ㅅ': 'ㅆ', 'ㅐ': 'ㅒ', 'ㅔ': 'ㅖ' };
+  const EMO = (() => {
+    const s = '😀😃😄😁😆😅😂🤣😊😇🙂😉😍🥰😘😋😛😜🤪😎🤩🥳😏😒😞😔😟🙁😣😖😫😩🥺😢😭😤😠😡🤯😳🥵🥶😱😨😰😥🤗🤔🤭🤫😶😐😑😬🙄😯😮😲🥱😴🤤😪😵🤐🥴🤢🤧😷👍👎👌✌️🤞🤟👏🙌🙏💪👋❤️🧡💛💚💙💜🖤🤍💔💯✨🔥⭐🎉🎂🎁🌸🍀☕🍕🍔🍜🍰🍺⚽🏀🎮🎵📱💻📷🚗✈️🏠☀️🌙⛅🌈❄️';
+    try { return [...new Intl.Segmenter().segment(s)].map(x => x.segment); } catch { return Array.from(s); }
+  })();
+
+  const isField = el => !!el && (el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && /^(text|search|url|email|password|)$/.test(el.getAttribute('type') || ''))) && !el.readOnly && !el.disabled && !el.hasAttribute('data-nokb');
+  const visible = () => root.classList.contains('show');
+
+  function fire(f) {
+    f.dispatchEvent(new Event('input', { bubbles: true }));
+    if (f.selectionEnd === f.value.length) { if (f.tagName === 'INPUT') f.scrollLeft = f.scrollWidth; else f.scrollTop = f.scrollHeight; }
+  }
+  function insert(text) {
+    const f = field; if (!f) return;
+    f.setRangeText(text, f.selectionStart, f.selectionEnd, 'end'); fire(f);
+  }
+  const compValid = () => comp && comp.f === field && field.selectionStart === comp.pos + 1 && field.selectionEnd === comp.pos + 1 && field.value.charAt(comp.pos) === Hangul.render(comp.s);
+  function endComp() { comp = null; }
+  function typeJamo(j) {
+    const f = field; if (!f) return;
+    if (!compValid()) comp = null;
+    const r = Hangul.feed(comp && comp.s, j);
+    if (r.update && comp) { comp.hist.push(comp.s); comp.s = r.update; f.setRangeText(Hangul.render(r.update), comp.pos, comp.pos + 1, 'end'); }
+    if (r.next) {
+      const a = f.selectionStart;
+      f.setRangeText(Hangul.render(r.next), a, f.selectionEnd, 'end');
+      comp = { f, pos: a, s: r.next, hist: r.next.cho && r.next.jung ? [{ cho: r.next.cho }] : [] };
+    }
+    fire(f);
+  }
+  function backspace() {
+    const f = field; if (!f) return;
+    if (compValid()) {
+      if (comp.hist.length) { comp.s = comp.hist.pop(); f.setRangeText(Hangul.render(comp.s), comp.pos, comp.pos + 1, 'end'); }
+      else { f.setRangeText('', comp.pos, comp.pos + 1, 'end'); comp = null; }
+      return fire(f);
+    }
+    comp = null;
+    let a = f.selectionStart; const b = f.selectionEnd;
+    if (a === b) {
+      if (a === 0) return;
+      a--;
+      if (f.value.charCodeAt(a) === 0xFE0F && a > 0) a--;
+      const c = f.value.charCodeAt(a);
+      if (c >= 0xDC00 && c <= 0xDFFF && a > 0) a--;
+    }
+    f.setRangeText('', a, b, 'end'); fire(f);
+  }
+  function typeChar(c) {
+    if (layout === 'ko' && Hangul.isJamo(c)) return typeJamo(c);
+    comp = null; insert(c);
+  }
+
+  function feedback() {
+    if (S.kbVib) vibrate(8);
+    if (S.kbSound) tone(1400, 0.025, 0.04, 'square');
+  }
+
+  /* ---- rendering ---- */
+  function render() {
+    dirty = false;
+    root.innerHTML = '';
+    const lbl = field && (field.getAttribute('placeholder') || '');
+    root.append(h('div', { class: 'kb-tool' },
+      tb('smile', '이모티콘', mode === 'emoji', () => setMode(mode === 'emoji' ? 'keys' : 'emoji')),
+      tb('clip', '클립보드', mode === 'clip', () => setMode(mode === 'clip' ? 'keys' : 'clip')),
+      tb('gear', '키보드 설정', false, () => { close(); WM.open('settings', { section: 'kb' }); }),
+      h('div', { class: 'lbl' }, mode === 'clip' ? '클립보드' : mode === 'emoji' ? '이모티콘' : (layout === 'ko' ? '한국어' : layout === 'en' ? 'English' : '기호') + (lbl ? ' · ' + lbl : '')),
+      tb('chevD', '키보드 숨기기', false, close)));
+    if (mode === 'emoji') root.append(emojiPanel());
+    else if (mode === 'clip') root.append(clipPanel());
+    else root.append(keys());
+  }
+  function tb(icon, label, isOn, fn) { return h('button', { class: isOn ? 'on' : '', 'aria-label': label, title: label, html: svg(icon), onclick: fn }); }
+  function enterLabel() {
+    if (!field) return '';
+    if (field.dataset.enter) return field.dataset.enter;
+    return field.tagName === 'TEXTAREA' ? '' : '완료';
+  }
+  function keys() {
+    const wrap = h('div', { class: 'kb-rows' });
+    const sym = layout.startsWith('sym');
+    const rows = [];
+    if (S.numRow || sym) rows.push(NUM);
+    rows.push(...LAY[layout]);
+    for (const r of rows) {
+      const row = h('div', { class: 'kb-row' });
+      const halfPad = r.length === 9 && !r.includes('⌫');
+      if (halfPad) row.append(h('div', { class: 'kb-sp' }));
+      for (const k of r) row.append(keyEl(k));
+      if (halfPad) row.append(h('div', { class: 'kb-sp' }));
+      wrap.append(row);
+    }
+    const el = enterLabel();
+    wrap.append(h('div', { class: 'kb-row' },
+      sym ? h('div', { class: 'key fn wide', 'data-k': 'abc' }, prevLetter === 'ko' ? '한글' : 'ABC') : h('div', { class: 'key fn wide', 'data-k': 'sym' }, '!#1'),
+      h('div', { class: 'key fn', 'data-k': 'lang', 'aria-label': '한/영 전환', html: svg('globe') + '<small>한/영</small>' }),
+      h('div', { class: 'key ch', 'data-k': 'c', 'data-c': ',' }, ','),
+      h('div', { class: 'key space', 'data-k': 'space' }, layout === 'ko' ? '한국어' : layout === 'en' ? 'English' : ''),
+      h('div', { class: 'key ch', 'data-k': 'c', 'data-c': '.' }, '.'),
+      h('div', { class: 'key fn wide enter', 'data-k': 'enter', html: el ? `<span style="font-size:14px">${el}</span>` : svg('enter') })));
+    return wrap;
+  }
+  function label(k) {
+    if (layout === 'ko' && shift && KO_SH[k]) return KO_SH[k];
+    if (layout === 'en' && shift) return k.toUpperCase();
+    return k;
+  }
+  function keyEl(k) {
+    if (k === '⇧') return h('div', { class: 'key fn wide shift' + (shift ? ' on' : '') + (shift === 2 ? ' lock' : ''), 'data-k': 'shift', 'aria-label': 'Shift', html: svg('shift') });
+    if (k === '⌫') return h('div', { class: 'key fn wide', 'data-k': 'bksp', 'aria-label': '지우기', html: svg('bksp') });
+    if (k === '1/2' || k === '2/2') return h('div', { class: 'key fn wide', 'data-k': 'page' }, k);
+    const c = label(k);
+    return h('div', { class: 'key ch', 'data-k': 'c', 'data-c': S.kbPreview ? c : '' , 'data-v': c }, c);
+  }
+  function emojiPanel() {
+    const p = h('div', { class: 'kb-panel', style: `height:${panelH}px` },
+      h('div', { class: 'emoji-grid' }, EMO.map(e => h('button', { onclick: () => { feedback(); comp = null; insert(e); } }, e))));
+    return h('div', null, p, h('div', { class: 'kb-bottom' },
+      h('div', { class: 'key fn wide', 'data-k': 'tokeys' }, layout === 'en' ? 'ABC' : '한글'),
+      h('div', { class: 'key space', 'data-k': 'space' }, ''),
+      h('div', { class: 'key fn wide', 'data-k': 'bksp', html: svg('bksp') })));
+  }
+  function clipPanel() {
+    const items = Clip.sorted();
+    const p = h('div', { class: 'kb-panel', style: `height:${panelH + 52}px` },
+      h('div', { class: 'clip-head' }, h('span', null, `항목 ${items.length}개 · 눌러서 붙여넣기`),
+        items.some(i => !i.pin) ? h('button', { onclick: () => { Clip.clear(); render(); } }, '모두 삭제') : null),
+      items.length ? h('div', { class: 'clip-grid' }, items.map(it => h('button', {
+        class: 'clip-item', onclick: () => { feedback(); comp = null; insert(Clip.use(it.id)); },
+      }, it.text.length > 120 ? it.text.slice(0, 120) + '…' : it.text,
+        h('div', { class: 'acts' },
+          h('span', { class: it.pin ? 'on' : '', title: '고정', html: svg('pin'), onclick: e => { e.stopPropagation(); Clip.pin(it.id); render(); } }),
+          h('span', { title: '삭제', html: svg('x'), onclick: e => { e.stopPropagation(); Clip.remove(it.id); render(); } }))))) :
+        h('div', { class: 'empty' }, '복사한 텍스트가 여기에 표시됩니다.\n텍스트를 길게 눌러 복사해 보세요.'));
+    return p;
+  }
+  function setMode(m) {
+    const rows = $('.kb-rows', root);
+    if (rows) panelH = rows.offsetHeight - 52;
+    if (!panelH || panelH < 120) panelH = 180;
+    mode = m; render();
+  }
+
+  /* ---- input handling ---- */
+  let repT = null, repI = null, downEl = null;
+  function stopRepeat() { clearTimeout(repT); clearInterval(repI); repT = repI = null; }
+  // keep focus in the text field: never let a tap on the keyboard move focus
+  root.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    const k = e.target.closest('.key');
+    if (!k) return;
+    e.preventDefault();
+    downEl = k; k.classList.add('down');
+    press(k);
+    if (k.dataset.k === 'bksp') repT = setTimeout(() => { repI = setInterval(backspace, 55); }, 380);
+  });
+  root.addEventListener('mousedown', e => e.preventDefault());
+  const release = () => { stopRepeat(); if (downEl) downEl.classList.remove('down'); downEl = null; if (dirty) render(); };
+  addEventListener('pointerup', release); addEventListener('pointercancel', release);
+
+  function press(el) {
+    const k = el.dataset.k; feedback();
+    if (!field) return;
+    switch (k) {
+      case 'c':
+        typeChar(el.dataset.v || el.dataset.c);
+        if (shift === 1) { shift = 0; dirty = true; }
+        break;
+      case 'shift': {
+        const now = Date.now();
+        if (shift === 0) shift = 1; else if (shift === 1) shift = now - lastShift < 350 ? 2 : 0; else shift = 0;
+        lastShift = now; dirty = true; break;
+      }
+      case 'bksp': backspace(); break;
+      case 'sym': comp = null; prevLetter = layout; layout = 'sym1'; shift = 0; dirty = true; break;
+      case 'abc': layout = prevLetter; dirty = true; break;
+      case 'page': layout = layout === 'sym1' ? 'sym2' : 'sym1'; dirty = true; break;
+      case 'lang':
+        comp = null; shift = 0;
+        layout = (layout.startsWith('sym') ? prevLetter : layout) === 'ko' ? 'en' : 'ko';
+        prevLetter = layout; S.lang = layout; store.set('settings', S); dirty = true; break;
+      case 'tokeys': mode = 'keys'; dirty = true; break;
+      case 'space': comp = null; insert(' '); break;
+      case 'enter':
+        comp = null;
+        if (field.tagName === 'TEXTAREA') insert('\n');
+        else field.dispatchEvent(new CustomEvent('osenter', { bubbles: true }));
+        break;
+    }
+  }
+
+  function attach(f) {
+    if (field !== f) { comp = null; field = f; shift = 0; mode = 'keys'; const want = f.dataset.kb; layout = want === 'num' ? 'sym1' : want === 'en' ? 'en' : (layout.startsWith('sym') ? prevLetter : layout); if (want === 'num') prevLetter = S.lang; }
+    if (!f.hasAttribute('inputmode')) f.setAttribute('inputmode', 'none');
+    root.classList.add('show'); phone.classList.add('kb-open');
+    render();
+    setTimeout(() => { if (field === f) scrollInto(f); }, 30);
+  }
+  function hide() { comp = null; field = null; root.classList.remove('show'); phone.classList.remove('kb-open'); }
+  function close() { const a = document.activeElement; if (isField(a)) a.blur(); hide(); }
+
+  // focus tracking
+  document.addEventListener('focusin', e => { if (isField(e.target) && phone.contains(e.target)) attach(e.target); });
+  document.addEventListener('focusout', () => setTimeout(() => { const a = document.activeElement; if (!(isField(a) && phone.contains(a))) hide(); }, 0));
+  // a real keyboard or caret move ends the on-screen composition
+  document.addEventListener('keydown', e => {
+    comp = null;
+    if (e.key === 'Enter' && !e.isComposing && e.target.tagName === 'INPUT' && isField(e.target)) { e.preventDefault(); e.target.dispatchEvent(new CustomEvent('osenter', { bubbles: true })); }
+  }, true);
+  phone.addEventListener('pointerdown', e => { if (e.target.closest && e.target.closest('input,textarea')) comp = null; }, true);
+  on('clip', () => { if (visible() && mode === 'clip') render(); });
+  on('settings', k => { if (visible() && (k === 'numRow' || k === 'kbPreview')) render(); });
+
+  return { attach, hide, close, isField, insertText: t => { comp = null; insert(t); }, setMode, get visible() { return visible(); }, get field() { return field; } };
+})();
+
+/* ==========================================================================
+   Long-press / right-click context menu (copy, cut, paste, select all…)
+   ========================================================================== */
+const Ctx = (() => {
+  const el = $('#ctx');
+  el.addEventListener('pointerdown', e => e.preventDefault());
+  el.addEventListener('mousedown', e => e.preventDefault());
+  const isOpen = () => el.classList.contains('show');
+  function hide() { el.classList.remove('show'); }
+  function show(pt, items) {
+    if (!items || !items.length) return;
+    el.innerHTML = '';
+    for (const it of items) el.append(h('button', { onclick: e => { e.stopPropagation(); hide(); it.fn(); } }, it.label));
+    el.classList.add('show');
+    const w = el.offsetWidth, hh = el.offsetHeight;
+    el.style.left = clamp(pt.x - w / 2, 8, pt.w - w - 8) + 'px';
+    let y = pt.y - hh - 18; if (y < 40) y = pt.y + 22;
+    el.style.top = clamp(y, 40, pt.h - hh - 60) + 'px';
+    vibrate(15);
+  }
+  function fieldItems(f) {
+    const a = f.selectionStart, b = f.selectionEnd, sel = f.value.slice(a, b), out = [];
+    const put = (text, x, y) => { f.focus(); f.setRangeText(text, x, y, 'end'); f.dispatchEvent(new Event('input', { bubbles: true })); };
+    if (sel) {
+      out.push({ label: '잘라내기', fn: () => { Clip.add(sel, { quiet: true }); put('', a, b); toast('잘라냄'); } });
+      out.push({ label: '복사', fn: () => { Clip.add(sel); f.focus(); } });
+    }
+    if (Clip.items.length) out.push({ label: '붙여넣기', fn: () => put(Clip.latest(), a, b) });
+    if (f.value && sel.length < f.value.length) out.push({ label: '모두 선택', fn: () => { f.focus(); f.setSelectionRange(0, f.value.length); setTimeout(() => showFor(f, lastPt), 30); } });
+    out.push({ label: '클립보드', fn: () => { f.focus(); KB.attach(f); KB.setMode('clip'); } });
+    return out;
+  }
+  function itemsFor(t) {
+    const f = t.closest && t.closest('input,textarea');
+    if (f && KB.isField(f)) return fieldItems(f);
+    const host = t.closest && t.closest('[data-ctx]');
+    if (host && host._ctx) return host._ctx().filter(Boolean);
+    const s = String(getSelection() || '');
+    if (s) return [{ label: '복사', fn: () => Clip.add(s) }];
+    return null;
+  }
+  let lastPt = null;
+  function showFor(t, pt) { show(pt, itemsFor(t)); }
+
+  let lp = null;
+  phone.addEventListener('pointerdown', e => {
+    if (isOpen() && !el.contains(e.target)) hide();
+    if (e.button > 0) return;
+    const t = e.target;
+    if (!(t.closest('input,textarea') || t.closest('[data-ctx]'))) return;
+    const x0 = e.clientX, y0 = e.clientY;
+    lp = { t, timer: setTimeout(() => {
+      lastPt = localPt({ clientX: x0, clientY: y0 });
+      const items = itemsFor(t); if (!items) return;
+      lp && (lp.fired = true);
+      show(lastPt, items);
+    }, 520), x0, y0 };
+  }, true);
+  phone.addEventListener('pointermove', e => { if (lp && Math.hypot(e.clientX - lp.x0, e.clientY - lp.y0) > 10) { clearTimeout(lp.timer); lp = null; } }, true);
+  const endLp = () => {
+    if (!lp) return;
+    clearTimeout(lp.timer);
+    if (lp.fired) { const kill = c => { c.stopPropagation(); c.preventDefault(); }; addEventListener('click', kill, { capture: true, once: true }); setTimeout(() => removeEventListener('click', kill, true), 60); }
+    lp = null;
+  };
+  phone.addEventListener('pointerup', endLp, true);
+  phone.addEventListener('pointercancel', () => { if (lp) { clearTimeout(lp.timer); lp = null; } }, true);
+  phone.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    if (isOpen()) return;
+    lastPt = localPt(e);
+    const items = itemsFor(e.target); if (items) show(lastPt, items);
+  });
+  return { hide, show, get open() { return isOpen(); } };
+})();
+
+/* ==========================================================================
+   Notifications
+   ========================================================================== */
+const NC = {
+  list: store.get('notifs', []),
+  save() { store.set('notifs', this.list); emit('notifs'); },
+  push(n) {
+    n = { id: uid(), t: Date.now(), ...n };
+    this.list.unshift(n); this.list = this.list.slice(0, 30); this.save();
+    if (!S.silent) tone(1175, 0.12, 0.07); else vibrate(120);
+    Headsup.show(n);
+  },
+  remove(id) { this.list = this.list.filter(n => n.id !== id); this.save(); },
+  clear() { this.list = []; this.save(); },
+};
+function notiEl(n, onClick) {
+  const a = APPS[n.app];
+  return h('div', { class: 'noti', onclick: onClick },
+    a ? h('div', { class: 'sq sm', style: `background:${a.color}`, html: svg(a.icon) }) : null,
+    h('div', { class: 'tx' }, h('b', null, n.title), h('p', null, n.body)),
+    h('span', { class: 'tm' }, fmtAgo(n.t)));
+}
+const Headsup = (() => {
+  const el = $('#headsup'); let t;
+  return {
+    show(n) {
+      if (!$('#lock').classList.contains('gone')) return;
+      el.innerHTML = '';
+      el.append(notiEl(n, () => { el.classList.remove('show'); NC.remove(n.id); WM.open(n.app, n.intent); }));
+      el.classList.add('show'); clearTimeout(t); t = setTimeout(() => el.classList.remove('show'), 3800);
+    },
+  };
+})();
+
+/* ==========================================================================
+   Window manager
+   ========================================================================== */
+const APPS = {};
+const APP_ORDER = [];
+function defineApp(id, name, color, icon, create) { APPS[id] = { id, name, color, icon, create }; APP_ORDER.push(id); }
+
+const WM = {
+  run: new Map(), cur: null,
+  open(id, intent) {
+    const app = APPS[id]; if (!app) return;
+    Unlock.force();
+    Drawer.close(); Recents.close(); Shade.close(); Ctx.hide();
+    let r = this.run.get(id);
+    if (!r) {
+      const el = h('div', { class: 'app', 'data-app': id });
+      $('#apps').append(el);
+      r = { id, el, inst: {} };
+      this.run.set(id, r);
+      r.inst = app.create(el, intent) || {};
+    } else if (intent && r.inst.intent) r.inst.intent(intent);
+    if (this.cur && this.cur !== id) { const c = this.run.get(this.cur); if (c) { c.el.classList.remove('active'); c.inst.hide && c.inst.hide(); } }
+    r.t = Date.now();
+    if (this.cur !== id) { r.el.classList.remove('closing'); r.el.classList.add('active', 'opening'); setTimeout(() => r.el.classList.remove('opening'), 300); }
+    this.cur = id;
+    r.inst.show && r.inst.show();
+    updateChrome();
+  },
+  home() {
+    KB.close(); Ctx.hide();
+    if (this.cur) {
+      const id = this.cur, c = this.run.get(id);
+      c.el.classList.add('closing');
+      setTimeout(() => { if (this.cur !== id) c.el.classList.remove('active', 'closing'); }, 220);
+      c.inst.hide && c.inst.hide();
+      this.cur = null;
+    }
+    Drawer.close(); Recents.close(); Shade.close();
+    updateChrome();
+  },
+  back() {
+    if (Ctx.open) return Ctx.hide();
+    if (Dialog.open) return Dialog.close();
+    if (Shade.isOpen) return Shade.close();
+    if (KB.visible) return KB.close();
+    if (Recents.isOpen) return Recents.close();
+    if (this.cur) { const r = this.run.get(this.cur); if (r.inst.back && r.inst.back()) return; return this.home(); }
+    if (Drawer.isOpen) return Drawer.close();
+  },
+  kill(id) {
+    const r = this.run.get(id); if (!r) return;
+    r.inst.hide && r.inst.hide(); r.inst.destroy && r.inst.destroy();
+    r.el.remove(); this.run.delete(id);
+    if (this.cur === id) { this.cur = null; updateChrome(); }
+  },
+};
+function updateChrome() {
+  const inApp = !!WM.cur && !Recents.isOpen;
+  phone.classList.toggle('in-app', inApp);
+  phone.classList.toggle('light-ui', inApp && !S.dark && $('#lock').classList.contains('gone') && !Shade.isOpen);
+  if (Shade.isOpen) phone.classList.toggle('light-ui', !S.dark);
+}
+
+/* stack navigation inside an app */
+function makeStack(root) {
+  const st = [];
+  return {
+    push(v) { v.classList.add('pushin'); root.append(v); st.push(v); setTimeout(() => v.classList.remove('pushin'), 270); return v; },
+    pop() { if (st.length < 2) return false; KB.close(); const v = st.pop(); v.classList.add('popout'); setTimeout(() => v.remove(), 200); v._onpop && v._onpop(); return true; },
+    reset(v) { st.splice(0).forEach(x => x.remove()); root.append(v); st.push(v); },
+    get top() { return st[st.length - 1]; },
+    get depth() { return st.length; },
+  };
+}
+function Page(title, { actions = [], sub } = {}) {
+  const body = h('div', { class: 'pg-body' });
+  const subEl = h('div', { class: 'sub' }, sub || '');
+  const el = h('div', { class: 'view' },
+    h('div', { class: 'pg-head' }, h('div', { class: 'grow' }, h('h1', null, title), subEl), actions), body);
+  return { el, body, subEl };
+}
+function Bar(title, { back, actions = [] } = {}) {
+  const t = h('div', { class: 'title' }, title);
+  const el = h('div', { class: 'bar' }, back ? iconBtn('back', back, '뒤로') : null, t, actions);
+  el._title = t;
+  return el;
+}
+function switchEl(isOn, onchange) {
+  const s = h('div', { class: 'switch' + (isOn ? ' on' : ''), role: 'switch' });
+  s._set = v => s.classList.toggle('on', v);
+  if (onchange) s.addEventListener('click', e => { e.stopPropagation(); const v = !s.classList.contains('on'); s._set(v); onchange(v); });
+  return s;
+}
+const AV_COLORS = ['#5b8def', '#f2994a', '#27ae60', '#eb5757', '#9b51e0', '#2d9cdb', '#e0a800', '#16a085'];
+const avColor = s => AV_COLORS[[...String(s)].reduce((a, c) => a + c.charCodeAt(0), 0) % AV_COLORS.length];
+function avatar(name, cls = '') { return h('div', { class: 'av ' + cls, style: `background:${avColor(name)}` }, [...String(name || '?')][0]); }
+</script>
+<script>
+'use strict';
+/* ==========================================================================
+   System UI
+   ========================================================================== */
+let battery = { level: 0.86, charging: false };
+try { navigator.getBattery && navigator.getBattery().then(b => { const u = () => { battery = { level: b.level, charging: b.charging }; renderStatus(); }; u(); b.addEventListener('levelchange', u); b.addEventListener('chargingchange', u); }); } catch {}
+
+function renderStatus() {
+  $('#sbTime').textContent = fmtHM(new Date());
+  const apps = [...new Set(NC.list.map(n => n.app))].slice(0, 3);
+  $('#sbNotis').innerHTML = apps.map(a => APPS[a] ? svg(APPS[a].icon) : '').join('');
+  const pct = Math.round(battery.level * 100);
+  $('#sbRight').innerHTML =
+    (S.silent ? svg('mute') : '') + (S.bt && !S.air ? svg('bt') : '') +
+    (S.air ? svg('plane') : S.wifi ? svg('wifi') : '') +
+    `<span class="batt">${pct}%<i><b style="width:${Math.max(2, pct * 0.17)}px"></b></i>${battery.charging ? '⚡' : ''}</span>`;
+}
+
+/* ---------- home & dock ---------- */
+const Home = (() => {
+  const el = $('#home');
+  let grid = store.get('home', ['calendar', 'gallery', 'notes', 'clock', 'calculator', 'clipboard', 'contacts', 'settings']);
+  let dock = store.get('dock', ['phone', 'messages', 'internet', 'camera']);
+  const save = () => { store.set('home', grid); store.set('dock', dock); };
+  function iconEl(id, where) {
+    const a = APPS[id];
+    return h('div', {
+      class: 'ic', onclick: () => WM.open(id), 'aria-label': a.name,
+      ctx: () => [
+        { label: '열기', fn: () => WM.open(id) },
+        where === 'home' ? { label: '홈 화면에서 삭제', fn: () => { grid = grid.filter(x => x !== id); save(); render(); toast(`${a.name}을(를) 홈 화면에서 삭제했습니다`); } } : null,
+        where === 'drawer' && !grid.includes(id) && !dock.includes(id) ? { label: '홈 화면에 추가', fn: () => { grid.push(id); save(); render(); toast(`${a.name}을(를) 홈 화면에 추가했습니다`); } } : null,
+        WM.run.has(id) ? { label: '앱 종료', fn: () => { WM.kill(id); toast(`${a.name} 종료됨`); } } : null,
+      ],
+    }, h('div', { class: 'sq', style: `background:${a.color}`, html: svg(a.icon) }), h('span', null, a.name));
+  }
+  const clockT = h('div', { class: 't' }), dateT = h('div', { class: 'd' });
+  function render() {
+    grid = grid.filter(id => APPS[id]); dock = dock.filter(id => APPS[id]);
+    el.innerHTML = '';
+    el.append(
+      h('div', { class: 'widget', onclick: () => WM.open('clock') }, clockT, dateT, h('div', { class: 'w' }, '서울 · 맑음 18°')),
+      h('div', { class: 'hgrid' }, grid.map(id => iconEl(id, 'home'))),
+      h('button', { class: 'drawer-hint', 'aria-label': '앱스 화면 열기', html: svg('chevU'), onclick: () => Drawer.open() }),
+      h('div', { class: 'dock' }, dock.map(id => iconEl(id, 'dock'))));
+    tick();
+  }
+  function tick() { const d = new Date(); clockT.textContent = fmtHM(d); dateT.textContent = fmtDate(d); }
+  drag(el, {
+    filter: () => !WM.cur,
+    end: (dx, dy, moved) => { if (moved && dy < -50) Drawer.open(); else if (moved && dy > 60) Shade.open(); },
+  });
+  el.addEventListener('wheel', e => { if (e.deltaY > 25) Drawer.open(); else if (e.deltaY < -25) Shade.open(); }, { passive: true });
+  return { render, tick, iconEl, reset() { localStorage.removeItem('gos.home'); localStorage.removeItem('gos.dock'); grid = ['calendar', 'gallery', 'notes', 'clock', 'calculator', 'clipboard', 'contacts', 'settings']; dock = ['phone', 'messages', 'internet', 'camera']; render(); } };
+})();
+
+/* ---------- apps screen (drawer) ---------- */
+const Drawer = (() => {
+  const el = $('#drawer');
+  const q = h('input', { type: 'text', placeholder: '앱 검색 (초성 검색 가능)', 'data-enter': '검색', inputmode: 'none', 'aria-label': '앱 검색' });
+  const gridEl = h('div', { class: 'dr-grid' });
+  const head = h('div', { class: 'dr-head' }, h('div', { class: 'dr-search', html: svg('search') }));
+  head.firstChild.append(q, h('button', { 'aria-label': '지우기', style: 'color:#fff;display:none', html: svg('x'), onclick: () => { q.value = ''; q.dispatchEvent(new Event('input')); } }));
+  el.append(head, gridEl);
+  const sorted = () => [...APP_ORDER].sort((a, b) => APPS[a].name.localeCompare(APPS[b].name, 'ko'));
+  function render() {
+    const v = q.value.trim().toLowerCase();
+    q.nextSibling.style.display = v ? '' : 'none';
+    const ids = sorted().filter(id => {
+      if (!v) return true;
+      const n = APPS[id].name.toLowerCase();
+      return n.includes(v) || id.includes(v) || Hangul.chosung(n).includes(v);
+    });
+    gridEl.innerHTML = '';
+    if (!ids.length) gridEl.append(h('div', { class: 'dr-empty' }, `'${q.value}'에 대한 검색 결과가 없습니다`));
+    ids.forEach(id => gridEl.append(Home.iconEl(id, 'drawer')));
+  }
+  q.addEventListener('input', render);
+  q.addEventListener('osenter', () => { const first = gridEl.querySelector('.ic'); if (first && q.value) first.click(); });
+  drag(head, { end: (dx, dy, moved) => { if (moved && dy > 50) close(); } });
+  drag(gridEl, { filter: () => gridEl.scrollTop <= 0, end: (dx, dy, moved) => { if (moved && dy > 70) close(); } });
+  gridEl.addEventListener('wheel', e => { if (gridEl.scrollTop <= 0 && e.deltaY < -30) close(); }, { passive: true });
+  function open() { if (WM.cur) WM.home(); render(); el.classList.add('open'); }
+  function close() { if (!el.classList.contains('open')) return; el.classList.remove('open'); if (document.activeElement === q) KB.close(); q.value = ''; }
+  return { open, close, render, get isOpen() { return el.classList.contains('open'); } };
+})();
+
+/* ---------- notification shade / quick settings ---------- */
+const Shade = (() => {
+  const el = $('#shade');
+  let isOpen = false;
+  const QS = [
+    { k: 'wifi', label: 'Wi-Fi', icon: 'wifi' },
+    { k: 'bt', label: '블루투스', icon: 'bt' },
+    { k: 'silent', label: '무음', icon: 'mute', off: 'bell', offLabel: '소리' },
+    { k: 'torch', label: '손전등', icon: 'torch' },
+    { k: 'air', label: '비행기 탑재 모드', icon: 'plane' },
+    { k: 'dark', label: '다크 모드', icon: 'moon' },
+    { k: 'rotate', label: '자동 회전', icon: 'rotate' },
+    { k: '_clip', label: '클립보드', icon: 'clip', act: () => WM.open('clipboard') },
+  ];
+  const timeEl = h('div', { class: 't' }), dateEl = h('div', { class: 'd' });
+  const qsEl = h('div', { class: 'qs' });
+  const list = h('div', { class: 'sh-list' });
+  const br = h('input', { type: 'range', min: 10, max: 100, value: S.bright, 'aria-label': '밝기', oninput: e => setS('bright', +e.target.value) });
+  const top = h('div', { class: 'sh-top' }, h('div', null, timeEl, dateEl), iconBtn('gear', () => WM.open('settings'), '설정'));
+  const foot = h('div', { class: 'sh-foot' }, h('div', { class: 'handle' }));
+  el.append(top, qsEl, h('div', { class: 'bright', html: svg('sun') }, br), list, foot);
+  function renderQS() {
+    qsEl.innerHTML = '';
+    for (const q of QS) {
+      const isOn = q.k[0] !== '_' && S[q.k];
+      qsEl.append(h('button', { class: isOn ? 'on' : '', onclick: () => {
+        if (q.act) return q.act();
+        setS(q.k, !S[q.k]);
+        if (q.k === 'air' && S.air) { S.wifi = false; S.bt = false; store.set('settings', S); renderStatus(); }
+        toast(`${q.label} ${S[q.k] ? '켜짐' : '꺼짐'}`);
+      } }, h('div', { class: 'q', html: svg(!isOn && q.off ? q.off : q.icon) }), isOn || !q.offLabel ? q.label : q.offLabel));
+    }
+    br.value = S.bright;
+  }
+  function renderList() {
+    list.innerHTML = '';
+    if (!NC.list.length) { list.append(h('div', { class: 'empty', style: 'padding:30px 0' }, '알림 없음')); return; }
+    NC.list.forEach(n => list.append(notiEl(n, () => { NC.remove(n.id); WM.open(n.app, n.intent); }) ));
+    list.append(h('div', { style: 'text-align:right;padding:4px 6px' }, h('button', { class: 'pill ghost', style: 'padding:8px 16px;font-size:13px', onclick: () => NC.clear() }, '모두 지우기')));
+  }
+  function tick() { const d = new Date(); timeEl.textContent = fmtHM(d); dateEl.textContent = fmtDate(d); }
+  function open() { if (!$('#lock').classList.contains('gone')) return; KB.close(); Ctx.hide(); renderQS(); renderList(); tick(); isOpen = true; el.classList.add('open'); updateChrome(); }
+  function close() { if (!isOpen) return; isOpen = false; el.classList.remove('open'); updateChrome(); }
+  drag(top, { end: (dx, dy, moved) => { if (moved && dy < -40) close(); } });
+  drag(foot, { end: (dx, dy, moved) => { if (!moved || dy < -20) close(); } });
+  el.addEventListener('click', e => { if (e.target === el || e.target === list) close(); });
+  drag($('#statusbar'), { end: (dx, dy, moved) => { if (!moved || dy > 20) open(); } });
+  on('settings', () => { if (isOpen) renderQS(); });
+  on('notifs', () => { if (isOpen) renderList(); renderStatus(); Lock.renderNotis(); });
+  return { open, close, tick, get isOpen() { return isOpen; } };
+})();
+
+/* ---------- recent apps ---------- */
+const Recents = (() => {
+  const el = $('#recents'); let isOpen = false;
+  function open() {
+    KB.close(); Drawer.close(); Shade.close();
+    isOpen = true; el.innerHTML = '';
+    const runs = [...WM.run.values()].sort((a, b) => b.t - a.t);
+    if (!runs.length) el.append(h('div', { class: 'rc-empty' }, '최근 사용한 앱이 없습니다'));
+    else {
+      const listEl = h('div', { class: 'rc-list' });
+      const content = $('#content'), W = content.clientWidth, H = content.clientHeight;
+      for (const r of runs) {
+        const a = APPS[r.id];
+        const prev = h('div', { class: 'rc-prev', onclick: () => WM.open(r.id) });
+        const card = h('div', { class: 'rc-card' },
+          h('div', { class: 'hd' }, h('div', { class: 'sq xs', style: `background:${a.color}`, html: svg(a.icon) }), a.name,
+            h('button', { class: 'x', 'aria-label': '닫기', html: svg('x'), onclick: () => { WM.kill(r.id); card.style.transform = 'translateY(-60px)'; card.style.opacity = 0; setTimeout(() => { card.remove(); if (!WM.run.size) open(); }, 200); } })),
+          prev);
+        drag(prev, { end: (dx, dy, moved) => { if (moved && dy < -80) card.querySelector('.x').click(); } });
+        listEl.append(card);
+        requestAnimationFrame(() => {
+          const clone = r.el.cloneNode(true);
+          clone.classList.remove('opening', 'closing');
+          const k = prev.clientWidth / W;
+          clone.style.cssText = `width:${W}px;height:${H}px;transform:scale(${k})`;
+          prev.append(clone);
+        });
+      }
+      el.append(listEl, h('div', { class: 'rc-foot' }, h('button', { onclick: () => { [...WM.run.keys()].forEach(id => WM.kill(id)); close(); toast('모든 앱을 닫았습니다'); } }, '모두 닫기')));
+      if (WM.cur) { const i = runs.findIndex(r => r.id === WM.cur); requestAnimationFrame(() => { const c = listEl.children[i]; if (c) listEl.scrollLeft = c.offsetLeft - (listEl.clientWidth - c.clientWidth) / 2; }); }
+    }
+    el.classList.add('open'); updateChrome();
+  }
+  function close() { if (!isOpen) return; isOpen = false; el.classList.remove('open'); el.innerHTML = ''; updateChrome(); }
+  el.addEventListener('click', e => { if (e.target === el || e.target.classList.contains('rc-list') || e.target.classList.contains('rc-empty')) close(); });
+  return { open, close, toggle() { isOpen ? close() : open(); }, get isOpen() { return isOpen; } };
+})();
+
+/* ---------- lock screen ---------- */
+const Lock = (() => {
+  const el = $('#lock');
+  const clock = h('div', { class: 'lk-clock' }), date = h('div', { class: 'lk-date' }), notis = h('div', { class: 'lk-notis' });
+  const sc = (icon, label, app) => h('button', { class: 'lk-sc', 'aria-label': label, html: svg(icon), onclick: e => { e.stopPropagation(); unlock(); WM.open(app); } });
+  el.append(h('div', { class: 'lbg' }), clock, date, notis,
+    h('div', { class: 'lk-bottom' }, sc('phone', '전화', 'phone'),
+      h('button', { class: 'lk-hint', onclick: () => unlock() }, h('span', { html: svg('chevU') }), '위로 밀거나 눌러서 잠금 해제'),
+      sc('cam', '카메라', 'camera')));
+  function tick() { const d = new Date(); clock.textContent = fmtHM(d); date.textContent = fmtDate(d); }
+  function renderNotis() {
+    notis.innerHTML = '';
+    NC.list.slice(0, 3).forEach(n => notis.append(notiEl(n, () => { unlock(); NC.remove(n.id); WM.open(n.app, n.intent); })));
+  }
+  function lock() {
+    KB.close(); Ctx.hide(); Shade.close(); Recents.close(); Dialog.close();
+    el.querySelector('.lbg').style.background = wallCss();
+    el.style.background = wallCss();
+    el.classList.remove('gone', 'hide'); el.style.transform = ''; tick(); renderNotis();
+    updateChrome();
+  }
+  function unlock() {
+    if (el.classList.contains('gone')) return;
+    el.classList.add('hide'); el.style.transform = '';
+    setTimeout(() => { el.classList.add('gone'); updateChrome(); }, 300);
+    vibrate(10);
+  }
+  drag(el, {
+    filter: e => !e.target.closest('.lk-sc,.noti'),
+    move: (dx, dy) => { if (dy < 0) { el.style.transition = 'none'; el.style.transform = `translateY(${dy}px)`; el.style.opacity = 1 + dy / 500; } },
+    end: (dx, dy) => { el.style.transition = ''; el.style.opacity = ''; if (dy < -90) unlock(); else el.style.transform = ''; },
+  });
+  return { lock, unlock, tick, renderNotis, get locked() { return !el.classList.contains('gone'); } };
+})();
+const Unlock = { force() { if (Lock.locked) Lock.unlock(); } };
+
+/* ---------- power / navigation / keys ---------- */
+function power() {
+  const off = $('#off');
+  if (off.classList.contains('show')) { off.classList.remove('show'); return; }
+  Lock.lock(); off.classList.add('show');
+}
+$('#powerBtn').addEventListener('click', power);
+$('#off').addEventListener('click', power);
+$('#navbar').addEventListener('click', e => {
+  const b = e.target.closest('[data-nav]'); if (!b) return;
+  vibrate(8);
+  const n = b.dataset.nav;
+  if (Lock.locked) return;
+  if (n === 'home') WM.home();
+  else if (n === 'back') WM.back();
+  else Recents.toggle();
+});
+$('#navbar').addEventListener('pointerdown', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { e.preventDefault(); WM.back(); }
+  if (Lock.locked && !$('#off').classList.contains('show') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); Lock.unlock(); }
+});
+
+/* ---------- clock tick & alarms ---------- */
+let lastMinute = -1;
+function tickAll() {
+  const d = new Date();
+  renderStatus(); Home.tick(); Lock.tick(); Shade.tick();
+  const m = d.getHours() * 60 + d.getMinutes();
+  if (m !== lastMinute) {
+    if (lastMinute !== -1) {
+      for (const a of store.get('alarms', [])) if (a.on && a.h * 60 + a.m === m) {
+        alertSound();
+        NC.push({ app: 'clock', title: '알람', body: `${pad2(a.h)}:${pad2(a.m)} ${a.label || '알람'}`, intent: { tab: 'alarm' } });
+        Dialog.alert('⏰ 알람', `${pad2(a.h)}:${pad2(a.m)} ${a.label || ''}`);
+      }
+    }
+    lastMinute = m;
+  }
+  emit('tick', d);
+}
+</script>
+<script>
+'use strict';
+/* ==========================================================================
+   Apps
+   ========================================================================== */
+const Contacts = {
+  get list() { return store.get('contacts', [
+    { id: 'p1', name: '엄마', phone: '010-2345-6789', email: '' },
+    { id: 'p2', name: '김민준', phone: '010-1234-5678', email: 'minjun@example.com' },
+    { id: 'p3', name: '이서연', phone: '010-9876-5432', email: '' },
+    { id: 'p4', name: '박지훈', phone: '010-5555-1212', email: 'jihoon@example.com' },
+    { id: 'p5', name: '최유나', phone: '010-3141-5926', email: '' },
+  ]); },
+  set list(v) { store.set('contacts', v); emit('contacts'); },
+  byPhone(num) { const d = String(num).replace(/\D/g, ''); return d ? this.list.find(c => c.phone.replace(/\D/g, '') === d) : null; },
+};
+function fmtPhone(n) {
+  const d = String(n).replace(/[^0-9*#+]/g, '');
+  if (/^01\d{0,9}$/.test(d)) return d.length <= 3 ? d : d.length <= 7 ? d.slice(0, 3) + '-' + d.slice(3) : d.slice(0, 3) + '-' + d.slice(3, d.length - 4) + '-' + d.slice(-4);
+  if (/^02\d{0,8}$/.test(d)) return d.length <= 2 ? d : d.length <= 5 ? d.slice(0, 2) + '-' + d.slice(2) : d.slice(0, 2) + '-' + d.slice(2, d.length - 4) + '-' + d.slice(-4);
+  return d;
+}
+
+/* ---------------- 전화 ---------------- */
+defineApp('phone', '전화', '#22b45a', 'phone', (el, intent) => {
+  let num = '', tab = 'pad', call = null;
+  const body = h('div', { style: 'flex:1;display:flex;flex-direction:column;min-height:0' });
+  const tabs = h('div', { class: 'tabbar' });
+  el.append(h('div', { class: 'view' }, body, tabs));
+  const disp = h('div', { class: 'dial-num', ctx: () => [num && { label: '복사', fn: () => Clip.add(fmtPhone(num)) }, { label: '붙여넣기', fn: () => { num = Clip.latest().replace(/[^0-9*#+]/g, ''); upd(); } }, num && { label: '연락처에 추가', fn: () => WM.open('contacts', { add: fmtPhone(num) }) }] });
+  const hint = h('div', { class: 'dial-hint' });
+  function upd() { disp.textContent = fmtPhone(num); const c = Contacts.byPhone(num); hint.textContent = c ? c.name : ''; }
+  const KEYS = [['1', ''], ['2', 'ABC'], ['3', 'DEF'], ['4', 'GHI'], ['5', 'JKL'], ['6', 'MNO'], ['7', 'PQRS'], ['8', 'TUV'], ['9', 'WXYZ'], ['*', ''], ['0', '+'], ['#', '']];
+  const DTMF = { 1: 697, 2: 770, 3: 852, '*': 941 };
+  function padView() {
+    let lpT;
+    return [h('div', { class: 'dial-top' }, disp, hint),
+      h('div', { class: 'dialpad' }, KEYS.map(([k, s]) => h('button', {
+        onpointerdown: () => { if (k === '0') lpT = setTimeout(() => { num += '+'; upd(); lpT = 'x'; }, 600); },
+        onclick: () => { if (lpT === 'x') { lpT = null; return; } clearTimeout(lpT); num += k; upd(); if (!S.silent) tone(DTMF[k] || 1000 + (+k || 0) * 40, 0.09, 0.05); },
+      }, k, h('small', null, s)))),
+      h('div', { class: 'dial-act' }, h('span'), h('button', { class: 'callbtn', 'aria-label': '전화 걸기', html: svg('phone'), onclick: () => num ? startCall(num) : (num = (store.get('calls', [])[0] || {}).num || '', upd()) }),
+        h('button', { class: 'ibtn', 'aria-label': '지우기', html: svg('bksp'), onclick: () => { num = num.slice(0, -1); upd(); },
+          onpointerdown: () => { const t = setTimeout(() => { num = ''; upd(); }, 600); const c = () => { clearTimeout(t); removeEventListener('pointerup', c); }; addEventListener('pointerup', c); } }))];
+  }
+  function recentsView() {
+    const calls = store.get('calls', []);
+    const pg = h('div', { class: 'pg-body', style: 'padding-top:12px' });
+    pg.append(h('h1', { style: 'font-size:28px;font-weight:600;padding:30px 8px 18px' }, '최근기록'));
+    if (!calls.length) pg.append(h('div', { class: 'empty' }, '통화 기록이 없습니다'));
+    else pg.append(h('div', { class: 'card' }, calls.map(c => h('div', { class: 'row', onclick: () => startCall(c.num) },
+      avatar(c.name || '#'), h('div', { class: 'tx' }, h('b', null, c.name || fmtPhone(c.num)), h('small', null, `발신 · ${c.dur ? Math.floor(c.dur / 60) + '분 ' + c.dur % 60 + '초' : '연결 안 됨'}`)),
+      h('span', { class: 'meta' }, fmtAgo(c.t))))));
+    return [pg];
+  }
+  function contactsView() {
+    const pg = h('div', { class: 'pg-body', style: 'padding-top:12px' });
+    pg.append(h('h1', { style: 'font-size:28px;font-weight:600;padding:30px 8px 18px' }, '연락처'));
+    const list = Contacts.list.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+    pg.append(h('div', { class: 'card' }, list.map(c => h('div', { class: 'row', onclick: () => startCall(c.phone) }, avatar(c.name), h('div', { class: 'tx' }, h('b', null, c.name), h('small', null, c.phone)), h('span', { class: 'ibtn', style: 'color:var(--ok)', html: svg('phone') })))));
+    return [pg];
+  }
+  function render() {
+    body.innerHTML = '';
+    body.append(...(tab === 'pad' ? padView() : tab === 'rec' ? recentsView() : contactsView()));
+    if (tab === 'pad') upd();
+    tabs.innerHTML = '';
+    [['pad', '키패드'], ['rec', '최근기록'], ['con', '연락처']].forEach(([k, l]) => tabs.append(h('button', { class: tab === k ? 'on' : '', onclick: () => { tab = k; render(); } }, l)));
+  }
+  function startCall(n) {
+    if (call) return;
+    const c = Contacts.byPhone(n);
+    const st = h('div', { class: 'st' }, '전화 거는 중...');
+    let secs = 0, mute = false, spk = false;
+    const ov = h('div', { class: 'call' }, avatar(c ? c.name : '#', 'lg'), h('div', { class: 'nm' }, c ? c.name : fmtPhone(n)), c ? h('div', { class: 'st' }, c.phone) : null, st);
+    const opt = (icon, label, fn) => { const b = h('button', { onclick: () => { b.classList.toggle('on', fn()); } }, h('span', { html: svg(icon) }), label); return b; };
+    ov.append(h('div', { class: 'opts' },
+      opt('speaker', '스피커', () => (spk = !spk)), opt('micoff', '음소거', () => (mute = !mute)), opt('keypad', '키패드', () => false)),
+      h('button', { class: 'callbtn end', 'aria-label': '통화 종료', html: svg('endcall'), onclick: () => end() }));
+    el.append(ov);
+    const ringT = setTimeout(() => { st.textContent = '00:00'; call.int = setInterval(() => { secs++; st.textContent = pad2(Math.floor(secs / 60)) + ':' + pad2(secs % 60); }, 1000); }, 2200);
+    call = { ov, int: null };
+    function end() {
+      clearTimeout(ringT); clearInterval(call.int);
+      st.textContent = '통화 종료'; tone(480, 0.25, 0.06);
+      const calls = store.get('calls', []); calls.unshift({ num: n, name: c ? c.name : '', t: Date.now(), dur: secs }); store.set('calls', calls.slice(0, 50));
+      setTimeout(() => { ov.remove(); call = null; num = ''; render(); }, 700);
+    }
+    call.end = end;
+  }
+  render();
+  const handle = i => { if (!i) return; if (i.dial) { num = i.dial.replace(/[^0-9*#+]/g, ''); tab = 'pad'; render(); } if (i.call) startCall(i.call); };
+  handle(intent);
+  return { intent: handle, back() { if (tab !== 'pad') { tab = 'pad'; render(); return true; } return false; }, destroy() { call && call.end(); } };
+});
+
+/* ---------------- 메시지 ---------------- */
+const Threads = {
+  get list() { return store.get('threads', [
+    { id: 't0', name: 'Galaxy', msgs: [{ me: false, text: 'Galaxy OS 1.0에 오신 것을 환영합니다! 🎉\n\n• 메시지를 길게 누르면 복사할 수 있어요.\n• 키보드의 클립보드 버튼으로 붙여넣기 해보세요.\n• 홈 화면에서 위로 밀면 앱스 화면이 열려요.', t: Date.now() - 86400e3 }] },
+    { id: 't1', name: '김민준', msgs: [{ me: false, text: '오늘 저녁에 시간 돼?', t: Date.now() - 3600e3 }, { me: true, text: '응 7시 이후면 괜찮아', t: Date.now() - 3500e3 }, { me: false, text: '좋아! 그럼 강남역에서 보자 😄', t: Date.now() - 3400e3 }] },
+  ]); },
+  set list(v) { store.set('threads', v); emit('threads'); },
+  update(id, fn) { const l = this.list; const t = l.find(x => x.id === id); if (t) { fn(t); this.list = l; } return t; },
+};
+function botReply(t) {
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  if (/안녕|하이|hi|hello/i.test(t)) return pick(['안녕하세요! 😊', '안녕~ 반가워!', '하이하이 👋']);
+  if (/뭐\s?해/.test(t)) return '그냥 쉬고 있어. 너는?';
+  if (/고마|감사|땡큐/.test(t)) return '천만에요 🙏';
+  if (/사랑|좋아해/.test(t)) return '❤️❤️';
+  if (/밥|먹/.test(t)) return pick(['배고프다 🍜', '나 방금 먹었어!', '같이 먹을래?']);
+  if (/ㅋㅋ|ㅎㅎ/.test(t)) return pick(['ㅋㅋㅋㅋㅋ', 'ㅎㅎㅎ']);
+  if (/[?？]$/.test(t.trim())) return pick(['음... 잘 모르겠어 🤔', '그건 좀 생각해볼게!', '아마도?']);
+  return pick(['좋아!', '알겠어 👍', '오 진짜?', '나중에 얘기하자~', 'ㅎㅎ 그렇구나', '대박 😮']);
+}
+defineApp('messages', '메시지', '#3c74f0', 'msg', (el, intent) => {
+  const stack = makeStack(el);
+  let openId = null, chatRender = null;
+  const pg = Page('메시지', { actions: [iconBtn('plus', () => newThread(), '새 대화')] });
+  function renderList() {
+    const l = Threads.list.sort((a, b) => (b.msgs.at(-1) || {}).t - (a.msgs.at(-1) || {}).t);
+    const unread = l.filter(t => t.unread).length;
+    pg.subEl.textContent = unread ? `읽지 않은 메시지 ${unread}개` : '';
+    pg.body.innerHTML = '';
+    if (!l.length) pg.body.append(h('div', { class: 'empty' }, '대화가 없습니다'));
+    pg.body.append(h('div', { class: 'card' }, l.map(t => { const last = t.msgs.at(-1) || { text: '', t: 0 }; return h('div', { class: 'row', onclick: () => openThread(t.id),
+      ctx: () => [{ label: '대화 삭제', fn: () => { Threads.list = Threads.list.filter(x => x.id !== t.id); } }] },
+      avatar(t.name), h('div', { class: 'tx' }, h('b', { style: t.unread ? 'font-weight:700' : '' }, t.name), h('small', null, last.text.split('\n')[0])),
+      h('div', { style: 'display:flex;flex-direction:column;align-items:flex-end;gap:4px' }, h('span', { class: 'meta' }, last.t ? fmtAgo(last.t) : ''),
+        t.unread ? h('span', { style: 'background:var(--danger);color:#fff;border-radius:10px;font-size:11px;padding:1px 7px' }, t.unread) : null)); })));
+  }
+  function openThread(id) {
+    Threads.update(id, t => { t.unread = 0; });
+    const t = Threads.list.find(x => x.id === id); if (!t) return;
+    openId = id;
+    const chat = h('div', { class: 'chat' });
+    const input = h('textarea', { class: 'field', rows: 1, placeholder: '메시지 입력', inputmode: 'none', style: 'max-height:110px' });
+    const send = () => {
+      const text = input.value.trim(); if (!text) return;
+      input.value = ''; input.style.height = '';
+      Threads.update(id, t => t.msgs.push({ me: true, text, t: Date.now() }));
+      if (id !== 't0') setTimeout(() => {
+        const reply = botReply(text);
+        const th = Threads.update(id, t => { t.msgs.push({ me: false, text: reply, t: Date.now() }); if (!(WM.cur === 'messages' && openId === id)) t.unread = (t.unread || 0) + 1; });
+        if (th && !(WM.cur === 'messages' && openId === id)) NC.push({ app: 'messages', title: th.name, body: reply, intent: { thread: id } });
+        else if (!S.silent) tone(1320, 0.06, 0.04);
+      }, 900 + Math.random() * 1400);
+    };
+    input.addEventListener('input', () => { input.style.height = 'auto'; input.style.height = Math.min(110, input.scrollHeight) + 'px'; });
+    const call = Contacts.list.find(c => c.name === t.name);
+    const v = h('div', { class: 'view' },
+      Bar(t.name, { back: () => stack.pop(), actions: [call ? iconBtn('phone', () => WM.open('phone', { call: call.phone }), '전화') : null] }),
+      chat, h('div', { class: 'composer' }, input, h('button', { class: 'send', 'aria-label': '보내기', html: svg('send'), onpointerdown: e => e.preventDefault(), onclick: send })));
+    chatRender = () => {
+      const th = Threads.list.find(x => x.id === id); if (!th) return;
+      chat.innerHTML = ''; let lastDay = '';
+      th.msgs.forEach((m, i) => {
+        const d = new Date(m.t), day = d.toDateString();
+        if (day !== lastDay) { chat.append(h('div', { class: 'chat-day' }, `${d.getFullYear()}년 ${fmtDate(d)}`)); lastDay = day; }
+        chat.append(h('div', { class: 'bub' + (m.me ? ' me' : ''), ctx: () => [
+          { label: '복사', fn: () => Clip.add(m.text) },
+          { label: '전달', fn: () => { input.value = m.text; input.focus(); } },
+          { label: '삭제', fn: () => Threads.update(id, t => t.msgs.splice(i, 1)) }] }, m.text));
+        chat.append(h('div', { class: 'bub-t' + (m.me ? ' me' : '') }, fmtHM(d)));
+      });
+      chat.scrollTop = chat.scrollHeight;
+    };
+    v._onpop = () => { openId = null; chatRender = null; };
+    chatRender();
+    stack.push(v);
+    setTimeout(() => chat.scrollTop = chat.scrollHeight, 30);
+    input.addEventListener('focus', () => setTimeout(() => chat.scrollTop = chat.scrollHeight, 60));
+    // Enter on the on-screen keyboard inserts a newline in textarea; the send button sends.
+  }
+  function newThread() {
+    const p = Page('새 메시지');
+    const q = h('input', { type: 'text', class: 'field', placeholder: '이름 또는 전화번호', inputmode: 'none', 'data-enter': '확인' });
+    const list = h('div', { class: 'card', style: 'margin-top:12px' });
+    const draw = () => { list.innerHTML = ''; Contacts.list.filter(c => !q.value || c.name.includes(q.value) || Hangul.chosung(c.name).includes(q.value) || c.phone.includes(q.value)).forEach(c => list.append(h('div', { class: 'row', onclick: () => start(c.name) }, avatar(c.name), h('div', { class: 'tx' }, h('b', null, c.name), h('small', null, c.phone))))); };
+    const start = name => {
+      let t = Threads.list.find(x => x.name === name);
+      if (!t) { t = { id: uid(), name, msgs: [] }; Threads.list = [...Threads.list, t]; }
+      stack.pop(); setTimeout(() => openThread(t.id), 10);
+    };
+    q.addEventListener('input', draw);
+    q.addEventListener('osenter', () => q.value.trim() && start(q.value.trim()));
+    p.body.append(q, list); draw();
+    p.el.prepend(Bar('', { back: () => stack.pop() }));
+    stack.push(p.el);
+    setTimeout(() => q.focus(), 280);
+  }
+  stack.reset(pg.el); renderList();
+  on('threads', () => { renderList(); chatRender && chatRender(); });
+  on('contacts', renderList);
+  const handle = i => { if (i && i.thread) { while (stack.depth > 1) stack.pop(); setTimeout(() => openThread(i.thread), 0); } if (i && i.to) { let t = Threads.list.find(x => x.name === i.to); if (!t) { t = { id: uid(), name: i.to, msgs: [] }; Threads.list = [...Threads.list, t]; } while (stack.depth > 1) stack.pop(); setTimeout(() => openThread(t.id), 0); } };
+  handle(intent);
+  return { intent: handle, back: () => stack.pop() };
+});
+
+/* ---------------- 연락처 ---------------- */
+defineApp('contacts', '연락처', '#f2994a', 'user', (el, intent) => {
+  const stack = makeStack(el);
+  const pg = Page('연락처', { actions: [iconBtn('plus', () => edit(null), '연락처 추가')] });
+  const q = h('input', { type: 'search', class: 'field', placeholder: '검색', inputmode: 'none', 'data-enter': '검색', style: 'margin-bottom:12px' });
+  const list = h('div');
+  pg.body.append(q, list);
+  function render() {
+    const v = q.value.trim();
+    const l = Contacts.list.filter(c => !v || c.name.includes(v) || Hangul.chosung(c.name).includes(v) || c.phone.replace(/\D/g, '').includes(v.replace(/\D/g, '') || '\u0000')).sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+    pg.subEl.textContent = `연락처 ${Contacts.list.length}개`;
+    list.innerHTML = '';
+    if (!l.length) { list.append(h('div', { class: 'empty' }, '연락처가 없습니다')); return; }
+    const groups = {};
+    l.forEach(c => { const k = Hangul.chosung(c.name[0]).toUpperCase(); (groups[k] = groups[k] || []).push(c); });
+    for (const k in groups) list.append(h('div', { class: 'card-t', style: 'padding:6px 12px' }, k), h('div', { class: 'card' }, groups[k].map(c => h('div', { class: 'row', onclick: () => detail(c.id) }, avatar(c.name), h('div', { class: 'tx' }, h('b', null, c.name), h('small', null, c.phone))))));
+  }
+  q.addEventListener('input', render);
+  function detail(id) {
+    const c = Contacts.list.find(x => x.id === id); if (!c) return;
+    const act = (icon, label, fn, color) => h('button', { style: 'display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px', onclick: fn }, h('span', { class: 'ibtn', style: `background:var(--surface);color:${color}`, html: svg(icon) }), label);
+    const v = h('div', { class: 'view' },
+      Bar('', { back: () => stack.pop(), actions: [iconBtn('edit', () => edit(id), '편집'), iconBtn('trash', async () => { if (await Dialog.confirm('연락처 삭제', `${c.name}을(를) 삭제할까요?`, '삭제', true)) { Contacts.list = Contacts.list.filter(x => x.id !== id); stack.pop(); } }, '삭제')] }),
+      h('div', { class: 'pg-body' },
+        h('div', { style: 'display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 0 24px' }, avatar(c.name, 'lg'), h('div', { style: 'font-size:28px;font-weight:600' }, c.name)),
+        h('div', { style: 'display:flex;justify-content:center;gap:34px;margin-bottom:20px' },
+          act('phone', '전화', () => WM.open('phone', { call: c.phone }), 'var(--ok)'),
+          act('msg', '메시지', () => WM.open('messages', { to: c.name }), 'var(--accent)'),
+          act('copy', '번호 복사', () => Clip.add(c.phone), 'var(--sub)')),
+        h('div', { class: 'card' },
+          h('div', { class: 'row', ctx: () => [{ label: '복사', fn: () => Clip.add(c.phone) }] }, h('span', { class: 'ibtn', html: svg('phone') }), h('div', { class: 'tx' }, h('b', null, c.phone), h('small', null, '휴대전화'))),
+          c.email ? h('div', { class: 'row', ctx: () => [{ label: '복사', fn: () => Clip.add(c.email) }] }, h('span', { class: 'ibtn', html: svg('msg') }), h('div', { class: 'tx' }, h('b', null, c.email), h('small', null, '이메일'))) : null)));
+    stack.push(v);
+  }
+  function edit(id, preset) {
+    const c = id ? Contacts.list.find(x => x.id === id) : { name: '', phone: preset || '', email: '' };
+    const f = (ph, val, kb) => h('input', { type: 'text', class: 'field', placeholder: ph, value: val, inputmode: 'none', 'data-kb': kb || '', 'data-enter': '다음', style: 'margin-bottom:10px' });
+    const nm = f('이름', c.name), ph = f('전화번호', c.phone, 'num'), em = f('이메일', c.email, 'en');
+    [nm, ph, em].forEach((x, i, a) => x.addEventListener('osenter', () => a[i + 1] ? a[i + 1].focus() : save()));
+    const save = () => {
+      if (!nm.value.trim()) { toast('이름을 입력하세요'); nm.focus(); return; }
+      const rec = { id: id || uid(), name: nm.value.trim(), phone: fmtPhone(ph.value), email: em.value.trim() };
+      Contacts.list = id ? Contacts.list.map(x => x.id === id ? rec : x) : [...Contacts.list, rec];
+      stack.pop(); if (id) { stack.pop(); setTimeout(() => detail(id), 10); } toast('저장됨');
+    };
+    stack.push(h('div', { class: 'view' }, Bar(id ? '연락처 편집' : '새 연락처', { back: () => stack.pop(), actions: [h('button', { class: 'pill', style: 'padding:8px 18px;margin-right:8px', onclick: save }, '저장')] }),
+      h('div', { class: 'pg-body', style: 'padding-top:16px' }, h('div', { style: 'display:flex;justify-content:center;padding:6px 0 22px' }, h('div', { class: 'av lg', style: 'background:var(--surface2);color:var(--sub)', html: svg('user', 'style="width:44px;height:44px;stroke:currentColor;fill:none;stroke-width:1.6"') })), nm, ph, em)));
+    setTimeout(() => nm.focus(), 280);
+  }
+  stack.reset(pg.el); render();
+  on('contacts', render);
+  const handle = i => { if (i && i.add) { while (stack.depth > 1) stack.pop(); edit(null, i.add); } };
+  handle(intent);
+  return { intent: handle, back: () => stack.pop() };
+});
+
+/* ---------------- 노트 ---------------- */
+defineApp('notes', '노트', '#f0a91e', 'note', el => {
+  const stack = makeStack(el);
+  const load = () => store.get('notes', [{ id: 'n1', title: '키보드 사용법', body: '• 한/영 키(🌐)로 언어 전환\n• !#1 키로 기호 입력\n• Shift 두 번 = 대문자 고정\n• ⌫ 길게 누르면 연속 삭제\n• 키보드 상단 클립보드 버튼으로 붙여넣기\n• 글자를 길게 눌러 잘라내기/복사/붙여넣기', t: Date.now() - 5e6 }, { id: 'n2', title: '장보기', body: '우유\n계란\n사과\n커피 원두', t: Date.now() - 9e6 }]);
+  const save = l => { store.set('notes', l); render(); };
+  const pg = Page('노트');
+  const fab = h('button', { class: 'fab', 'aria-label': '새 노트', html: svg('plus'), onclick: () => open(null) });
+  pg.el.append(fab);
+  const q = h('input', { type: 'search', class: 'field', placeholder: '노트 검색', inputmode: 'none', 'data-enter': '검색', style: 'margin-bottom:12px' });
+  const grid = h('div', { class: 'notes-grid' });
+  pg.body.append(q, grid);
+  q.addEventListener('input', render);
+  function render() {
+    const l = load().sort((a, b) => b.t - a.t).filter(n => !q.value || (n.title + n.body).toLowerCase().includes(q.value.toLowerCase()));
+    pg.subEl.textContent = `노트 ${load().length}개`;
+    grid.innerHTML = '';
+    if (!l.length) grid.append(h('div', { class: 'empty', style: 'grid-column:1/-1' }, '노트가 없습니다.\n+ 버튼을 눌러 새 노트를 만드세요.'));
+    l.forEach(n => grid.append(h('div', { class: 'note-card', onclick: () => open(n.id), ctx: () => [
+      { label: '내용 복사', fn: () => Clip.add((n.title ? n.title + '\n' : '') + n.body) },
+      { label: '삭제', fn: () => save(load().filter(x => x.id !== n.id)) }] },
+      h('b', null, n.title || '제목 없음'), h('p', null, n.body), h('small', null, fmtAgo(n.t)))));
+  }
+  function open(id) {
+    const n = id ? load().find(x => x.id === id) : { id: uid(), title: '', body: '', t: Date.now() };
+    const title = h('input', { type: 'text', placeholder: '제목', value: n.title, inputmode: 'none', 'data-enter': '다음' });
+    const body = h('textarea', { placeholder: '메모를 입력하세요', inputmode: 'none' }); body.value = n.body;
+    const persist = () => {
+      const l = load().filter(x => x.id !== n.id);
+      if (title.value.trim() || body.value.trim()) l.push({ ...n, title: title.value, body: body.value, t: Date.now() });
+      save(l);
+    };
+    title.addEventListener('input', persist); body.addEventListener('input', persist);
+    title.addEventListener('osenter', () => body.focus());
+    const v = h('div', { class: 'view' },
+      Bar('', { back: () => stack.pop(), actions: [
+        iconBtn('copy', () => Clip.add((title.value ? title.value + '\n' : '') + body.value), '전체 복사'),
+        iconBtn('trash', async () => { if (await Dialog.confirm('노트 삭제', '이 노트를 삭제할까요?', '삭제', true)) { save(load().filter(x => x.id !== n.id)); title.value = body.value = ''; stack.pop(); } }, '삭제')] }),
+      h('div', { class: 'note-ed' }, title, body));
+    v._onpop = persist;
+    stack.push(v);
+    if (!id) setTimeout(() => title.focus(), 280);
+  }
+  stack.reset(pg.el); render();
+  return { back: () => stack.pop() };
+});
+
+/* ---------------- 계산기 ---------------- */
+function evalExpr(s) {
+  let i = 0;
+  const num = () => { const st = i; while (i < s.length && /[\d.]/.test(s[i])) i++; if (st === i) throw 0; const v = Number(s.slice(st, i)); if (isNaN(v)) throw 0; return v; };
+  const prim = () => { if (s[i] === '(') { i++; const v = expr(); if (s[i] === ')') i++; return v; } return num(); };
+  const fac = () => { if (s[i] === '-') { i++; return -fac(); } if (s[i] === '+') { i++; return fac(); } let v = prim(); while (s[i] === '%') { i++; v /= 100; } return v; };
+  const term = () => { let v = fac(); while (s[i] === '*' || s[i] === '/') { const o = s[i++]; const r = fac(); v = o === '*' ? v * r : v / r; } return v; };
+  const expr = () => { let v = term(); while (s[i] === '+' || s[i] === '-') { const o = s[i++]; const r = term(); v = o === '+' ? v + r : v - r; } return v; };
+  try { const v = expr(); return i === s.length ? v : null; } catch { return null; }
+}
+const fmtNum = v => !isFinite(v) ? '0으로 나눌 수 없습니다' : Number(v.toPrecision(12)).toLocaleString('en-US', { maximumFractionDigits: 10 });
+defineApp('calculator', '계산기', '#16a085', 'calc', el => {
+  let ex = '', justEq = false;
+  const hist = store.get('calcHist', []);
+  const show = s => s.replace(/\*/g, '×').replace(/\//g, '÷').replace(/-/g, '−').replace(/\d+(\.\d+)?/g, m => { const [a, b] = m.split('.'); return Number(a).toLocaleString('en-US') + (b !== undefined ? '.' + b : ''); });
+  const exprEl = h('div', { class: 'calc-expr' }), resEl = h('div', { class: 'calc-res' });
+  const disp = h('div', { class: 'calc-disp', ctx: () => [
+    { label: '복사', fn: () => { const v = evalExpr(ex); Clip.add(v != null && isFinite(v) ? String(Number(v.toPrecision(12))) : show(ex)); } },
+    { label: '붙여넣기', fn: () => { const t = Clip.latest().replace(/,/g, '').replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/[^0-9+\-*/().%]/g, ''); if (t) { ex += t; upd(); } else toast('붙여넣을 수 있는 숫자가 없습니다'); } }] }, exprEl, resEl);
+  const histEl = h('div', { class: 'calc-hist', style: 'display:none' });
+  function upd() {
+    exprEl.textContent = ex ? show(ex) : '0';
+    exprEl.style.fontSize = ex.length > 14 ? '28px' : '38px';
+    const v = /[+\-*/%]/.test(ex.replace(/^-/, '')) ? evalExpr(ex) : null;
+    resEl.textContent = v != null ? fmtNum(v) : '';
+  }
+  const last = () => ex.slice(-1);
+  const isOp = c => '+-*/'.includes(c);
+  function press(k) {
+    if (S.kbVib) vibrate(6);
+    if (/\d/.test(k)) { if (justEq) ex = ''; if (last() === ')' || last() === '%') ex += '*'; ex += k; }
+    else if (k === '.') { if (justEq) ex = ''; const m = ex.match(/[\d.]*$/)[0]; if (m.includes('.')) return; ex += m ? '.' : (last() === ')' ? '*0.' : '0.'); }
+    else if (isOp(k)) { if (!ex && k !== '-') return; if (isOp(last())) ex = ex.slice(0, -1); if (last() === '(' && k !== '-') return; ex += k; }
+    else if (k === 'C') ex = '';
+    else if (k === '%') { if (ex && /[\d)]/.test(last())) ex += '%'; }
+    else if (k === '()') { const open = (ex.match(/\(/g) || []).length - (ex.match(/\)/g) || []).length; if (open > 0 && /[\d)%]/.test(last())) ex += ')'; else { if (/[\d)%]/.test(last())) ex += '*'; ex += '('; } }
+    else if (k === '±') { const m = ex.match(/(\(-)?([\d.]+)$/); if (m) ex = ex.slice(0, ex.length - m[0].length) + (m[1] ? m[2] : '(-' + m[2]); else if (!ex || isOp(last()) || last() === '(') ex += '(-'; }
+    else if (k === '⌫') ex = ex.slice(0, -1);
+    else if (k === '=') {
+      const v = evalExpr(ex); if (v == null) { if (ex) toast('잘못된 수식입니다'); return; }
+      if (!isFinite(v)) { toast('0으로 나눌 수 없습니다'); return; }
+      const r = String(Number(v.toPrecision(12)));
+      hist.unshift({ e: show(ex), r: fmtNum(v) }); store.set('calcHist', hist.slice(0, 40));
+      ex = r; justEq = true; upd(); return;
+    }
+    justEq = false; upd();
+  }
+  const K = [['C', 'cl'], ['()', ''], ['%', ''], ['/', 'op'], ['7'], ['8'], ['9'], ['*', 'op'], ['4'], ['5'], ['6'], ['-', 'op'], ['1'], ['2'], ['3'], ['+', 'op'], ['±'], ['0'], ['.'], ['=', 'eq']];
+  const LBL = { '/': '÷', '*': '×', '-': '−', '()': '( )', '±': '+/−' };
+  function toggleHist() {
+    if (histEl.style.display === 'none') {
+      histEl.innerHTML = '';
+      const h2 = store.get('calcHist', []);
+      if (!h2.length) histEl.append(h('p', { class: 'empty' }, '기록이 없습니다'));
+      h2.forEach(x => histEl.append(h('div', { onclick: () => { ex = x.r.replace(/,/g, ''); upd(); toggleHist(); } }, h('small', null, x.e), '=' + x.r)));
+      if (h2.length) histEl.append(h('p', { style: 'text-align:center;padding:14px' }, h('button', { class: 'pill ghost', onclick: () => { store.set('calcHist', []); hist.length = 0; toggleHist(); } }, '기록 삭제')));
+      histEl.style.display = '';
+    } else histEl.style.display = 'none';
+  }
+  const top = h('div', { style: 'position:relative;flex:1;display:flex;flex-direction:column;min-height:0' }, disp, histEl);
+  el.append(h('div', { class: 'view' }, top,
+    h('div', { class: 'calc-tools' }, iconBtn('history', toggleHist, '기록'), iconBtn('bksp', () => press('⌫'), '지우기')),
+    h('div', { class: 'calc-pad' }, K.map(([k, c]) => h('button', { class: c || '', onclick: () => press(k) }, LBL[k] || k)))));
+  const keyH = e => {
+    if (WM.cur !== 'calculator' || KB.visible) return;
+    const m = { Enter: '=', '=': '=', Backspace: '⌫', Escape: null, Delete: 'C', '(': '()', ')': '()', x: '*' };
+    const k = e.key in m ? m[e.key] : e.key;
+    if (k && (/^[\d.+\-*/%=]$/.test(k) || ['⌫', 'C', '()'].includes(k))) { e.preventDefault(); press(k); }
+  };
+  document.addEventListener('keydown', keyH);
+  upd();
+  return { back() { if (histEl.style.display !== 'none') { toggleHist(); return true; } }, destroy() { document.removeEventListener('keydown', keyH); } };
+});
+</script>
+<script>
+'use strict';
+/* ---------------- 시계 ---------------- */
+defineApp('clock', '시계', '#5b5fc7', 'clock', (el, intent) => {
+  let tab = (intent && intent.tab) || 'alarm';
+  const body = h('div', { style: 'flex:1;display:flex;flex-direction:column;min-height:0;position:relative' });
+  const tabs = h('div', { class: 'tabbar' });
+  el.append(h('div', { class: 'view' }, body, tabs));
+  // stopwatch & timer state survives tab switches
+  const sw = { run: false, base: 0, start: 0, laps: [] };
+  const tm = { total: 300, left: 300, run: false, end: 0, int: null, set: { h: 0, m: 5, s: 0 } };
+  let raf = null, view = null;
+  const swNow = () => sw.base + (sw.run ? Date.now() - sw.start : 0);
+  const fmtSW = ms => `${pad2(Math.floor(ms / 60000))}:${pad2(Math.floor(ms / 1000) % 60)}.${pad2(Math.floor(ms / 10) % 100)}`;
+  const fmtT = s => { s = Math.ceil(s); const hh = Math.floor(s / 3600), mm = Math.floor(s / 60) % 60, ss = s % 60; return (hh ? pad2(hh) + ':' : '') + pad2(mm) + ':' + pad2(ss); };
+
+  function alarmView() {
+    const alarms = store.get('alarms', [{ id: 'a1', h: 7, m: 0, on: false, label: '기상' }, { id: 'a2', h: 8, m: 30, on: false, label: '출근' }]);
+    const save = l => { store.set('alarms', l); render(); };
+    const pg = Page('알람', { actions: [iconBtn('plus', () => addAlarm(), '알람 추가')] });
+    const next = alarms.filter(a => a.on).map(a => { const n = new Date(), t = new Date(); t.setHours(a.h, a.m, 0, 0); if (t <= n) t.setDate(t.getDate() + 1); return t - n; }).sort((a, b) => a - b)[0];
+    pg.subEl.textContent = next != null ? `${Math.floor(next / 3600e3)}시간 ${Math.floor(next / 60e3) % 60}분 후에 알람이 울립니다` : '모든 알람이 꺼져 있습니다';
+    if (!alarms.length) pg.body.append(h('div', { class: 'empty' }, '알람이 없습니다'));
+    alarms.sort((a, b) => a.h * 60 + a.m - b.h * 60 - b.m).forEach(a => pg.body.append(h('div', { class: 'alarm' + (a.on ? '' : ' off'), ctx: () => [{ label: '삭제', fn: () => save(alarms.filter(x => x.id !== a.id)) }] },
+      h('div', { class: 'tm' }, `${a.h < 12 ? '오전' : '오후'} ${pad2(a.h % 12 || 12)}:${pad2(a.m)}`, h('small', null, a.label || '')),
+      switchEl(a.on, v => { a.on = v; save(alarms); if (v) toast(`${pad2(a.h)}:${pad2(a.m)} 알람이 설정되었습니다`); }))));
+    pg.body.append(h('p', { style: 'color:var(--sub);font-size:12px;text-align:center;padding:10px' }, '알람을 길게 눌러 삭제'));
+    function addAlarm() {
+      const now = new Date(); const st = { h: now.getHours(), m: (now.getMinutes() + 1) % 60 };
+      const hv = h('div', { class: 'v' }), mv = h('div', { class: 'v' });
+      const upd = () => { hv.textContent = pad2(st.h); mv.textContent = pad2(st.m); };
+      const col = (k, max, v, lbl) => h('div', { class: 'col' }, iconBtn('chevU', () => { st[k] = (st[k] + 1) % max; upd(); }), v, iconBtn('chevD', () => { st[k] = (st[k] + max - 1) % max; upd(); }), h('small', null, lbl));
+      const label = h('input', { type: 'text', class: 'field', placeholder: '알람 이름', inputmode: 'none', 'data-enter': '저장' });
+      const ov = h('div', { class: 'view pushin' }, Bar('알람 추가', { back: () => ov.remove() }),
+        h('div', { class: 'pg-body' }, h('div', { class: 'spin' }, col('h', 24, hv, '시'), h('div', { class: 'sep' }, ':'), col('m', 60, mv, '분')), label,
+          h('div', { class: 'ctl' }, h('button', { class: 'pill ghost', onclick: () => ov.remove() }, '취소'), h('button', { class: 'pill', onclick: () => doSave() }, '저장'))));
+      const doSave = () => { alarms.push({ id: uid(), h: st.h, m: st.m, on: true, label: label.value.trim() }); KB.close(); ov.remove(); save(alarms); toast(`${pad2(st.h)}:${pad2(st.m)} 알람이 설정되었습니다`); };
+      label.addEventListener('osenter', doSave);
+      upd(); body.append(ov); view = { back: () => { ov.remove(); view = null; return true; } };
+    }
+    return pg.el;
+  }
+  function worldView() {
+    const pg = Page('세계 시각');
+    const zones = [['서울', 'Asia/Seoul'], ['도쿄', 'Asia/Tokyo'], ['런던', 'Europe/London'], ['파리', 'Europe/Paris'], ['뉴욕', 'America/New_York'], ['로스앤젤레스', 'America/Los_Angeles'], ['시드니', 'Australia/Sydney']];
+    const rows = zones.map(([n, z]) => { const t = h('div', { class: 'tm' }), s = h('small'); return { z, t, s, el: h('div', { class: 'wc' }, h('div', null, h('b', null, n), s), t) }; });
+    const upd = () => {
+      const now = new Date(), here = now.getTimezoneOffset();
+      rows.forEach(r => {
+        try {
+          r.t.textContent = new Intl.DateTimeFormat('ko-KR', { timeZone: r.z, hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
+          const loc = new Date(now.toLocaleString('en-US', { timeZone: r.z })), diff = Math.round((loc - new Date(now.toLocaleString('en-US'))) / 3600e3);
+          r.s.textContent = diff === 0 ? '현재 시간대' : `${diff > 0 ? '+' : ''}${diff}시간 · ${new Intl.DateTimeFormat('ko-KR', { timeZone: r.z, month: 'long', day: 'numeric', weekday: 'short' }).format(now)}`;
+        } catch { r.t.textContent = '--:--'; }
+      });
+    };
+    upd(); pg.el._tick = upd;
+    pg.body.append(...rows.map(r => r.el));
+    return pg.el;
+  }
+  function swView() {
+    const t = h('div', { class: 'big-time', style: 'padding:70px 0 30px' });
+    const laps = h('div', { class: 'laps' });
+    const ctl = h('div', { class: 'ctl' });
+    const drawLaps = () => { laps.innerHTML = ''; sw.laps.forEach((l, i) => laps.append(h('div', null, h('span', { style: 'color:var(--sub)' }, pad2(sw.laps.length - i)), h('span', null, fmtSW(l.split)), h('span', null, fmtSW(l.total))))); };
+    const drawCtl = () => {
+      ctl.innerHTML = '';
+      if (sw.run) ctl.append(h('button', { class: 'pill ghost', onclick: () => { const tot = swNow(); sw.laps.unshift({ total: tot, split: tot - (sw.laps[0] ? sw.laps[0].total : 0) }); drawLaps(); } }, '구간 기록'), h('button', { class: 'pill red', onclick: () => { sw.base = swNow(); sw.run = false; drawCtl(); } }, '중지'));
+      else if (sw.base) ctl.append(h('button', { class: 'pill ghost', onclick: () => { sw.base = 0; sw.laps = []; drawLaps(); drawCtl(); t.textContent = fmtSW(0); } }, '초기화'), h('button', { class: 'pill', onclick: () => { sw.start = Date.now(); sw.run = true; drawCtl(); } }, '계속'));
+      else ctl.append(h('button', { class: 'pill', onclick: () => { sw.start = Date.now(); sw.run = true; drawCtl(); } }, '시작'));
+    };
+    t.textContent = fmtSW(swNow()); drawLaps(); drawCtl();
+    const v = h('div', { class: 'view' }, t, laps, ctl);
+    v._frame = () => { t.textContent = fmtSW(swNow()); };
+    return v;
+  }
+  function timerView() {
+    const v = h('div', { class: 'view' });
+    const draw = () => {
+      v.innerHTML = '';
+      if (tm.run || tm.left !== tm.total) {
+        const R = 110, C = 2 * Math.PI * R;
+        const ring = h('div', { class: 'ring', html: `<svg viewBox="0 0 240 240"><circle cx="120" cy="120" r="${R}" fill="none" stroke="var(--surface2)" stroke-width="8"/><circle class="arc" cx="120" cy="120" r="${R}" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="0"/></svg>` });
+        const tt = h('div', { class: 'big-time' }); ring.append(tt);
+        v._frame = () => { const left = tm.run ? Math.max(0, (tm.end - Date.now()) / 1000) : tm.left; tt.textContent = fmtT(left); ring.querySelector('.arc').setAttribute('stroke-dashoffset', C * (1 - left / tm.total)); };
+        v._frame();
+        v.append(h('div', { style: 'height:50px' }), ring, h('div', { class: 'ctl', style: 'margin-top:auto' },
+          h('button', { class: 'pill ghost', onclick: () => { stopTimer(); tm.left = tm.total; draw(); } }, '취소'),
+          tm.run ? h('button', { class: 'pill red', onclick: () => { tm.left = Math.max(0, (tm.end - Date.now()) / 1000); stopTimer(); draw(); } }, '일시정지')
+            : h('button', { class: 'pill', onclick: () => { startTimer(tm.left); draw(); } }, '계속')));
+      } else {
+        v._frame = null;
+        const vals = {};
+        const col = (k, max, lbl) => { vals[k] = h('div', { class: 'v' }, pad2(tm.set[k])); return h('div', { class: 'col' }, iconBtn('chevU', () => { tm.set[k] = (tm.set[k] + 1) % max; vals[k].textContent = pad2(tm.set[k]); }), vals[k], iconBtn('chevD', () => { tm.set[k] = (tm.set[k] + max - 1) % max; vals[k].textContent = pad2(tm.set[k]); }), h('small', null, lbl)); };
+        v.append(h('div', { style: 'height:60px' }), h('div', { class: 'spin' }, col('h', 24, '시간'), h('div', { class: 'sep' }, ':'), col('m', 60, '분'), h('div', { class: 'sep' }, ':'), col('s', 60, '초')),
+          h('div', { class: 'presets' }, [[1, '1분'], [3, '3분'], [5, '5분'], [10, '10분'], [15, '15분'], [30, '30분']].map(([m, l]) => h('button', { onclick: () => { tm.set = { h: 0, m, s: 0 }; draw(); } }, l))),
+          h('div', { class: 'ctl', style: 'margin-top:auto' }, h('button', { class: 'pill', onclick: () => { const s = tm.set.h * 3600 + tm.set.m * 60 + tm.set.s; if (!s) return toast('시간을 설정하세요'); tm.total = s; startTimer(s); draw(); } }, '시작')));
+      }
+    };
+    draw(); v._redraw = draw;
+    return v;
+  }
+  function startTimer(secs) {
+    tm.run = true; tm.end = Date.now() + secs * 1000;
+    clearInterval(tm.int);
+    tm.int = setInterval(() => {
+      if (Date.now() >= tm.end) {
+        stopTimer(); tm.left = tm.total = tm.set.h * 3600 + tm.set.m * 60 + tm.set.s;
+        alertSound(); NC.push({ app: 'clock', title: '타이머', body: '설정한 시간이 끝났습니다 ⏱', intent: { tab: 'timer' } });
+        if (tab === 'timer' && view && view._redraw) view._redraw();
+      }
+    }, 250);
+  }
+  function stopTimer() { tm.run = false; clearInterval(tm.int); }
+  function loop() { if (view && view._frame) view._frame(); raf = requestAnimationFrame(loop); }
+  function render() {
+    body.innerHTML = '';
+    view = tab === 'alarm' ? alarmView() : tab === 'world' ? worldView() : tab === 'sw' ? swView() : timerView();
+    body.append(view);
+    tabs.innerHTML = '';
+    [['alarm', '알람'], ['world', '세계 시각'], ['sw', '스톱워치'], ['timer', '타이머']].forEach(([k, l]) => tabs.append(h('button', { class: tab === k ? 'on' : '', onclick: () => { tab = k; render(); } }, l)));
+  }
+  on('tick', () => { if (WM.cur === 'clock' && view && view._tick) view._tick(); });
+  render();
+  return {
+    intent: i => { if (i && i.tab) { tab = i.tab; render(); } },
+    show() { cancelAnimationFrame(raf); loop(); }, hide() { cancelAnimationFrame(raf); },
+    back() { if (view && view.back) return view.back(); if (body.querySelector('.view.pushin, .view + .view')) { body.lastChild.remove(); return true; } return false; },
+    destroy() { stopTimer(); cancelAnimationFrame(raf); },
+  };
+});
+
+/* ---------------- 캘린더 ---------------- */
+defineApp('calendar', '캘린더', '#e5484d', 'cal', el => {
+  const today = new Date(); let ym = new Date(today.getFullYear(), today.getMonth(), 1), sel = new Date(today);
+  const key = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  const load = () => store.get('events', { [key(today)]: ['Galaxy OS 1.0 출시 🎉'] });
+  const title = h('div', { class: 'title' }), grid = h('div', { class: 'cal-grid' }), evs = h('div', { class: 'pg-body', style: 'padding-top:10px' });
+  const input = h('input', { type: 'text', class: 'field', placeholder: '일정 추가', inputmode: 'none', 'data-enter': '추가' });
+  const add = () => { const v = input.value.trim(); if (!v) return; const e = load(); (e[key(sel)] = e[key(sel)] || []).push(v); store.set('events', e); input.value = ''; render(); toast('일정이 추가되었습니다'); };
+  input.addEventListener('osenter', add);
+  el.append(h('div', { class: 'view' },
+    h('div', { style: 'padding:26px 0 4px' }, h('div', { class: 'cal-head' }, iconBtn('chevL', () => { ym.setMonth(ym.getMonth() - 1); render(); }, '이전 달'), title, iconBtn('chevR', () => { ym.setMonth(ym.getMonth() + 1); render(); }, '다음 달'), h('button', { class: 'pill ghost', style: 'padding:7px 14px;font-size:13px', onclick: () => { ym = new Date(today.getFullYear(), today.getMonth(), 1); sel = new Date(today); render(); } }, '오늘'))),
+    grid, evs, h('div', { class: 'composer' }, input, h('button', { class: 'send', 'aria-label': '일정 추가', html: svg('plus'), onpointerdown: e => e.preventDefault(), onclick: add }))));
+  function render() {
+    const e = load();
+    title.textContent = `${ym.getFullYear()}년 ${ym.getMonth() + 1}월`;
+    grid.innerHTML = '';
+    DAYS.forEach(d => grid.append(h('div', { class: 'dw' }, d)));
+    const start = new Date(ym); start.setDate(1 - ym.getDay());
+    for (let i = 0; i < 42; i++) {
+      const d = new Date(start); d.setDate(start.getDate() + i);
+      if (i >= 35 && d.getMonth() !== ym.getMonth()) break;
+      const cls = [d.getMonth() !== ym.getMonth() && 'mut', key(d) === key(today) && 'today', key(d) === key(sel) && 'sel', d.getDay() === 0 && 'sun', d.getDay() === 6 && 'sat'].filter(Boolean).join(' ');
+      grid.append(h('button', { class: cls, onclick: () => { sel = d; if (d.getMonth() !== ym.getMonth()) ym = new Date(d.getFullYear(), d.getMonth(), 1); render(); } }, h('span', null, d.getDate()), e[key(d)] && e[key(d)].length ? h('i') : null));
+    }
+    evs.innerHTML = '';
+    evs.append(h('div', { class: 'card-t', style: 'padding:0 6px 8px' }, `${sel.getMonth() + 1}월 ${sel.getDate()}일 ${DAYS[sel.getDay()]}요일`));
+    const list = e[key(sel)] || [];
+    if (!list.length) evs.append(h('div', { class: 'empty', style: 'padding:20px' }, '일정 없음'));
+    list.forEach((t, i) => evs.append(h('div', { class: 'ev', ctx: () => [{ label: '복사', fn: () => Clip.add(t) }, { label: '삭제', fn: () => { const x = load(); x[key(sel)].splice(i, 1); store.set('events', x); render(); } }] }, h('span', null, t),
+      h('button', { class: 'ibtn', style: 'width:32px;height:32px', 'aria-label': '삭제', html: svg('x'), onclick: () => { const x = load(); x[key(sel)].splice(i, 1); store.set('events', x); render(); } }))));
+  }
+  render();
+  return {};
+});
+
+/* ---------------- 갤러리 ---------------- */
+const ART = (() => {
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const pals = [['#ff6a88', '#ffb199', '#8f4bf4'], ['#00c6ff', '#0072ff', '#a1ffce'], ['#f7971e', '#ffd200', '#ff4e50'], ['#11998e', '#38ef7d', '#0b3d2e'], ['#c471f5', '#fa71cd', '#3b1c5a'], ['#2c3e50', '#fd746c', '#ff9068'], ['#355c7d', '#6c5b7b', '#c06c84'], ['#1e3c72', '#2a5298', '#e0eafc'], ['#ff9966', '#ff5e62', '#2b1055'], ['#43cea2', '#185a9d', '#f8ffae'], ['#e96443', '#904e95', '#1f1c2c'], ['#56ccf2', '#2f80ed', '#ffffff']];
+  return pals.map((p, i) => {
+    let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 640"><defs><linearGradient id="g" x1="0" y1="0" x2="${rnd().toFixed(2)}" y2="1"><stop offset="0" stop-color="${p[0]}"/><stop offset="1" stop-color="${p[1]}"/></linearGradient><filter id="b"><feGaussianBlur stdDeviation="${20 + rnd() * 30 | 0}"/></filter></defs><rect width="360" height="640" fill="url(#g)"/><g filter="url(#b)" opacity=".85">`;
+    for (let k = 0; k < 5; k++) s += `<circle cx="${rnd() * 360 | 0}" cy="${rnd() * 640 | 0}" r="${60 + rnd() * 140 | 0}" fill="${p[k % 3]}" opacity="${(0.4 + rnd() * 0.5).toFixed(2)}"/>`;
+    s += '</g>';
+    if (i % 3 === 0) s += `<path d="M0 ${460 + rnd() * 80 | 0} Q 180 ${380 + rnd() * 80 | 0} 360 ${460 + rnd() * 80 | 0} V640 H0z" fill="${p[2]}" opacity=".55"/>`;
+    s += '</svg>';
+    return { id: 'art' + i, src: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s), t: Date.now() - (i + 2) * 864e5, art: true };
+  });
+})();
+defineApp('gallery', '갤러리', '#d6457a', 'img', el => {
+  const pg = Page('갤러리');
+  el.append(pg.el);
+  const all = () => [...store.get('photos', []), ...ART];
+  function render() {
+    const l = all();
+    pg.subEl.textContent = `사진 ${l.length}장`;
+    pg.body.innerHTML = '';
+    pg.body.append(h('div', { class: 'gal' }, l.map((p, i) => h('div', { style: `background-image:url("${p.src}")`, onclick: () => view(i) }))));
+  }
+  let viewer = null;
+  function view(i) {
+    const l = all(), p = l[i]; if (!p) return;
+    viewer && viewer.remove();
+    const img = h('div', { class: 'img', style: `background-image:url("${p.src}")` });
+    const d = new Date(p.t);
+    viewer = h('div', { class: 'viewer' },
+      Bar(`${d.getMonth() + 1}월 ${d.getDate()}일`, { back: () => close(), actions: [] }),
+      img,
+      h('div', { class: 'acts' },
+        h('button', { onclick: () => { setS('wallCustom', p.src); toast('배경화면으로 설정했습니다'); } }, h('span', { html: svg('wall') }), '배경화면'),
+        h('button', { onclick: () => view((i + 1) % l.length) }, h('span', { html: svg('chevR') }), '다음'),
+        !p.art ? h('button', { onclick: async () => { if (await Dialog.confirm('사진 삭제', '이 사진을 삭제할까요?', '삭제', true)) { store.set('photos', store.get('photos', []).filter(x => x.id !== p.id)); close(); render(); } } }, h('span', { html: svg('trash') }), '삭제') : null));
+    drag(img, { end: (dx, dy, moved) => { if (!moved) return; if (dx < -50) view((i + 1) % l.length); else if (dx > 50) view((i - 1 + l.length) % l.length); else if (dy > 80) close(); } });
+    el.append(viewer);
+  }
+  const close = () => { viewer && viewer.remove(); viewer = null; };
+  on('photos', render);
+  render();
+  return { back() { if (viewer) { close(); return true; } }, show: render };
+});
+
+/* ---------------- 카메라 ---------------- */
+defineApp('camera', '카메라', '#3a3a44', 'cam', el => {
+  let stream = null, facing = 'environment';
+  const video = h('video', { autoplay: true, playsinline: true, muted: true });
+  const msg = h('div', { class: 'msg', style: 'display:none' });
+  const flash = h('div', { class: 'flash' });
+  const thumb = h('button', { class: 'thumb', 'aria-label': '갤러리', onclick: () => WM.open('gallery') });
+  const setThumb = () => { const p = store.get('photos', [])[0]; thumb.style.backgroundImage = p ? `url("${p.src}")` : ''; };
+  el.append(h('div', { class: 'cam' }, video, msg, flash,
+    h('div', { class: 'ctlr' }, thumb, h('button', { class: 'shutter', 'aria-label': '촬영', onclick: shoot }), iconBtn('flip', () => { facing = facing === 'user' ? 'environment' : 'user'; start(); }, '카메라 전환'))));
+  async function start() {
+    stop();
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('unsupported');
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing }, audio: false });
+      if (WM.cur !== 'camera') return stop();
+      video.srcObject = stream; video.style.display = ''; msg.style.display = 'none';
+      video.style.transform = facing === 'user' ? 'scaleX(-1)' : '';
+    } catch (e) {
+      video.style.display = 'none'; msg.style.display = '';
+      msg.textContent = '카메라를 사용할 수 없습니다.\n브라우저의 카메라 권한을 허용하면 실제 카메라가 동작합니다.\n(셔터를 누르면 테스트 이미지가 저장됩니다)';
+      msg.style.whiteSpace = 'pre-line';
+    }
+  }
+  function stop() { if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; } }
+  function shoot() {
+    const c = document.createElement('canvas'); const W = 480;
+    let src;
+    if (stream && video.videoWidth) {
+      c.width = W; c.height = Math.round(W * video.videoHeight / video.videoWidth);
+      const g = c.getContext('2d');
+      if (facing === 'user') { g.translate(W, 0); g.scale(-1, 1); }
+      g.drawImage(video, 0, 0, c.width, c.height);
+      src = c.toDataURL('image/jpeg', 0.72);
+    } else {
+      c.width = W; c.height = 640; const g = c.getContext('2d');
+      const gr = g.createLinearGradient(0, 0, W, 640); gr.addColorStop(0, `hsl(${Math.random() * 360},70%,60%)`); gr.addColorStop(1, `hsl(${Math.random() * 360},70%,35%)`);
+      g.fillStyle = gr; g.fillRect(0, 0, W, 640); g.fillStyle = 'rgba(255,255,255,.9)'; g.font = '600 34px sans-serif'; g.textAlign = 'center';
+      g.fillText('Galaxy OS 1.0', W / 2, 300); g.font = '22px sans-serif'; g.fillText(new Date().toLocaleString('ko-KR'), W / 2, 344);
+      src = c.toDataURL('image/jpeg', 0.8);
+    }
+    flash.style.opacity = 0.9; setTimeout(() => flash.style.opacity = 0, 120);
+    if (!S.silent) tone(2200, 0.05, 0.05, 'square');
+    const photos = store.get('photos', []); photos.unshift({ id: uid(), src, t: Date.now() });
+    let list = photos.slice(0, 12);
+    // drop the oldest photos until it fits in localStorage
+    while (list.length) { try { localStorage.setItem('gos.photos', JSON.stringify(list)); break; } catch { list = list.slice(0, -1); } }
+    emit('photos'); setThumb(); toast('사진이 저장되었습니다');
+  }
+  setThumb();
+  return { show: start, hide: stop, destroy: stop };
+});
+
+/* ---------------- 설정 ---------------- */
+defineApp('settings', '설정', '#6b7280', 'gear', (el, intent) => {
+  const stack = makeStack(el);
+  const pg = Page('설정');
+  stack.reset(pg.el);
+  const toggleRow = (icon, color, label, sub, k, after) => h('div', { class: 'row', onclick: e => e.currentTarget.querySelector('.switch').click() },
+    h('div', { class: 'sq sm', style: `background:${color}`, html: svg(icon) }), h('div', { class: 'tx' }, h('b', null, label), sub ? h('small', null, sub) : null),
+    switchEl(S[k], v => { setS(k, v); after && after(v); }));
+  const linkRow = (icon, color, label, sub, fn) => h('div', { class: 'row', onclick: fn }, h('div', { class: 'sq sm', style: `background:${color}`, html: svg(icon) }), h('div', { class: 'tx' }, h('b', null, label), sub ? h('small', null, sub) : null), h('span', { class: 'ibtn', style: 'width:24px;color:var(--sub)', html: svg('chevR') }));
+  const kbCard = h('div');
+  function render() {
+    pg.body.innerHTML = '';
+    const used = (() => { try { let n = 0; for (const k in localStorage) if (k.startsWith('gos.')) n += (localStorage.getItem(k) || '').length; return n; } catch { return 0; } })();
+    pg.body.append(
+      h('div', { class: 'card' },
+        h('div', { class: 'row', onclick: () => sub('about') }, h('div', { class: 'av', style: 'background:linear-gradient(135deg,#3c74f0,#8a63ff)' }, 'G'), h('div', { class: 'tx' }, h('b', null, 'Galaxy 사용자'), h('small', null, 'Galaxy OS 1.0 · 휴대전화 정보')))),
+      h('div', { class: 'card' },
+        toggleRow('wifi', '#2d9cdb', 'Wi-Fi', S.air ? '비행기 탑재 모드 사용 중' : S.wifi ? 'Galaxy_5G 연결됨' : '꺼짐', 'wifi', () => render()),
+        toggleRow('bt', '#2f80ed', '블루투스', null, 'bt'),
+        toggleRow('plane', '#f2994a', '비행기 탑재 모드', null, 'air', v => { if (v) { S.wifi = false; S.bt = false; store.set('settings', S); renderStatus(); } render(); })),
+      h('div', { class: 'card' },
+        toggleRow('mute', '#eb5757', '무음 모드', '알림음과 키보드 소리를 끕니다', 'silent'),
+        toggleRow('moon', '#5b5fc7', '다크 모드', '어두운 테마 사용', 'dark'),
+        h('div', { class: 'row', style: 'cursor:default' }, h('div', { class: 'sq sm', style: 'background:#f2c94c', html: svg('sun') }), h('div', { class: 'tx' }, h('b', null, '밝기'), h('input', { type: 'range', min: 10, max: 100, value: S.bright, oninput: e => setS('bright', +e.target.value), style: 'margin-top:8px' })))),
+      h('div', { class: 'card' }, h('div', { class: 'card-t' }, '배경화면'),
+        h('div', { class: 'swatches' }, WALLS.map((w, i) => h('button', { class: !S.wallCustom && S.wall === i ? 'on' : '', style: `background:${w}`, 'aria-label': `배경화면 ${i + 1}`, onclick: () => { S.wallCustom = ''; setS('wall', i); render(); } })),
+          S.wallCustom ? h('button', { class: 'on', style: `background:url("${S.wallCustom}") center/cover`, 'aria-label': '갤러리 사진' }) : null),
+        h('div', { style: 'padding:0 18px 16px;font-size:12.5px;color:var(--sub)' }, '갤러리에서 사진을 열고 "배경화면"을 누르면 사진을 배경으로 쓸 수 있습니다.')),
+      kbCard,
+      h('div', { class: 'card' },
+        linkRow('clip', '#16a085', '클립보드', `저장된 항목 ${Clip.items.length}개`, () => WM.open('clipboard')),
+        linkRow('home', '#9b51e0', '홈 화면 초기화', '앱 배치를 기본값으로 되돌립니다', async () => { if (await Dialog.confirm('홈 화면 초기화', '홈 화면 배치를 기본값으로 되돌릴까요?', '초기화')) { Home.reset(); toast('홈 화면을 초기화했습니다'); } })),
+      h('div', { class: 'card' },
+        linkRow('info', '#6b7280', '휴대전화 정보', `Galaxy OS 1.0 · 사용 중인 저장공간 ${(used / 1024).toFixed(1)}KB`, () => sub('about')),
+        linkRow('refresh', '#e5484d', '모든 데이터 초기화', '설정, 노트, 메시지 등을 모두 삭제합니다', async () => {
+          if (await Dialog.confirm('초기화', '모든 데이터를 삭제하고 다시 시작할까요?', '초기화', true)) { try { Object.keys(localStorage).filter(k => k.startsWith('gos.')).forEach(k => localStorage.removeItem(k)); } catch {} location.reload(); }
+        })));
+    renderKb();
+  }
+  function renderKb() {
+    kbCard.innerHTML = '';
+    kbCard.append(h('div', { class: 'card' }, h('div', { class: 'card-t' }, 'Galaxy 키보드'),
+      h('div', { class: 'row', style: 'cursor:default' }, h('div', { class: 'sq sm', style: 'background:#3c74f0', html: svg('globe') }), h('div', { class: 'tx' }, h('b', null, '기본 언어')),
+        h('div', { class: 'seg', style: 'width:150px' }, [['ko', '한국어'], ['en', 'English']].map(([k, l]) => h('button', { class: S.lang === k ? 'on' : '', onclick: () => { setS('lang', k); renderKb(); } }, l)))),
+      toggleRow('keypad', '#27ae60', '숫자 키 표시', '키보드 맨 위에 숫자 줄 표시', 'numRow'),
+      toggleRow('kb', '#2d9cdb', '키 누를 때 미리보기', null, 'kbPreview'),
+      toggleRow('bell', '#f2994a', '키 누를 때 진동', '지원되는 기기에서 동작', 'kbVib'),
+      toggleRow('speaker', '#9b51e0', '키 누를 때 소리', null, 'kbSound'),
+      h('div', { style: 'padding:6px 20px 16px' }, h('input', { type: 'text', class: 'field', placeholder: '여기에서 키보드를 테스트해 보세요', inputmode: 'none', style: 'background:var(--surface2)' }))));
+  }
+  function sub(which) {
+    if (which === 'about') {
+      const row = (k, v) => h('div', { class: 'row', ctx: () => [{ label: '복사', fn: () => Clip.add(v) }] }, h('div', { class: 'tx' }, h('b', null, k), h('small', null, v)));
+      let taps = 0;
+      stack.push(h('div', { class: 'view' }, Bar('휴대전화 정보', { back: () => stack.pop() }), h('div', { class: 'pg-body' },
+        h('div', { style: 'text-align:center;padding:24px 0 26px' }, h('div', { style: 'font-size:30px;font-weight:300;letter-spacing:8px' }, 'GALAXY'), h('div', { style: 'color:var(--sub);margin-top:6px' }, 'OS 1.0')),
+        h('div', { class: 'card' }, row('기기 이름', 'Galaxy 웹 폰'), row('모델 번호', 'GOS-W100'), row('소프트웨어 버전', 'Galaxy OS 1.0'),
+          h('div', { class: 'row', onclick: () => { if (++taps === 5) { toast('🎉 개발자 모드가 켜졌습니다 (농담입니다)'); taps = 0; } } }, h('div', { class: 'tx' }, h('b', null, '빌드 번호'), h('small', null, 'GOS1.0.' + new Date().getFullYear() + '.001'))),
+          row('브라우저', navigator.userAgent.replace(/\s*\(.*?\)\s*/g, ' ').slice(0, 80)),
+          row('화면 해상도', `${$('#phone').clientWidth} × ${$('#phone').clientHeight}`)),
+        h('p', { style: 'color:var(--sub);font-size:12px;text-align:center;padding:12px;line-height:1.6' }, 'Galaxy OS 1.0은 브라우저에서 동작하는 휴대전화 OS 시뮬레이터입니다.\n모든 데이터는 이 브라우저에만 저장됩니다.'))));
+    }
+  }
+  render();
+  on('settings', k => { if (k !== 'bright') render(); });
+  on('clip', render);
+  const handle = i => { if (i && i.section === 'kb') { while (stack.depth > 1) stack.pop(); setTimeout(() => scrollInto(kbCard, 'start'), 320); } };
+  handle(intent);
+  return { intent: handle, back: () => stack.pop() };
+});
+
+/* ---------------- 클립보드 ---------------- */
+defineApp('clipboard', '클립보드', '#0ea5a4', 'clip', el => {
+  const pg = Page('클립보드', { actions: [iconBtn('trash', async () => { if (await Dialog.confirm('클립보드 비우기', '고정되지 않은 항목을 모두 삭제할까요?', '삭제', true)) Clip.clear(); }, '모두 삭제')] });
+  el.append(pg.el);
+  const input = h('textarea', { class: 'field', rows: 2, placeholder: '여기에 입력한 뒤 [저장]을 누르면 클립보드에 복사됩니다', inputmode: 'none', style: 'margin-bottom:8px' });
+  const list = h('div');
+  pg.body.append(input, h('div', { style: 'display:flex;gap:8px;justify-content:flex-end;margin-bottom:14px' },
+    h('button', { class: 'pill ghost', style: 'padding:8px 16px;font-size:14px', onpointerdown: e => e.preventDefault(), onclick: async () => {
+      try { const t = await navigator.clipboard.readText(); if (t) { Clip.add(t, { system: false, quiet: true }); toast('기기 클립보드에서 가져왔습니다'); } else toast('기기 클립보드가 비어 있습니다'); } catch { toast('브라우저가 클립보드 읽기를 허용하지 않습니다'); }
+    } }, '기기에서 가져오기'),
+    h('button', { class: 'pill', style: 'padding:8px 18px;font-size:14px', onpointerdown: e => e.preventDefault(), onclick: () => { if (input.value) { Clip.add(input.value); input.value = ''; } } }, '저장')), list);
+  function render() {
+    const items = Clip.sorted();
+    pg.subEl.textContent = `항목 ${items.length}개 · 눌러서 복사`;
+    list.innerHTML = '';
+    if (!items.length) list.append(h('div', { class: 'empty' }, '클립보드가 비어 있습니다.\n앱에서 텍스트를 길게 눌러 복사해 보세요.'));
+    items.forEach(it => list.append(h('div', { class: 'clipapp-item', onclick: () => { Clip.add(Clip.use(it.id)); } },
+      h('div', { style: 'flex:1;min-width:0' }, h('p', null, it.text), h('small', null, (it.pin ? '📌 고정됨 · ' : '') + fmtAgo(it.t))),
+      h('button', { class: 'ibtn' + (it.pin ? ' on' : ''), 'aria-label': '고정', html: svg('pin'), onclick: e => { e.stopPropagation(); Clip.pin(it.id); } }),
+      h('button', { class: 'ibtn', 'aria-label': '삭제', html: svg('x'), onclick: e => { e.stopPropagation(); Clip.remove(it.id); } }))));
+  }
+  on('clip', render); render();
+  return { show: render };
+});
+
+/* ---------------- 인터넷 ---------------- */
+defineApp('internet', '인터넷', '#7a5af8', 'globe', el => {
+  const START = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><style>body{font-family:system-ui,sans-serif;margin:0;padding:40px 20px;background:linear-gradient(180deg,#eef2ff,#fff);color:#222}h1{font-weight:300;letter-spacing:6px;text-align:center;font-size:26px}p{text-align:center;color:#666;font-size:14px}.g{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}a{display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;color:#333;font-size:12px}a span{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;color:#fff;font-size:22px;font-weight:700}</style><h1>GALAXY</h1><p>주소창을 눌러 웹 주소나 검색어를 입력하세요</p><div class="g"><a href="https://ko.m.wikipedia.org/"><span style="background:#555">W</span>위키백과</a><a href="https://en.m.wikipedia.org/wiki/Main_Page"><span style="background:#3366cc">W</span>Wikipedia</a><a href="https://www.openstreetmap.org/export/embed.html?bbox=126.9,37.5,127.1,37.6"><span style="background:#7ebc6f">M</span>지도</a><a href="https://example.com"><span style="background:#e96443">E</span>Example</a><a href="https://developer.mozilla.org/ko/"><span style="background:#111">M</span>MDN</a><a href="https://www.youtube.com/embed/jNQXAC9IVRw"><span style="background:#ff0000">▶</span>동영상</a></div>`;
+  const url = h('input', { type: 'url', class: 'field', placeholder: '검색 또는 URL 입력', inputmode: 'none', 'data-kb': 'en', 'data-enter': '이동' });
+  const frame = h('iframe', { class: 'web', title: '웹 페이지', sandbox: 'allow-scripts allow-same-origin allow-forms allow-popups' });
+  const note = h('div', { style: 'font-size:11px;color:var(--sub);text-align:center;padding:4px 10px' }, '일부 사이트는 보안 정책 때문에 이곳에 표시되지 않을 수 있습니다.');
+  const go = v => {
+    v = (v || '').trim(); KB.close();
+    if (!v) { frame.removeAttribute('src'); frame.srcdoc = START; url.value = ''; return; }
+    let u = /^https?:\/\//i.test(v) ? v : /^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(v) ? 'https://' + v : 'https://ko.m.wikipedia.org/w/index.php?search=' + encodeURIComponent(v);
+    frame.removeAttribute('srcdoc'); frame.src = u; url.value = u;
+    const hist = store.get('webHist', []); hist.unshift(u); store.set('webHist', hist.slice(0, 20));
+  };
+  url.addEventListener('osenter', () => go(url.value));
+  el.append(h('div', { class: 'view' }, h('div', { class: 'urlbar' }, iconBtn('home', () => go(''), '시작 페이지'), url, iconBtn('refresh', () => { if (frame.src) frame.src = frame.src; }, '새로고침')), frame, note));
+  url.addEventListener('focus', () => setTimeout(() => url.select(), 0));
+  go('');
+  return {};
+});
+
+/* ==========================================================================
+   Boot
+   ========================================================================== */
+applySettings();
+Home.render();
+Lock.lock();
+tickAll(); setInterval(tickAll, 1000);
+$('#boot').addEventListener('click', () => $('#boot').classList.add('done'));
+setTimeout(() => $('#boot').classList.add('done'), 1900);
+if (!store.get('booted')) {
+  store.set('booted', true);
+  setTimeout(() => NC.push({ app: 'messages', title: 'Galaxy', body: 'Galaxy OS 1.0에 오신 것을 환영합니다! 메시지 앱을 확인하세요.', intent: { thread: 't0' } }), 2400);
+}
+</script>
+</body>
+</html>
