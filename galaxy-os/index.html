@@ -366,6 +366,100 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 @keyframes bootIn{from{opacity:0;letter-spacing:30px}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* ==========================================================================
+   One UI 9.5 layer: frosted glass, floating bars, editable quick panel
+   ========================================================================== */
+.phone{--gl:rgba(255,255,255,.58);--gl-b:rgba(255,255,255,.7);--gl-hi:rgba(255,255,255,.55);--gl-s:0 10px 34px rgba(0,0,0,.14);--ease:cubic-bezier(.22,1,.36,1)}
+.phone[data-theme=dark]{--gl:rgba(44,44,48,.55);--gl-b:rgba(255,255,255,.12);--gl-hi:rgba(255,255,255,.08);--gl-s:0 10px 34px rgba(0,0,0,.45)}
+.glass{background:var(--gl);backdrop-filter:blur(26px) saturate(1.7);-webkit-backdrop-filter:blur(26px) saturate(1.7);border:1px solid var(--gl-b);box-shadow:var(--gl-s),inset 0 1px 0 var(--gl-hi)}
+#toast{background:var(--gl);color:var(--text);backdrop-filter:blur(26px) saturate(1.7);-webkit-backdrop-filter:blur(26px) saturate(1.7);border:1px solid var(--gl-b)}
+.phone[data-theme=dark] #toast{background:var(--gl);color:var(--text)}
+#ctx{background:var(--gl);backdrop-filter:blur(30px) saturate(1.8);-webkit-backdrop-filter:blur(30px) saturate(1.8);border:1px solid var(--gl-b)}
+.dlg{background:color-mix(in srgb,var(--surface) 82%,transparent);backdrop-filter:blur(30px) saturate(1.6);-webkit-backdrop-filter:blur(30px) saturate(1.6);border:1px solid var(--gl-b)}
+#headsup .noti,.lk-notis .noti{background:var(--gl);color:var(--text);backdrop-filter:blur(26px) saturate(1.7);-webkit-backdrop-filter:blur(26px) saturate(1.7);border:1px solid var(--gl-b)}
+.lk-notis .noti p,.lk-notis .noti .tm,.lk-notis .noti .ap{color:var(--sub)}
+.ou-bar{background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+/* smoother, springier motion */
+.app.opening{animation:appIn .42s var(--ease)}
+.view.pushin{animation:pushIn .38s var(--ease)}
+#drawer{transition:transform .38s var(--ease),opacity .26s}
+/* depth: the home screen recedes behind apps, the apps screen and the lock screen */
+#home{transition:transform .42s var(--ease),opacity .3s,filter .3s}
+.phone.drawer-open #home{transform:scale(.93);opacity:.35;filter:blur(6px)}
+.phone.in-app #home{transform:scale(.92);opacity:.5}
+.phone.locked #home{transform:scale(1.12);opacity:0}
+#wall{transition:background .4s,transform .6s var(--ease),filter .4s}
+.phone.drawer-open #wall,.phone.shade-open #wall{transform:scale(1.04)}
+
+/* floating pill tab bar (One UI 8.5+) */
+.ftab{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;gap:2px;padding:5px;border-radius:34px;z-index:6}
+.ftab button{min-width:62px;height:48px;border-radius:24px;display:grid;place-items:center;color:var(--sub);transition:background .2s,color .2s;padding:0 14px}
+.ftab button.on{background:color-mix(in srgb,var(--text) 10%,transparent);color:var(--text)}
+.ftab svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.has-ftab{padding-bottom:78px!important}
+.has-ftab>.view{padding-bottom:76px}
+/* bottom search pill (One UI 8.5 Settings) */
+.bsearch{position:absolute;left:16px;right:16px;bottom:14px;height:52px;border-radius:26px;display:flex;align-items:center;gap:10px;padding:0 20px;z-index:6;color:var(--sub);font-size:16px;cursor:pointer}
+.bsearch svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.1;stroke-linecap:round}
+
+/* minimal sliders (One UI 9) */
+.oslider .tr{height:4px;border-radius:2px}
+.oslider .fi{height:4px;border-radius:2px}
+.oslider .th{width:16px;height:16px;margin-left:-8px;border:0;background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent)}
+
+/* quick panel tiles */
+#shade .bgd{background:color-mix(in srgb,var(--shade) 70%,transparent);backdrop-filter:blur(40px) saturate(1.5);-webkit-backdrop-filter:blur(40px) saturate(1.5)}
+.qtiles{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:78px;grid-auto-flow:row dense;gap:10px;padding:2px 2px 6px}
+.qt{position:relative;border-radius:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:11.5px;color:var(--text);min-width:0;padding:0 4px;transition:background .2s,color .2s,transform .2s}
+.qt>svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.qt span{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qt.on{background:var(--accent);color:#fff;border-color:transparent}
+.qt.w{grid-column:span 2;flex-direction:row;justify-content:flex-start;gap:12px;padding:0 16px;text-align:left}
+.qt.w .tx{min-width:0}.qt.w b{display:block;font-size:14.5px;font-weight:600}.qt.w small{display:block;font-size:11.5px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qt.sl{padding:0;overflow:hidden;cursor:ns-resize;touch-action:none}
+.qt.sl.h{grid-column:span 4;cursor:ew-resize}
+.qt.sl.v{grid-row:span 3}
+.qt.sl .f{position:absolute;left:0;bottom:0;background:var(--accent);transition:height .06s,width .06s}
+.qt.sl.v .f{right:0}.qt.sl.h .f{top:0}
+.qt.sl .ico{position:absolute;color:#fff}
+.qt.sl.low .ico{color:var(--text)}
+.qt.sl.v .ico{bottom:16px;left:50%;transform:translateX(-50%)}.qt.sl.h .ico{left:18px;top:50%;transform:translateY(-50%)}
+.qt.sl .ico svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.qt.sl .pct{position:absolute;font-size:12px;font-weight:600;color:var(--sub)}
+.qt.sl.v .pct{top:12px;left:0;right:0;text-align:center}.qt.sl.h .pct{right:18px;top:50%;transform:translateY(-50%)}
+.qedit .qt{animation:wiggle .35s ease-in-out infinite alternate}
+.qedit .qt:nth-child(2n){animation-delay:.12s}
+@keyframes wiggle{from{transform:rotate(-1.2deg)}to{transform:rotate(1.2deg)}}
+.qb{position:absolute;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--surface);color:var(--text);box-shadow:0 2px 6px rgba(0,0,0,.25);z-index:2}
+.qb svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round}
+.qb.rm{top:-4px;left:-4px;background:var(--danger);color:#fff}.qb.rs{top:-4px;right:-4px}.qb.mv{bottom:-4px;left:-4px}
+.qadd{display:flex;flex-wrap:wrap;gap:8px;padding:6px 2px 4px}
+.qadd button{display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:20px;font-size:13px}
+.qadd svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.qedit-bar{display:flex;justify-content:space-between;align-items:center;padding:4px 6px 10px;font-size:13px;color:var(--sub)}
+
+/* Now Bar on the lock screen */
+.nowbar{display:flex;align-items:center;gap:10px;height:52px;border-radius:26px;padding:0 18px 0 8px;color:#fff;background:rgba(18,18,22,.62);backdrop-filter:blur(24px) saturate(1.5);-webkit-backdrop-filter:blur(24px) saturate(1.5);border:1px solid rgba(255,255,255,.12);max-width:220px;cursor:pointer;margin-bottom:6px}
+.nowbar .sq{width:36px;height:36px;box-shadow:none}.nowbar .sq svg{width:19px;height:19px}
+.nowbar .tx{min-width:0;font-size:13px;line-height:1.25}.nowbar b{display:block;font-size:14.5px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nowbar small{opacity:.75;white-space:nowrap}
+.lk-mid{display:flex;flex-direction:column;align-items:center;gap:6px}
+.lk-clock.stack{font-size:128px;line-height:.92;font-weight:600;letter-spacing:-4px;display:flex;flex-direction:column;align-items:center;margin-top:6px}
+.lk-clock.bold{font-weight:600;font-size:96px}
+
+/* app lock PIN pad */
+.pinpad{position:absolute;inset:0;z-index:45;display:flex;flex-direction:column;align-items:center;padding-top:90px;color:var(--text);background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:blur(30px) saturate(1.4);-webkit-backdrop-filter:blur(30px) saturate(1.4);animation:fadeIn .2s}
+.pinpad h3{font-size:20px;font-weight:600;margin-top:16px}.pinpad p{font-size:14px;color:var(--sub);margin-top:6px;min-height:20px}
+.pinpad .dots{margin:26px 0 30px;gap:16px}.pinpad .dots i{width:13px;height:13px;background:var(--text);opacity:.2}.pinpad .dots i.on{opacity:1;transform:none}
+.pinpad .dots.err{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+.pinpad .pad{display:grid;grid-template-columns:repeat(3,76px);gap:14px 26px}
+.pinpad .pad button{height:76px;border-radius:50%;font-size:30px;font-weight:300}
+.pinpad .pad button.k{background:color-mix(in srgb,var(--text) 7%,transparent)}
+.pinpad .pad button:active{background:color-mix(in srgb,var(--text) 16%,transparent)}
+.pinpad .pad svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:1.8;margin:auto}
+.pinpad .cancel{margin-top:18px;color:var(--accent);font-weight:600;padding:10px 20px}
+
 /* ---------- app specific ---------- */
 .wx-app{color:#fff;transition:background .4s}
 .wx-app .ibtn{color:#fff}.wx-app .ibtn:active{background:rgba(255,255,255,.15)}
@@ -542,7 +636,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     <div id="volp"></div>
     <div id="pmenu"></div>
     <div id="off"></div>
-    <div id="boot"><div class="logo">GALAXY</div><div class="ver">ONE UI · OS 1.0</div></div>
+    <div id="boot"><div class="logo">GALAXY</div><div class="ver">ONE UI 9.5</div></div>
   </div>
 </div>
 <script>
@@ -682,12 +776,15 @@ const P = {
   nfc: '<path d="M6 8v8l6-8v8M14 8h4M14 12h3M14 8v8"/>',
   eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
   data: '<path d="M7 20V9M4 12l3-3 3 3M17 4v11M14 12l3 3 3-3"/>',
+  hourglass: '<path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9"/>',
+  stopwatch: '<circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 1.5M10 2.5h4M18.5 6.5l1.5-1.5"/>',
+  album: '<rect x="3" y="7" width="14" height="14" rx="2.5"/><path d="M7 3h11a3 3 0 0 1 3 3v11"/><path d="M3 17l4-4 4 4 2-2 4 4"/>',
 };
 const svg = (n, extra = '') => `<svg viewBox="0 0 24 24" ${extra}>${P[n] || ''}</svg>`;
 const iconBtn = (n, onclick, label) => h('button', { class: 'ibtn', onclick, 'aria-label': label || n, title: label || '', html: svg(n) });
 
 /* ---------- settings ---------- */
-const DEFAULTS = { dark: false, wall: 0, wallCustom: '', bright: 100, numRow: true, kbVib: true, kbSound: false, kbAlt: true, lang: 'ko', wifi: true, bt: false, silent: false, vibOnly: false, air: false, torch: false, rotate: true, kbPreview: true, h24: false, vol: 9, mediaVol: 10, fs: 1, headsup: true, dnd: false, data: true, loc: true, hotspot: false, nfc: false, eyeComfort: false, powerSave: false, lockNoti: 'icons', edge: true, pageDots: true, accent: '', wxLat: 37.5665, wxLon: 126.978, wxCity: '서울' };
+const DEFAULTS = { lockClock: 'stack', appLock: [], pin: '', dark: false, wall: 0, wallCustom: '', bright: 100, numRow: true, kbVib: true, kbSound: false, kbAlt: true, lang: 'ko', wifi: true, bt: false, silent: false, vibOnly: false, air: false, torch: false, rotate: true, kbPreview: true, h24: false, vol: 9, mediaVol: 10, fs: 1, headsup: true, dnd: false, data: true, loc: true, hotspot: false, nfc: false, eyeComfort: false, powerSave: false, lockNoti: 'icons', edge: true, pageDots: true, accent: '', wxLat: 37.5665, wxLon: 126.978, wxCity: '서울' };
 const S = Object.assign({}, DEFAULTS, store.get('settings', {}));
 function setS(k, v) { S[k] = v; store.set('settings', S); applySettings(); emit('settings', k); }
 const WALLS = [
@@ -1267,6 +1364,7 @@ const WM = {
   open(id, intent, from) {
     const app = APPS[id]; if (!app) return;
     Unlock.force();
+    if (AppLock.needs(id) && this.cur !== id) { AppLock.verify(id).then(ok => { if (ok) this.open(id, intent, from); }); return; }
     Drawer.close(); Recents.close(); Shade.close(); Ctx.hide(); Edge.close();
     let r = this.run.get(id);
     if (!r) {
@@ -1608,8 +1706,8 @@ const Drawer = (() => {
   }
   q.addEventListener('input', render);
   q.addEventListener('osenter', () => { const first = results.querySelector('.ic,.rrow'); if (first && q.value) first.click(); });
-  function open(focusSearch) { if (WM.cur) WM.home(); Edge.close(); renderPages(); render(); pager.go(0, false); el.classList.add('open'); if (focusSearch) setTimeout(() => q.focus(), 60); }
-  function close() { if (!el.classList.contains('open')) return; el.classList.remove('open'); if (document.activeElement === q) KB.close(); q.value = ''; render(); }
+  function open(focusSearch) { if (WM.cur) WM.home(); Edge.close(); renderPages(); render(); pager.go(0, false); el.classList.add('open'); phone.classList.add('drawer-open'); if (focusSearch) setTimeout(() => q.focus(), 60); }
+  function close() { if (!el.classList.contains('open')) return; el.classList.remove('open'); phone.classList.remove('drawer-open'); if (document.activeElement === q) KB.close(); q.value = ''; render(); }
   return { open, close, render, get isOpen() { return el.classList.contains('open'); } };
 })();
 
@@ -1634,15 +1732,24 @@ const Edge = (() => {
 })();
 
 /* ---------- quick panel (two stages, like One UI) ---------- */
+const QS_DEFAULT = [
+  { id: 'wifi', sz: 'w' }, { id: 'bt', sz: 'w' },
+  { id: 'sound', sz: 's' }, { id: 'rotate', sz: 's' }, { id: 'torch', sz: 's' }, { id: 'air', sz: 's' },
+  { id: 'bright', sz: 'v' }, { id: 'vol', sz: 'v' },
+  { id: 'dark', sz: 's' }, { id: 'dnd', sz: 's' }, { id: 'data', sz: 's' }, { id: 'loc', sz: 's' }, { id: 'eyeComfort', sz: 's' }, { id: 'rec', sz: 's' },
+];
 const Shade = (() => {
   const el = $('#shade');
   let state = 0; // 0 closed, 1 notifications + mini toggles, 2 expanded quick panel
+  let editing = false;
+  let layout = store.get('qsLayout', QS_DEFAULT);
+  const saveLayout = () => store.set('qsLayout', layout);
   const soundMode = () => S.silent ? 2 : S.vibOnly ? 1 : 0;
   const cycleSound = () => { const m = (soundMode() + 1) % 3; S.vibOnly = m === 1; setS('silent', m === 2); toast(['소리 모드', '진동 모드', '무음 모드'][m]); if (m === 1) vibrate(200); };
   const QS = {
-    wifi: { label: 'Wi-Fi', icon: 'wifi', k: 'wifi' },
-    bt: { label: '블루투스', icon: 'bt', k: 'bt' },
-    sound: { label: () => ['소리', '진동', '무음'][soundMode()], icon: () => ['bell', 'vibrate', 'mute'][soundMode()], on: () => true, act: cycleSound },
+    wifi: { label: 'Wi-Fi', icon: 'wifi', k: 'wifi', sub: () => S.wifi && !S.air ? (S.ssid || 'Galaxy_5G') : '꺼짐', page: 'conn' },
+    bt: { label: '블루투스', icon: 'bt', k: 'bt', sub: () => S.bt ? '켜짐' : '꺼짐', page: 'conn' },
+    sound: { label: () => ['소리', '진동', '무음'][soundMode()], icon: () => ['bell', 'vibrate', 'mute'][soundMode()], on: () => true, act: cycleSound, sub: () => '모드 전환', page: 'sound' },
     rotate: { label: '자동 회전', icon: 'rotate', k: 'rotate' },
     air: { label: '비행기 탑재 모드', icon: 'plane', k: 'air' },
     torch: { label: '손전등', icon: 'torch', k: 'torch' },
@@ -1656,43 +1763,79 @@ const Shade = (() => {
     nfc: { label: 'NFC', icon: 'nfc', k: 'nfc' },
     clip: { label: '클립보드', icon: 'clip', on: () => false, act: () => WM.open('clipboard') },
     rec: { label: '화면 캡처', icon: 'img', on: () => false, act: () => capture() },
+    bright: { label: '밝기', icon: 'sun', slider: 'bright', min: 10, max: 100 },
+    vol: { label: '음량', icon: 'speaker', slider: 'vol', min: 0, max: 15 },
   };
+  const SIZES = { slider: ['v', 'h'], tile: ['s', 'w'] };
   const val = (q, f) => typeof q[f] === 'function' ? q[f]() : q[f];
   const isOn = q => q.on ? q.on() : !!S[q.k];
   function toggle(id) {
     const q = QS[id];
     if (q.act) return q.act();
     const v = !S[q.k];
-    if (q.k === 'air') { if (v) { S.wifi = false; S.bt = false; } }
+    if (q.k === 'air' && v) { S.wifi = false; S.bt = false; }
     if ((q.k === 'wifi' || q.k === 'bt') && v) S.air = false;
     setS(q.k, v);
   }
-  function qbtn(id, withLabel) {
-    const q = QS[id];
-    return h('button', { class: isOn(q) ? 'on' : '', 'aria-label': val(q, 'label'), onclick: () => toggle(id),
-      ctx: q.k === 'wifi' || q.k === 'bt' || id === 'sound' ? () => [{ label: '설정 열기', fn: () => WM.open('settings', { page: id === 'sound' ? 'sound' : 'conn' }) }] : null },
-      h('span', { class: 'qc', html: svg(val(q, 'icon')) }), h('span', null, val(q, 'label')));
+  // thick One UI slider tile: drag anywhere on it, vertical or horizontal
+  function sliderTile(id, sz) {
+    const q = QS[id], k = q.slider;
+    const f = h('div', { class: 'f' }), pct = h('div', { class: 'pct' });
+    const t = h('div', { class: `qt sl glass ${sz}`, role: 'slider', 'aria-label': q.label }, f, h('div', { class: 'ico', html: svg(q.icon) }), pct);
+    const paint = () => { const p = (S[k] - q.min) / (q.max - q.min) * 100; if (sz === 'v') { f.style.height = p + '%'; f.style.width = ''; } else { f.style.width = p + '%'; f.style.height = ''; } pct.textContent = k === 'vol' ? S[k] : Math.round(p) + '%'; t.classList.toggle('low', p < (sz === 'v' ? 22 : 14)); };
+    const at = e => {
+      const r = t.getBoundingClientRect();
+      const p = sz === 'v' ? (r.bottom - e.clientY) / r.height : (e.clientX - r.left) / r.width;
+      const v = Math.round(q.min + clamp(p, 0, 1) * (q.max - q.min));
+      if (k === 'vol') { S.vibOnly = v === 0; S.silent = false; }
+      S[k] = v; store.set('settings', S); applySettings(); paint();
+    };
+    t.addEventListener('pointerdown', e => {
+      if (editing) return;
+      e.stopPropagation(); at(e);
+      const mv = ev => at(ev), up = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); emit('settings', k); };
+      addEventListener('pointermove', mv); addEventListener('pointerup', up);
+    });
+    paint();
+    return t;
+  }
+  function tile(item, i) {
+    const q = QS[item.id]; if (!q) return null;
+    let t;
+    if (q.slider) t = sliderTile(item.id, item.sz);
+    else if (item.sz === 'w') t = h('button', { class: 'qt w glass' + (isOn(q) ? ' on' : ''), onclick: () => !editing && toggle(item.id), ctx: q.page ? () => [{ label: '설정 열기', fn: () => WM.open('settings', { page: q.page }) }] : null, html: svg(val(q, 'icon')) }, h('span', { class: 'tx' }, h('b', null, val(q, 'label')), h('small', null, q.sub ? q.sub() : isOn(q) ? '켜짐' : '꺼짐')));
+    else t = h('button', { class: 'qt glass' + (isOn(q) ? ' on' : ''), 'aria-label': val(q, 'label'), onclick: () => !editing && toggle(item.id), ctx: q.page ? () => [{ label: '설정 열기', fn: () => WM.open('settings', { page: q.page }) }] : null, html: svg(val(q, 'icon')) }, h('span', null, val(q, 'label')));
+    if (editing) {
+      const badge = (cls, icon, label, fn) => h('span', { class: 'qb ' + cls, role: 'button', 'aria-label': label, html: svg(icon), onclick: e => { e.stopPropagation(); fn(); render(); } });
+      t.append(badge('rm', 'minus', '삭제', () => layout.splice(i, 1)));
+      const kinds = q.slider ? SIZES.slider : SIZES.tile;
+      t.append(badge('rs', q.slider ? 'rotate' : 'apps', '크기 변경', () => { item.sz = kinds[(kinds.indexOf(item.sz) + 1) % kinds.length]; }));
+      if (i > 0) t.append(badge('mv', 'chevL', '앞으로 이동', () => { [layout[i - 1], layout[i]] = [layout[i], layout[i - 1]]; }));
+    }
+    return t;
   }
   function render() {
     el.innerHTML = '';
     const d = new Date();
     const top = h('div', { class: 'qp-top' }, h('div', { class: 't' }, fmtST(d)), h('div', { class: 'd' }, fmtDate(d)),
-      iconBtn('search', () => { close(); Drawer.open(true); }, '검색'),
+      state === 2 ? iconBtn(editing ? 'check' : 'edit', () => { editing = !editing; if (!editing) { saveLayout(); toast('빠른 설정 패널을 저장했습니다'); } render(); }, editing ? '완료' : '편집') : iconBtn('search', () => { close(); Drawer.open(true); }, '검색'),
       iconBtn('power', () => { close(); PowerMenu.show(); }, '전원'),
       iconBtn('gear', () => WM.open('settings'), '설정'));
-    const panel = h('div', { class: 'qp-panel' });
+    const panel = h('div', { class: 'qp-panel' + (editing ? ' qedit' : '') });
     if (state === 1) {
-      panel.append(h('div', { class: 'qmini' }, ['wifi', 'sound', 'bt', 'rotate', 'torch', 'air'].map(id => qbtn(id))));
+      const minis = layout.filter(it => QS[it.id] && !QS[it.id].slider).slice(0, 6);
+      panel.append(h('div', { class: 'qmini' }, minis.map(it => { const q = QS[it.id]; return h('button', { class: isOn(q) ? 'on' : '', 'aria-label': val(q, 'label'), onclick: () => toggle(it.id) }, h('span', { class: 'qc', html: svg(val(q, 'icon')) }), h('span', null, val(q, 'label'))); })));
     } else {
-      const big = (id, sub) => { const q = QS[id]; return h('button', { class: isOn(q) ? 'on' : '', onclick: () => toggle(id) }, h('span', { class: 'qi', html: svg(q.icon) }), h('span', { class: 'tx' }, h('b', null, q.label), h('small', null, sub))); };
-      panel.append(
-        h('div', { class: 'qbig' }, big('wifi', S.wifi && !S.air ? 'Galaxy_5G' : '꺼짐'), big('bt', S.bt ? '켜짐' : '꺼짐')),
-        h('div', { class: 'qgrid' }, ['sound', 'rotate', 'air', 'torch', 'dark', 'dnd', 'data', 'loc', 'hotspot', 'powerSave', 'eyeComfort', 'clip'].map(id => qbtn(id, true))),
-        h('div', { class: 'qbright', html: svg('sun') }, oslider(S.bright, 10, 100, v => setS('bright', v))),
-        h('div', { class: 'qrow2' }, h('button', { onclick: () => toast('연결된 기기가 없습니다') }, '기기 제어'), h('button', { onclick: () => toast('미디어 출력: 이 휴대전화') }, '미디어 출력')));
+      if (editing) panel.append(h('div', { class: 'qedit-bar' }, h('span', null, '− 삭제 · 크기 변경 · ‹ 앞으로 이동'), h('button', { class: 'tbtn', onclick: () => { layout = QS_DEFAULT.map(x => ({ ...x })); render(); } }, '초기화')));
+      panel.append(h('div', { class: 'qtiles' }, layout.map((it, i) => tile(it, i))));
+      if (editing) {
+        const unused = Object.keys(QS).filter(id => !layout.some(it => it.id === id));
+        panel.append(h('div', { class: 'qedit-bar' }, h('span', null, unused.length ? '추가할 수 있는 버튼' : '모든 버튼이 추가되었습니다')),
+          h('div', { class: 'qadd' }, unused.map(id => h('button', { class: 'glass', onclick: () => { layout.push({ id, sz: QS[id].slider ? 'h' : 's' }); render(); } }, h('span', { html: svg('plus') }), val(QS[id], 'label')))));
+      } else panel.append(h('div', { class: 'qrow2' }, h('button', { class: 'glass', onclick: () => toast('연결된 기기가 없습니다') }, '기기 제어'), h('button', { class: 'glass', onclick: () => toast('미디어 출력: 이 휴대전화') }, '미디어 출력')));
     }
     const handle = h('div', { class: 'qhandle', onclick: () => setState(state === 1 ? 2 : 1) }, h('i'));
-    const qp = h('div', { class: 'qp' }, top, panel, handle);
+    const qp = h('div', { class: 'qp' }, top, state === 2 ? h('div', { style: 'flex:1;overflow-y:auto;min-height:0;touch-action:pan-y' }, panel) : panel, handle);
     if (state === 1) {
       const list = h('div', { class: 'qp-list' });
       if (!NC.list.length) list.append(h('div', { class: 'empty', style: 'padding:30px 0' }, '알림 없음'));
@@ -1702,21 +1845,21 @@ const Shade = (() => {
       }
       list.addEventListener('click', e => { if (e.target === list) close(); });
       qp.append(list);
-    } else qp.append(h('div', { style: 'flex:1', onclick: () => close() }));
+    }
     el.append(h('div', { class: 'bgd', onclick: () => close() }), qp);
-    drag(top, { end: (dx, dy, moved) => { if (!moved) return; if (dy > 40) setState(2); else if (dy < -40) setState(state - 1); } });
-    drag(panel, { end: (dx, dy, moved) => { if (!moved) return; if (dy > 40) setState(2); else if (dy < -40) setState(state - 1); } });
-    drag(handle, { end: (dx, dy, moved) => { if (!moved) return; if (dy > 30) setState(2); else if (dy < -30) setState(state - 1); } });
+    const swipe = { end: (dx, dy, moved) => { if (!moved || editing) return; if (dy > 40) setState(2); else if (dy < -40) setState(state - 1); } };
+    drag(top, swipe); drag(handle, swipe);
+    if (state === 1) drag(panel, swipe);
     requestAnimationFrame(() => el.classList.add('open'));
   }
-  function setState(s) { if (s <= 0) return close(); state = Math.min(2, s); render(); }
+  function setState(s) { if (s <= 0) return close(); if (s < 2 && editing) { editing = false; saveLayout(); } state = Math.min(2, s); render(); }
   function open(s = 1) { if (Lock.locked) return; KB.close(); Ctx.hide(); Edge.close(); if (state && s <= state) s = state; state = s; render(); updateChrome(); }
-  function close() { if (!state) return; state = 0; el.classList.remove('open'); updateChrome(); setTimeout(() => { if (!state) el.innerHTML = ''; }, 300); }
+  function close() { if (!state) return; if (editing) { editing = false; saveLayout(); } state = 0; el.classList.remove('open'); updateChrome(); setTimeout(() => { if (!state) el.innerHTML = ''; }, 300); }
   function tick() { if (state) { const t = el.querySelector('.qp-top .t'); if (t) t.textContent = fmtST(new Date()); } }
   drag($('#statusbar'), { end: (dx, dy, moved) => { if (!moved) open(1); else if (dy > 20) open(dy > 200 ? 2 : 1); } });
-  on('settings', () => { if (state) render(); });
+  on('settings', k => { if (state && k !== 'bright' && k !== 'vol') render(); });
   on('notifs', () => { if (state === 1) render(); renderStatus(); Lock.renderNotis(); });
-  return { open, close, tick, get isOpen() { return state > 0; }, get state() { return state; } };
+  return { open, close, tick, get isOpen() { return state > 0; }, get state() { return state; }, get editing() { return editing; } };
 })();
 
 /* screen capture of the current app, saved to the gallery */
@@ -1776,8 +1919,27 @@ const Recents = (() => {
 })();
 
 /* ---------- lock screen ---------- */
+/* Now Bar: live activities shown on the lock screen (timer, stopwatch, call…) */
+const NowBar = {
+  items: new Map(),
+  set(key, item) { this.items.set(key, item); Lock.tick(); },
+  clear(key) { this.items.delete(key); Lock.tick(); },
+  // highest priority live item, else the next alarm, else a Now Brief (weather + today's events)
+  current() {
+    const live = [...this.items.values()].sort((a, b) => (b.pri || 0) - (a.pri || 0))[0];
+    if (live) return live;
+    const now = new Date(), nowM = now.getHours() * 60 + now.getMinutes();
+    const next = store.get('alarms', []).filter(a => a.on).map(a => ({ a, d: (a.h * 60 + a.m - nowM + 1440) % 1440 })).sort((x, y) => x.d - y.d)[0];
+    if (next && next.d < 12 * 60) { const t = new Date(); t.setHours(next.a.h, next.a.m); return { app: 'clock', title: () => fmtST(t), sub: () => `알람 · ${next.a.label || ''}`, intent: { tab: 'alarm' } }; }
+    const w = Weather.now, k = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`, ev = (store.get('events', {})[k] || []).length;
+    return { app: 'weather', title: () => `${wxInfo(w.code)[2]} ${w.t}° ${S.wxCity}`, sub: () => ev ? `오늘 일정 ${ev}개` : 'Now Brief', intent: null };
+  },
+};
+// lock-screen clock colour follows the wallpaper
+const WALL_TINT = ['#e4dcff', '#fff0f3', '#d2ffef', '#fff7e8', '#e3ebff', '#e8fbff', '#24305c', '#f2f2f2'];
 const Lock = (() => {
   const el = $('#lock');
+  const nowbar = h('div', { class: 'nowbar' });
   const clock = h('div', { class: 'lk-clock' }), date = h('div', { class: 'lk-date' }), wx = h('div', { class: 'lk-wx' });
   const icons = h('div', { class: 'lk-icons' }), notis = h('div', { class: 'lk-notis' });
   const hint = h('div', { class: 'lk-hint' }, '화면을 밀어서 잠금 해제하세요');
@@ -1796,8 +1958,21 @@ const Lock = (() => {
     return b;
   }
   el.append(h('div', { class: 'lk-lock', html: svg('lock') }), date, clock, wx, icons, notis,
-    h('div', { class: 'lk-bottom' }, shortcut('phone', '전화', 'phone'), hint, shortcut('cam', '카메라', 'camera')));
-  function tick() { const d = new Date(); clock.textContent = fmtBig(d); date.textContent = fmtDate(d); const w = Weather.now; wx.textContent = `${wxInfo(w.code)[2]} ${w.t}° ${S.wxCity}`; }
+    h('div', { class: 'lk-bottom' }, shortcut('phone', '전화', 'phone'), h('div', { class: 'lk-mid' }, nowbar, hint), shortcut('cam', '카메라', 'camera')));
+  nowbar.addEventListener('pointerdown', e => e.stopPropagation());
+  nowbar.addEventListener('click', e => { e.stopPropagation(); const c = NowBar.current(); unlock(); WM.open(c.app, c.intent, nowbar); });
+  function tick() {
+    const d = new Date();
+    if (S.lockClock === 'stack') { const t = fmtBig(d).split(':'); clock.className = 'lk-clock stack'; clock.innerHTML = `<span>${pad2(t[0])}</span><span>${t[1]}</span>`; }
+    else { clock.className = 'lk-clock bold'; clock.textContent = fmtBig(d); }
+    clock.style.color = S.wallCustom ? '#fff' : WALL_TINT[S.wall] || '#fff';
+    date.textContent = fmtDate(d);
+    const w = Weather.now; wx.textContent = S.lockClock === 'stack' ? '' : `${wxInfo(w.code)[2]} ${w.t}° ${S.wxCity}`;
+    if (!el.classList.contains('gone')) {
+      const c = NowBar.current();
+      nowbar.innerHTML = ''; nowbar.append(appIcon(c.app), h('div', { class: 'tx' }, h('b', null, c.title()), h('small', null, c.sub())));
+    }
+  }
   function renderNotis() {
     icons.innerHTML = ''; notis.innerHTML = '';
     const apps = [...new Set(NC.list.map(n => n.app))].filter(a => APPS[a]);
@@ -1807,6 +1982,9 @@ const Lock = (() => {
   icons.addEventListener('click', e => { e.stopPropagation(); expanded = true; renderNotis(); });
   function lock() {
     KB.close(); Ctx.hide(); Shade.close(); Recents.close(); Dialog.close(); Edge.close(); PowerMenu.close();
+    AppLock.ok.clear(); $$('.pinpad').forEach(x => x.remove());
+    // a locked app that is on screen goes back home so it can't be seen after unlocking
+    if (WM.cur && S.pin && S.appLock.includes(WM.cur)) WM.home();
     el.style.backgroundImage = ''; el.style.background = wallCss();
     expanded = false; el.classList.remove('gone', 'hide'); el.style.opacity = ''; el.style.transform = ''; tick(); renderNotis();
     updateChrome();
@@ -1845,6 +2023,50 @@ const PowerMenu = (() => {
   el.addEventListener('click', close);
   return { show, close, get open() { return el.classList.contains('show'); } };
 })();
+/* ---------- app lock (One UI 9.5) ---------- */
+function askPin({ title, sub = '', app, err } = {}) {
+  return new Promise(res => {
+    KB.close(); Ctx.hide();
+    let v = '';
+    const dots = h('div', { class: 'dots' + (err ? ' err' : '') });
+    const paint = () => { dots.innerHTML = ''; for (let i = 0; i < 4; i++) dots.append(h('i', { class: i < v.length ? 'on' : '' })); };
+    const done = r => { ov.remove(); document.removeEventListener('keydown', kd, true); res(r); };
+    const press = k => { if (k === '⌫') v = v.slice(0, -1); else if (v.length < 4) v += k; paint(); vibrate(8); if (v.length === 4) setTimeout(() => done(v), 140); };
+    const pad = h('div', { class: 'pad' }, ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫'].map(k => k ? h('button', { class: k === '⌫' ? '' : 'k', 'aria-label': k === '⌫' ? '지우기' : k, html: k === '⌫' ? svg('bksp') : k, onclick: () => press(k) }) : h('span')));
+    const ov = h('div', { class: 'pinpad' }, app ? appIcon(app) : h('div', { class: 'sic', style: 'background:var(--accent);width:56px;height:56px', html: svg('lock') }),
+      h('h3', null, title), h('p', null, sub), dots, pad, h('button', { class: 'cancel', onclick: () => done(null) }, '취소'));
+    const kd = e => {
+      if (/^\d$/.test(e.key)) { e.preventDefault(); e.stopPropagation(); press(e.key); }
+      else if (e.key === 'Backspace') { e.preventDefault(); e.stopPropagation(); press('⌫'); }
+      else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); done(null); }
+    };
+    document.addEventListener('keydown', kd, true);
+    paint(); phone.append(ov);
+  });
+}
+const pinHash = pin => { let x = 5381; for (const c of 'gos:' + pin) x = (x * 33 + c.charCodeAt(0)) >>> 0; return x.toString(36); };
+const AppLock = {
+  ok: new Set(), // apps unlocked since the screen was last locked
+  needs(id) { return !!S.pin && S.appLock.includes(id) && !this.ok.has(id); },
+  async verify(id) {
+    let err = false;
+    for (let i = 0; i < 5; i++) {
+      const pin = await askPin({ title: `${APPS[id].name} 잠금 해제`, sub: err ? 'PIN이 일치하지 않습니다. 다시 시도하세요.' : 'PIN을 입력하세요', app: id, err });
+      if (pin == null) return false;
+      if (pinHash(pin) === S.pin) { this.ok.add(id); return true; }
+      err = true; vibrate([60, 40, 60]);
+    }
+    toast('잠시 후 다시 시도하세요'); return false;
+  },
+  async setPin() {
+    if (S.pin) { const old = await askPin({ title: '현재 PIN 입력', sub: 'PIN을 변경하려면 현재 PIN을 입력하세요' }); if (old == null) return false; if (pinHash(old) !== S.pin) { toast('PIN이 일치하지 않습니다'); return false; } }
+    const a = await askPin({ title: '새 PIN 설정', sub: '숫자 4자리를 입력하세요' }); if (a == null) return false;
+    const b = await askPin({ title: 'PIN 확인', sub: '같은 PIN을 한 번 더 입력하세요' }); if (b == null) return false;
+    if (a !== b) { toast('PIN이 일치하지 않습니다'); return false; }
+    setS('pin', pinHash(a)); toast('PIN을 설정했습니다'); return true;
+  },
+};
+
 let poweredOff = false;
 function powerOff() { poweredOff = true; Lock.lock(); $('#off').classList.add('show'); }
 function boot() {
@@ -1959,8 +2181,8 @@ function fmtPhone(n) {
 /* ---------------- 전화 ---------------- */
 defineApp('phone', '전화', '#33b864', 'phone', (el, intent) => {
   let num = '', tab = 'pad', call = null;
-  const body = h('div', { style: 'flex:1;display:flex;flex-direction:column;min-height:0' });
-  const tabs = h('div', { class: 'tabbar' });
+  const body = h('div', { class: 'has-ftab', style: 'flex:1;display:flex;flex-direction:column;min-height:0' });
+  const tabs = h('div', { class: 'ftab glass' });
   el.append(h('div', { class: 'view' }, body, tabs));
   const disp = h('div', { class: 'dial-num', ctx: () => [num && { label: '복사', fn: () => Clip.add(fmtPhone(num)) }, { label: '붙여넣기', fn: () => { num = Clip.latest().replace(/[^0-9*#+]/g, ''); upd(); } }, num && { label: '연락처에 추가', fn: () => WM.open('contacts', { add: fmtPhone(num) }) }] });
   const hint = h('div', { class: 'dial-hint' });
@@ -2000,7 +2222,7 @@ defineApp('phone', '전화', '#33b864', 'phone', (el, intent) => {
     body.append(...(tab === 'pad' ? padView() : tab === 'rec' ? recentsView() : contactsView()));
     if (tab === 'pad') upd();
     tabs.innerHTML = '';
-    [['pad', '키패드'], ['rec', '최근기록'], ['con', '연락처']].forEach(([k, l]) => tabs.append(h('button', { class: tab === k ? 'on' : '', onclick: () => { tab = k; render(); } }, l)));
+    [['pad', '키패드', 'keypad'], ['rec', '최근기록', 'history'], ['con', '연락처', 'user']].forEach(([k, l, ic]) => tabs.append(h('button', { class: tab === k ? 'on' : '', 'aria-label': l, title: l, html: svg(ic), onclick: () => { tab = k; render(); } })));
   }
   function startCall(n) {
     if (call) return;
@@ -2015,8 +2237,9 @@ defineApp('phone', '전화', '#33b864', 'phone', (el, intent) => {
     el.append(ov);
     const ringT = setTimeout(() => { st.textContent = '00:00'; call.int = setInterval(() => { secs++; st.textContent = pad2(Math.floor(secs / 60)) + ':' + pad2(secs % 60); }, 1000); }, 2200);
     call = { ov, int: null };
+    NowBar.set('call', { pri: 5, app: 'phone', title: () => c ? c.name : fmtPhone(n), sub: () => secs ? `통화 중 ${pad2(Math.floor(secs / 60))}:${pad2(secs % 60)}` : '전화 거는 중' });
     function end() {
-      clearTimeout(ringT); clearInterval(call.int);
+      clearTimeout(ringT); clearInterval(call.int); NowBar.clear('call');
       st.textContent = '통화 종료'; tone(480, 0.25, 0.06);
       const calls = store.get('calls', []); calls.unshift({ num: n, name: c ? c.name : '', t: Date.now(), dur: secs }); store.set('calls', calls.slice(0, 50));
       setTimeout(() => { ov.remove(); call = null; num = ''; render(); }, 700);
@@ -2315,8 +2538,8 @@ defineApp('calculator', '계산기', '#3bb26a', 'calc', el => {
 /* ---------------- 시계 ---------------- */
 defineApp('clock', '시계', '#283a7a', 'clock', (el, intent) => {
   let tab = (intent && intent.tab) || 'alarm';
-  const body = h('div', { style: 'flex:1;display:flex;flex-direction:column;min-height:0;position:relative' });
-  const tabs = h('div', { class: 'tabbar' });
+  const body = h('div', { class: 'has-ftab', style: 'flex:1;display:flex;flex-direction:column;min-height:0;position:relative' });
+  const tabs = h('div', { class: 'ftab glass' });
   el.append(h('div', { class: 'view' }, body, tabs));
   // stopwatch & timer state survives tab switches
   const sw = { run: false, base: 0, start: 0, laps: [] };
@@ -2377,6 +2600,7 @@ defineApp('clock', '시계', '#283a7a', 'clock', (el, intent) => {
     const drawLaps = () => { laps.innerHTML = ''; sw.laps.forEach((l, i) => laps.append(h('div', null, h('span', { style: 'color:var(--sub)' }, pad2(sw.laps.length - i)), h('span', null, fmtSW(l.split)), h('span', null, fmtSW(l.total))))); };
     const drawCtl = () => {
       ctl.innerHTML = '';
+      if (sw.run) NowBar.set('sw', { pri: 2, app: 'clock', intent: { tab: 'sw' }, title: () => fmtSW(swNow()).slice(0, 5), sub: () => '스톱워치' }); else NowBar.clear('sw');
       if (sw.run) ctl.append(h('button', { class: 'pill ghost', onclick: () => { const tot = swNow(); sw.laps.unshift({ total: tot, split: tot - (sw.laps[0] ? sw.laps[0].total : 0) }); drawLaps(); } }, '구간 기록'), h('button', { class: 'pill red', onclick: () => { sw.base = swNow(); sw.run = false; drawCtl(); } }, '중지'));
       else if (sw.base) ctl.append(h('button', { class: 'pill ghost', onclick: () => { sw.base = 0; sw.laps = []; drawLaps(); drawCtl(); t.textContent = fmtSW(0); } }, '초기화'), h('button', { class: 'pill', onclick: () => { sw.start = Date.now(); sw.run = true; drawCtl(); } }, '계속'));
       else ctl.append(h('button', { class: 'pill', onclick: () => { sw.start = Date.now(); sw.run = true; drawCtl(); } }, '시작'));
@@ -2414,6 +2638,7 @@ defineApp('clock', '시계', '#283a7a', 'clock', (el, intent) => {
   }
   function startTimer(secs) {
     tm.run = true; tm.end = Date.now() + secs * 1000;
+    NowBar.set('timer', { pri: 3, app: 'clock', intent: { tab: 'timer' }, title: () => fmtT(Math.max(0, (tm.end - Date.now()) / 1000)), sub: () => '타이머' });
     clearInterval(tm.int);
     tm.int = setInterval(() => {
       if (Date.now() >= tm.end) {
@@ -2423,14 +2648,14 @@ defineApp('clock', '시계', '#283a7a', 'clock', (el, intent) => {
       }
     }, 250);
   }
-  function stopTimer() { tm.run = false; clearInterval(tm.int); }
+  function stopTimer() { tm.run = false; clearInterval(tm.int); NowBar.clear('timer'); }
   function loop() { if (view && view._frame) view._frame(); raf = requestAnimationFrame(loop); }
   function render() {
     body.innerHTML = '';
     view = tab === 'alarm' ? alarmView() : tab === 'world' ? worldView() : tab === 'sw' ? swView() : timerView();
     body.append(view);
     tabs.innerHTML = '';
-    [['alarm', '알람'], ['world', '세계 시각'], ['sw', '스톱워치'], ['timer', '타이머']].forEach(([k, l]) => tabs.append(h('button', { class: tab === k ? 'on' : '', onclick: () => { tab = k; render(); } }, l)));
+    [['alarm', '알람', 'bell'], ['world', '세계 시각', 'globe'], ['sw', '스톱워치', 'stopwatch'], ['timer', '타이머', 'hourglass']].forEach(([k, l, ic]) => tabs.append(h('button', { class: tab === k ? 'on' : '', 'aria-label': l, title: l, html: svg(ic), onclick: () => { tab = k; render(); } })));
   }
   on('tick', () => { if (WM.cur === 'clock' && view && view._tick) view._tick(); });
   render();
@@ -2438,7 +2663,7 @@ defineApp('clock', '시계', '#283a7a', 'clock', (el, intent) => {
     intent: i => { if (i && i.tab) { tab = i.tab; render(); } },
     show() { cancelAnimationFrame(raf); loop(); }, hide() { cancelAnimationFrame(raf); },
     back() { if (view && view.back) return view.back(); if (body.querySelector('.view.pushin, .view + .view')) { body.lastChild.remove(); return true; } return false; },
-    destroy() { stopTimer(); cancelAnimationFrame(raf); },
+    destroy() { stopTimer(); NowBar.clear('sw'); cancelAnimationFrame(raf); },
   };
 });
 
@@ -2491,13 +2716,26 @@ const ART = (() => {
   });
 })();
 defineApp('gallery', '갤러리', '#ea4372', 'img', el => {
-  const pg = Page('갤러리');
-  el.append(pg.el);
-  const all = () => [...store.get('photos', []), ...ART];
+  const pg = Page('사진');
+  const tabs = h('div', { class: 'ftab glass' });
+  pg.body.classList.add('has-ftab');
+  el.append(pg.el); pg.el.append(tabs);
+  let tab = 'photos', album = null;
+  const ALBUMS = { camera: ['카메라', () => store.get('photos', [])], wall: ['배경화면', () => ART] };
+  const all = () => album ? ALBUMS[album][1]() : [...store.get('photos', []), ...ART];
   function render() {
-    const l = all();
-    pg.subEl.textContent = `사진 ${l.length}장`;
     pg.body.innerHTML = '';
+    tabs.innerHTML = '';
+    [['photos', '사진', 'img'], ['albums', '앨범', 'album']].forEach(([k, l, ic]) => tabs.append(h('button', { class: tab === k ? 'on' : '', 'aria-label': l, title: l, html: svg(ic), onclick: () => { tab = k; album = null; render(); } })));
+    if (tab === 'albums' && !album) {
+      pg.setTitle('앨범'); pg.subEl.textContent = `앨범 ${Object.keys(ALBUMS).length}개`;
+      pg.body.append(h('div', { class: 'notes-grid' }, Object.entries(ALBUMS).map(([k, [name, list]]) => { const l = list(); return h('div', { style: 'cursor:pointer', onclick: () => { album = k; render(); } },
+        h('div', { style: `aspect-ratio:1;border-radius:20px;background:${l[0] ? `url("${l[0].src}") center/cover` : 'var(--surface2)'}` }), h('div', { style: 'font-size:15px;margin:8px 4px 0' }, name), h('div', { style: 'font-size:13px;color:var(--sub);margin:2px 4px' }, `${l.length}`)); })));
+      return;
+    }
+    const l = all();
+    pg.setTitle(album ? ALBUMS[album][0] : '사진'); pg.subEl.textContent = `사진 ${l.length}장`;
+    if (!l.length) pg.body.append(h('div', { class: 'empty' }, '사진 없음'));
     pg.body.append(h('div', { class: 'gal' }, l.map((p, i) => h('div', { style: `background-image:url("${p.src}")`, onclick: () => view(i) }))));
   }
   let viewer = null;
@@ -2519,7 +2757,7 @@ defineApp('gallery', '갤러리', '#ea4372', 'img', el => {
   const close = () => { viewer && viewer.remove(); viewer = null; };
   on('photos', render);
   render();
-  return { back() { if (viewer) { close(); return true; } }, show: render };
+  return { back() { if (viewer) { close(); return true; } if (album) { album = null; render(); return true; } }, show: render };
 });
 
 /* ---------------- 카메라 ---------------- */
@@ -2591,9 +2829,9 @@ const SETTINGS_INDEX = [
   ['다크 모드', 'display'], ['라이트 모드', 'display'], ['밝기', 'display'], ['편안하게 보기', 'display'], ['글자 크기', 'display'], ['엣지 패널', 'useful'],
   ['절전 모드', 'battery'], ['배경화면', 'wall'], ['색상 팔레트', 'wall'], ['홈 화면 초기화', 'home'], ['잠금화면 알림', 'lock'], ['24시간 형식', 'general'],
   ['Galaxy 키보드', 'kb'], ['숫자 키', 'kb'], ['키보드 진동', 'kb'], ['클립보드', 'general'], ['언어', 'general'], ['위치', 'location'],
-  ['소프트웨어 업데이트', 'update'], ['휴대전화 정보', 'about'], ['빌드 번호', 'about'], ['저장공간', 'care'], ['메모리', 'care'], ['애플리케이션', 'apps'], ['초기화', 'general'],
+  ['소프트웨어 업데이트', 'update'], ['앱 잠금', 'applock'], ['잠금화면 시계', 'lock'], ['휴대전화 정보', 'about'], ['빌드 번호', 'about'], ['저장공간', 'care'], ['메모리', 'care'], ['애플리케이션', 'apps'], ['초기화', 'general'],
 ];
-const settingsTitle = id => { for (const g of SETTINGS_MENU) for (const m of g) if (m[0] === id) return m[1]; return { kb: 'Galaxy 키보드 설정', wifi: 'Wi-Fi', datetime: '날짜 및 시간', reset: '초기화' }[id] || id; };
+const settingsTitle = id => { for (const g of SETTINGS_MENU) for (const m of g) if (m[0] === id) return m[1]; return { applock: '앱 잠금', kb: 'Galaxy 키보드 설정', wifi: 'Wi-Fi', datetime: '날짜 및 시간', reset: '초기화' }[id] || id; };
 FINDER.push(q => ({ title: '설정', items: SETTINGS_INDEX.filter(([l]) => l.toLowerCase().includes(q) || Hangul.chosung(l).includes(q)).slice(0, 4).map(([l, pg]) => ({ icon: appIcon('settings', 'sm'), label: l, sub: '설정 › ' + settingsTitle(pg), fn: () => WM.open('settings', { page: pg }) })) }));
 const BOOT_AT = Date.now();
 defineApp('settings', '설정', '#68717d', 'gear', (el, intent) => {
@@ -2621,7 +2859,9 @@ defineApp('settings', '설정', '#68717d', 'gear', (el, intent) => {
   const sliderRow = (title, icon, k, min, max) => h('div', { class: 'row', style: 'cursor:default;flex-wrap:wrap;gap:6px 14px' }, h('div', { class: 'tx', style: 'flex-basis:100%' }, h('b', null, title)), h('span', { class: 'ibtn', style: 'width:28px;height:28px;color:var(--sub)', html: svg(icon) }), oslider(S[k], min, max, v => setS(k, v)));
 
   /* ---- main page ---- */
-  const main = Page('설정', { actions: [iconBtn('search', () => open('search'), '검색')] });
+  const main = Page('설정');
+  main.body.classList.add('has-ftab');
+  main.el.append(h('div', { class: 'bsearch glass', role: 'button', onclick: () => open('search'), html: svg('search') }, '설정 검색'));
   main.body.append(
     card(h('div', { class: 'row', onclick: () => open('account') }, h('div', { class: 'av', style: 'background:linear-gradient(135deg,#387cff,#8a63ff);width:52px;height:52px' }, 'G'), h('div', { class: 'tx' }, h('b', { style: 'font-weight:600' }, 'Galaxy 사용자'), h('small', null, 'Galaxy 계정 · 프로필, 계정 및 백업')))),
     ...SETTINGS_MENU.map(g => card(g.map(([id, t, sub, icon, color]) => linkRow(t, sub, () => open(id), icon, color)))));
@@ -2702,8 +2942,28 @@ defineApp('settings', '설정', '#68717d', 'gear', (el, intent) => {
         h('div', { class: 'card' }, h('div', { class: 'card-t' }, '색상 팔레트'), pal)];
     },
     home: () => [card(tRow('엣지 패널', '', 'edge'), linkRow('홈 화면 레이아웃', '홈 화면 및 앱스 화면'), linkRow('홈 화면 초기화', '앱 배치를 기본값으로 되돌립니다', async () => { if (await Dialog.confirm('홈 화면 초기화', '홈 화면 배치를 기본값으로 되돌릴까요?', '초기화')) { Home.reset(); toast('홈 화면을 초기화했습니다'); } })), note('앱스 화면에서 앱을 길게 누르면 홈 화면에 추가할 수 있습니다.')],
-    lock: () => [card(linkRow('화면 잠금 방식', '밀기'), tRow('24시간 형식 사용', '', 'h24', () => { tickAll(); Home.render(); })), card(linkRow('알림', S.lockNoti === 'icons' ? '아이콘만 표시' : '카드', () => open('noti')), linkRow('바로가기', '전화, 카메라')), note('잠금화면에서 아무 방향으로나 화면을 밀면 잠금이 해제됩니다.\n바로가기 아이콘은 밀어서 실행합니다.')],
-    security: () => [h('div', { class: 'card', style: 'display:flex;align-items:center;gap:16px;padding:20px 22px' }, sic('shield', 'var(--ok)'), h('div', null, h('b', { style: 'font-weight:600' }, '보안 상태'), h('div', { style: 'color:var(--sub);font-size:13.5px;margin-top:3px' }, '조치가 필요한 항목이 없습니다'))), card(linkRow('생체 인식', '사용 안 함'), linkRow('권한 관리자', '앱 권한 확인'), linkRow('개인정보 보호', ''))],
+    lock: () => [h('div', { class: 'card' }, h('div', { class: 'card-t' }, '시계 스타일'), h('div', { class: 'seg', style: 'margin:8px 18px 16px' }, [['stack', '세로 (적응형)'], ['line', '가로']].map(([k, l]) => h('button', { class: S.lockClock === k ? 'on' : '', onclick: e => { setS('lockClock', k); Lock.tick(); e.target.parentNode.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === e.target)); } }, l)))),
+      card(linkRow('화면 잠금 방식', '밀기'), tRow('24시간 형식 사용', '', 'h24', () => { tickAll(); Home.render(); })), card(linkRow('알림', S.lockNoti === 'icons' ? '아이콘만 표시' : '카드', () => open('noti')), linkRow('바로가기', '전화, 카메라')), note('잠금화면에서 아무 방향으로나 화면을 밀면 잠금이 해제됩니다.\n바로가기 아이콘은 밀어서 실행합니다.')],
+    security: () => [h('div', { class: 'card', style: 'display:flex;align-items:center;gap:16px;padding:20px 22px' }, sic('shield', 'var(--ok)'), h('div', null, h('b', { style: 'font-weight:600' }, '보안 상태'), h('div', { style: 'color:var(--sub);font-size:13.5px;margin-top:3px' }, '조치가 필요한 항목이 없습니다'))),
+      card(linkRow('앱 잠금', S.appLock.length ? `잠긴 앱 ${S.appLock.length}개` : '사용 안 함', () => open('applock'), 'lock', '#2563eb')), card(linkRow('생체 인식', '사용 안 함'), linkRow('권한 관리자', '앱 권한 확인'), linkRow('개인정보 보호', ''))],
+    applock() {
+      const list = h('div');
+      const draw = () => {
+        list.innerHTML = '';
+        list.append(card(h('div', { class: 'row', onclick: async () => { if (await AppLock.setPin()) draw(); } }, h('div', { class: 'tx' }, h('b', null, S.pin ? 'PIN 변경' : 'PIN 설정'), h('small', { class: S.pin ? 'on' : '' }, S.pin ? '설정됨' : '앱을 잠그려면 먼저 PIN을 설정하세요')))),
+          h('div', { class: 'grp-t' }, '잠글 앱'),
+          card([...APP_ORDER].filter(id => id !== 'settings').sort((a, b) => APPS[a].name.localeCompare(APPS[b].name, 'ko')).map(id => h('div', { class: 'row ind' }, appIcon(id, 'sm'), h('div', { class: 'tx' }, h('b', null, APPS[id].name)),
+            switchEl(S.appLock.includes(id), async v => {
+              if (v && !S.pin && !(await AppLock.setPin())) { draw(); return; }
+              setS('appLock', v ? [...S.appLock, id] : S.appLock.filter(x => x !== id));
+              if (v) WM.kill(id);
+              toast(`${APPS[id].name} ${v ? '잠금' : '잠금 해제'}`); draw();
+            })))),
+          note('잠긴 앱은 열 때마다 PIN이 필요합니다. 화면을 잠그면 다시 잠깁니다.'));
+      };
+      draw();
+      return [list];
+    },
     location: () => [card(mRow('위치 사용', v => v ? '켜짐' : '꺼짐', 'loc')), card(linkRow('날씨 위치', S.wxCity, () => WM.open('weather')))],
     safety: () => [card(linkRow('긴급 연락처', '추가된 연락처 없음'), linkRow('긴급 SOS', '측면 버튼 5번 누르기'), linkRow('재난 문자', ''))],
     account: () => [h('div', { style: 'display:flex;flex-direction:column;align-items:center;padding:10px 0 24px;gap:10px' }, h('div', { class: 'av lg', style: 'background:linear-gradient(135deg,#387cff,#8a63ff)' }, 'G'), h('div', { style: 'font-size:22px' }, 'Galaxy 사용자')), card(linkRow('계정 관리', ''), linkRow('백업', '이 브라우저에 자동 저장 중'), linkRow('데이터 내보내기', '노트와 연락처를 클립보드에 복사', () => { Clip.add(JSON.stringify({ notes: store.get('notes', []), contacts: Contacts.list }, null, 1)); }))],
@@ -2730,14 +2990,14 @@ defineApp('settings', '설정', '#68717d', 'gear', (el, intent) => {
     update() {
       const st = h('div', { style: 'color:var(--sub);font-size:14.5px;margin-top:8px' }, '마지막 확인: ' + (store.get('lastUpd') ? fmtAgo(store.get('lastUpd')) : '없음'));
       const btn = h('button', { class: 'pill', style: 'margin-top:18px', onclick: () => { btn.disabled = true; st.textContent = '업데이트 확인 중…'; setTimeout(() => { store.set('lastUpd', Date.now()); st.textContent = '최신 소프트웨어 버전입니다.'; btn.disabled = false; }, 1600); } }, '다운로드 및 설치');
-      return [h('div', { class: 'card', style: 'padding:30px 24px;text-align:center' }, h('div', { style: 'font-size:15px' }, '현재 소프트웨어 버전'), h('div', { style: 'font-size:22px;font-weight:600;margin-top:6px' }, 'Galaxy OS 1.0 (One UI 스타일)'), st, btn), card(linkRow('자동 다운로드', 'Wi-Fi 연결 시'))];
+      return [h('div', { class: 'card', style: 'padding:30px 24px;text-align:center' }, h('div', { style: 'font-size:15px' }, '현재 소프트웨어 버전'), h('div', { style: 'font-size:22px;font-weight:600;margin-top:6px' }, 'One UI 9.5'), st, btn), card(linkRow('자동 다운로드', 'Wi-Fi 연결 시'))];
     },
     about() {
       let taps = 0;
       const row = (k, v) => h('div', { class: 'row', ctx: () => [{ label: '복사', fn: () => Clip.add(v) }] }, h('div', { class: 'tx' }, h('b', null, k), h('small', null, v)));
       return [h('div', { style: 'text-align:center;padding:4px 0 24px' }, h('div', { style: 'font-size:26px;font-weight:300;letter-spacing:7px' }, 'GALAXY'), h('div', { style: 'color:var(--sub);margin-top:6px' }, 'Galaxy 웹 폰')),
         card(row('기기 이름', 'Galaxy 웹 폰'), row('모델 번호', 'GOS-W100'), row('전화번호', '010-0000-0000')),
-        card(row('소프트웨어 버전', 'Galaxy OS 1.0'), h('div', { class: 'row', onclick: () => { if (++taps === 7) { toast('개발자 모드가 켜졌습니다'); taps = 0; } else if (taps > 3) toast(`개발자 모드까지 ${7 - taps}단계 남았습니다`); } }, h('div', { class: 'tx' }, h('b', null, '빌드 번호'), h('small', null, 'GOS1.0.' + new Date().getFullYear() + '.ONEUI'))),
+        card(row('One UI 버전', '9.5'), row('Android 버전', '17 (웹 시뮬레이션)'), row('소프트웨어 버전', 'Galaxy OS 1.0'), h('div', { class: 'row', onclick: () => { if (++taps === 7) { toast('개발자 모드가 켜졌습니다'); taps = 0; } else if (taps > 3) toast(`개발자 모드까지 ${7 - taps}단계 남았습니다`); } }, h('div', { class: 'tx' }, h('b', null, '빌드 번호'), h('small', null, 'GOS1.0.' + new Date().getFullYear() + '.ONEUI95'))),
           row('화면 해상도', `${phone.clientWidth} × ${phone.clientHeight}`), row('브라우저', navigator.userAgent.replace(/\s*\(.*?\)\s*/g, ' ').slice(0, 80))),
         note('Galaxy OS 1.0은 브라우저에서 동작하는 One UI 스타일 휴대전화 시뮬레이터입니다.\n모든 데이터는 이 브라우저에만 저장됩니다.')];
     },
