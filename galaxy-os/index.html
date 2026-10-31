@@ -460,6 +460,72 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .pinpad .pad svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:1.8;margin:auto}
 .pinpad .cancel{margin-top:18px;color:var(--accent);font-weight:600;padding:10px 20px}
 
+/* ---------- Galaxy AI ---------- */
+.phone{--ai:linear-gradient(120deg,#8a6bff,#3c8dff 50%,#ff6ad5)}
+.ai-grad{background:var(--ai)!important;color:#fff!important}
+.ai-badge{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--ai);flex:none}
+.ai-badge svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linejoin:round}
+.ai-badge.lg{width:56px;height:56px}.ai-badge.lg svg{width:30px;height:30px}
+.ai-ring{position:relative}
+.ai-ring::before{content:"";position:absolute;inset:-1.5px;border-radius:inherit;padding:1.5px;background:var(--ai);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:.9}
+.ai-shimmer{height:14px;border-radius:7px;margin:8px 0;background:linear-gradient(90deg,color-mix(in srgb,var(--text) 8%,transparent),color-mix(in srgb,#8a6bff 35%,transparent),color-mix(in srgb,var(--text) 8%,transparent));background-size:200% 100%;animation:shimmer 1.2s linear infinite}
+@keyframes shimmer{to{background-position:-200% 0}}
+.aisheet-wrap{position:absolute;inset:0;z-index:78;background:rgba(0,0,0,.25);display:flex;align-items:flex-end;padding:0 10px 10px;animation:fadeIn .2s}
+.aisheet{width:100%;border-radius:30px;padding:16px 18px 14px;max-height:70%;display:flex;flex-direction:column;color:var(--text);animation:pushUp .3s var(--ease)}
+.ais-head{display:flex;align-items:center;gap:12px;flex:none}
+.ais-head .tx{flex:1;min-width:0}.ais-head b{display:block;font-size:16px;font-weight:700}
+.ais-head small{display:block;font-size:12.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ais-body{overflow-y:auto;padding:12px 2px 4px;min-height:60px;touch-action:pan-y}
+.ais-text{font-size:15.5px;line-height:1.6;white-space:pre-wrap;word-break:break-word;user-select:text;-webkit-user-select:text}
+.ais-foot{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;padding-top:10px;flex:none}
+.ais-foot .pill{padding:10px 18px;font-size:14px}
+.asst{position:absolute;inset:0;z-index:77;background:rgba(0,0,0,.28);display:flex;align-items:flex-end;padding:0 10px 10px;animation:fadeIn .2s}
+.as-panel{width:100%;height:78%;max-height:100%;border-radius:32px;padding:16px 14px 6px;display:flex;flex-direction:column;color:var(--text);animation:pushUp .32s var(--ease)}
+.as-log{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:14px 4px;touch-action:pan-y}
+.as-b{max-width:86%;padding:11px 15px;border-radius:20px;font-size:15px;line-height:1.5;white-space:pre-wrap;word-break:break-word;align-self:flex-start;background:var(--surface);user-select:text;-webkit-user-select:text}
+.as-b.me{align-self:flex-end;background:var(--ai);color:#fff}
+.as-chips{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 8px;flex:none;scrollbar-width:none;touch-action:pan-x}
+.as-chips::-webkit-scrollbar{display:none}
+.as-chips button{flex:none;padding:9px 14px;border-radius:20px;font-size:13.5px;white-space:nowrap}
+.as-chips button.on{background:var(--accent);color:#fff}
+.as-panel .composer{padding:6px 0 8px}
+.as-panel .composer .field{background:var(--surface)}
+.cts{position:absolute;inset:0 0 46px 0;z-index:79;background:rgba(0,0,0,.18);touch-action:none}
+.cts::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 3px #8a6bff,inset 0 0 40px rgba(110,110,255,.6);pointer-events:none;animation:ctsGlow 1.6s ease-in-out infinite alternate}
+@keyframes ctsGlow{from{opacity:.55}to{opacity:1}}
+.cts.done{z-index:76;pointer-events:none}
+.cts-canvas{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair;transition:opacity .3s}
+.cts-hint{position:absolute;top:52px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:22px;font-size:13.5px;white-space:nowrap;color:var(--text);pointer-events:none}
+.cts-hint svg{width:18px;height:18px;stroke:#8a6bff;fill:none;stroke-width:2}
+.cts-x{position:absolute;top:48px;right:14px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--text)}
+.cts-x svg{width:18px;height:18px;stroke:currentColor;stroke-width:2.4;fill:none;stroke-linecap:round}
+.cts-sel{position:absolute;border-radius:18px;box-shadow:0 0 0 2px #fff,0 0 0 4px #8a6bff,0 0 30px rgba(120,100,255,.8),0 0 0 2000px rgba(0,0,0,.35);animation:fadeIn .25s}
+.kb-ai{padding:0 2px 6px}
+.kb-ai-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 4px 8px}
+.kb-ai-chip{padding:8px 13px;border-radius:18px;background:var(--key);font-size:13px;color:var(--key-text);box-shadow:0 1px 0 rgba(0,0,0,.1)}
+.kb-ai-chip:active{background:var(--accent);color:#fff}
+.kb-ai-out{padding:0 4px}
+.kb-ai-card{background:var(--key);border-radius:14px;padding:12px 14px;font-size:14.5px;line-height:1.5;color:var(--key-text);position:relative}
+.kb-ai-card::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;background:var(--ai);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.kb-ai-card small{color:var(--accent);font-weight:600;font-size:12px}
+.kb-ai-card p{white-space:pre-wrap;word-break:break-word;margin:4px 0 6px}
+.pa-prev{height:260px;border-radius:20px;background:center/contain no-repeat;background-color:#000;transition:filter .2s}
+.pa-prev.busy{filter:blur(6px) brightness(.8)}
+.ai-hero{padding:24px 22px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.ai-hero b{font-size:20px;font-weight:700;background:var(--ai);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ai-hero p{font-size:14px;color:var(--sub);line-height:1.5}
+.ip{background:var(--bg)}
+.ip-half{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px 24px;min-height:0;text-align:center}
+.ip-half.you{transform:rotate(180deg);background:color-mix(in srgb,var(--accent) 8%,var(--bg))}
+.ip-lang{padding:8px 18px;border-radius:20px;font-size:14px;font-weight:600;color:var(--text)}
+.ip-text{font-size:24px;line-height:1.4;max-height:40%;overflow-y:auto;width:100%;word-break:break-word}
+.ip-ph{color:var(--sub);font-size:17px}
+.ip-mic{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;box-shadow:0 6px 18px rgba(90,80,255,.35)}
+.ip-mic svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round}
+.ip-mic.rec{animation:pulse 1s infinite}
+.ip-mid{height:1px;background:var(--line);position:relative;flex:none}
+.ip-mid .ibtn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--surface);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+
 /* ---------- app specific ---------- */
 .wx-app{color:#fff;transition:background .4s}
 .wx-app .ibtn{color:#fff}.wx-app .ibtn:active{background:rgba(255,255,255,.15)}
@@ -776,6 +842,8 @@ const P = {
   nfc: '<path d="M6 8v8l6-8v8M14 8h4M14 12h3M14 8v8"/>',
   eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
   data: '<path d="M7 20V9M4 12l3-3 3 3M17 4v11M14 12l3 3 3-3"/>',
+  ai: '<path d="M11 3.5l1.9 4.9 4.9 1.9-4.9 1.9L11 17.1l-1.9-4.9L4.2 10.3l4.9-1.9z"/><path d="M18.5 14.5l.9 2.2 2.1.8-2.1.9-.9 2.1-.8-2.1-2.2-.9 2.2-.8z"/>',
+  translate: '<path d="M4 5h9M8.5 3v2M6.5 5c1 3.3 3.2 5.7 6.5 7M11 5c-1 4-3.6 6.8-7 8"/><path d="M13 21l4-9 4 9M14.4 18h5.2"/>',
   hourglass: '<path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9"/>',
   stopwatch: '<circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4l2.5 1.5M10 2.5h4M18.5 6.5l1.5-1.5"/>',
   album: '<rect x="3" y="7" width="14" height="14" rx="2.5"/><path d="M7 3h11a3 3 0 0 1 3 3v11"/><path d="M3 17l4-4 4 4 2-2 4 4"/>',
@@ -784,7 +852,7 @@ const svg = (n, extra = '') => `<svg viewBox="0 0 24 24" ${extra}>${P[n] || ''}<
 const iconBtn = (n, onclick, label) => h('button', { class: 'ibtn', onclick, 'aria-label': label || n, title: label || '', html: svg(n) });
 
 /* ---------- settings ---------- */
-const DEFAULTS = { lockClock: 'stack', appLock: [], pin: '', dark: false, wall: 0, wallCustom: '', bright: 100, numRow: true, kbVib: true, kbSound: false, kbAlt: true, lang: 'ko', wifi: true, bt: false, silent: false, vibOnly: false, air: false, torch: false, rotate: true, kbPreview: true, h24: false, vol: 9, mediaVol: 10, fs: 1, headsup: true, dnd: false, data: true, loc: true, hotspot: false, nfc: false, eyeComfort: false, powerSave: false, lockNoti: 'icons', edge: true, pageDots: true, accent: '', wxLat: 37.5665, wxLon: 126.978, wxCity: '서울' };
+const DEFAULTS = { aiKey: '', aiModel: 'claude-opus-5-5', aiCts: true, aiKb: true, sideKey: 'assistant', lockClock: 'stack', appLock: [], pin: '', dark: false, wall: 0, wallCustom: '', bright: 100, numRow: true, kbVib: true, kbSound: false, kbAlt: true, lang: 'ko', wifi: true, bt: false, silent: false, vibOnly: false, air: false, torch: false, rotate: true, kbPreview: true, h24: false, vol: 9, mediaVol: 10, fs: 1, headsup: true, dnd: false, data: true, loc: true, hotspot: false, nfc: false, eyeComfort: false, powerSave: false, lockNoti: 'icons', edge: true, pageDots: true, accent: '', wxLat: 37.5665, wxLon: 126.978, wxCity: '서울' };
 const S = Object.assign({}, DEFAULTS, store.get('settings', {}));
 function setS(k, v) { S[k] = v; store.set('settings', S); applySettings(); emit('settings', k); }
 const WALLS = [
@@ -1051,13 +1119,15 @@ const KB = (() => {
     root.innerHTML = '';
     const lbl = field && (field.getAttribute('placeholder') || '');
     root.append(h('div', { class: 'kb-tool' },
+      S.aiKb ? tb('ai', 'Galaxy AI 채팅 어시스트', mode === 'ai', () => setMode(mode === 'ai' ? 'keys' : 'ai')) : null,
       tb('smile', '이모티콘', mode === 'emoji', () => setMode(mode === 'emoji' ? 'keys' : 'emoji')),
       tb('clip', '클립보드', mode === 'clip', () => setMode(mode === 'clip' ? 'keys' : 'clip')),
       tb('mic', '음성 입력', !!rec, voice),
       tb('gear', '키보드 설정', false, () => { close(); WM.open('settings', { section: 'kb' }); }),
       h('div', { class: 'lbl' }, mode === 'clip' ? '클립보드' : mode === 'emoji' ? '이모티콘' : (layout === 'ko' ? '한국어' : layout === 'en' ? 'English' : '기호') + (lbl ? ' · ' + lbl : '')),
       tb('chevD', '키보드 숨기기', false, close)));
-    if (mode === 'emoji') root.append(emojiPanel());
+    if (mode === 'ai') root.append(aiPanel());
+    else if (mode === 'emoji') root.append(emojiPanel());
     else if (mode === 'clip') root.append(clipPanel());
     else root.append(keys());
   }
@@ -1118,6 +1188,44 @@ const KB = (() => {
     if (k === '1/2' || k === '2/2') return h('div', { class: 'key fn wide', 'data-k': 'page' }, k);
     const c = label(k);
     return h('div', { class: 'key ch', 'data-k': 'c', 'data-c': S.kbPreview ? c : '', 'data-v': c, 'data-a': alt || '' }, c, alt ? h('span', { class: 'alt' }, alt) : null);
+  }
+  // Chat Assist: rewrite the field's text (or the selection) in another tone, fix spelling, translate
+  let aiResult = null;
+  function aiPanel() {
+    const f = field, a = f.selectionStart, b = f.selectionEnd;
+    const src = (a !== b ? f.value.slice(a, b) : f.value).trim();
+    const out = h('div', { class: 'kb-ai-out' });
+    const STY = [['전문적으로', '전문적이고 공손한 비즈니스 문체'], ['캐주얼하게', '친구에게 말하듯 편안한 문체'], ['정중하게', '아주 정중한 존댓말'], ['소셜 미디어', '소셜 미디어 게시물 문체 (해시태그 포함)'], ['이모티콘 추가', '같은 문체에 어울리는 이모지를 추가']];
+    const run = (label, job) => {
+      if (!src) { out.innerHTML = ''; out.append(h('div', { class: 'empty', style: 'padding:14px' }, '먼저 문장을 입력하세요')); return; }
+      out.innerHTML = ''; out.append(h('div', { class: 'ai-shimmer' }), h('div', { class: 'ai-shimmer', style: 'width:70%' }));
+      job().then(t => {
+        aiResult = t; out.innerHTML = '';
+        out.append(h('div', { class: 'kb-ai-card' }, h('small', null, label), h('p', null, t),
+          h('div', { style: 'display:flex;gap:6px;justify-content:flex-end' },
+            h('button', { class: 'tbtn', onclick: () => Clip.add(t) }, '복사'),
+            h('button', { class: 'pill', style: 'padding:7px 16px;font-size:13px', onclick: () => {
+              comp = null;
+              if (a !== b) f.setRangeText(t, a, b, 'end'); else { f.value = t; f.setSelectionRange(t.length, t.length); }
+              fire(f); mode = 'keys'; render(); toast('적용했습니다');
+            } }, '적용'))));
+      }).catch(e => { out.innerHTML = ''; out.append(h('div', { class: 'kb-ai-card' }, h('p', null, aiErrText(e)))); });
+    };
+    const rewrite = (label, how) => run(label, () => AI.ask('You rewrite a message typed on a phone keyboard. Rewrite it in the requested style, keeping its meaning and its language. Reply with the rewritten message only.', `스타일: ${how}
+
+${src}`, { max: 2000 }));
+    const chip = (l, fn) => h('button', { class: 'kb-ai-chip', onclick: fn }, l);
+    const p = h('div', { class: 'kb-panel kb-ai', style: `height:${panelH + 52}px` },
+      h('div', { class: 'clip-head' }, h('span', null, a !== b ? '선택한 텍스트에 적용' : src ? '입력한 문장에 적용' : '문장을 입력한 뒤 사용하세요'), h('span', { style: 'color:var(--accent);font-weight:600' }, '✦ 채팅 어시스트')),
+      h('div', { class: 'kb-ai-chips' },
+        STY.map(([l, how]) => chip(l, () => rewrite(l, how))),
+        chip('맞춤법 검사', () => run('맞춤법 검사', () => AI.ask('Fix only the spelling, spacing and grammar of the user\'s text, keeping its language and wording. Reply with the corrected text only.', src, { max: 2000 }))),
+        chip('영어로', () => run('영어 번역', () => AI.translate(src, 'en'))),
+        chip('한국어로', () => run('한국어 번역', () => AI.translate(src, 'ko'))),
+        chip('일본어로', () => run('일본어 번역', () => AI.translate(src, 'ja')))),
+      out);
+    if (!AI.ready) out.append(h('div', { class: 'kb-ai-card' }, h('p', null, '문체 변경과 맞춤법 검사는 Claude API 키를 연결해야 쓸 수 있습니다. 번역은 키 없이도 됩니다.'), h('button', { class: 'tbtn', onclick: () => { close(); WM.open('settings', { page: 'ai' }); } }, 'Galaxy AI 설정')));
+    return p;
   }
   function emojiPanel() {
     const p = h('div', { class: 'kb-panel', style: `height:${panelH}px` },
@@ -1399,6 +1507,9 @@ const WM = {
     updateChrome();
   },
   back() {
+    if (AISheet.open) return AISheet.close();
+    if (CircleSearch.active) return CircleSearch.stop();
+    if (Assistant.open_ && !KB.visible) return Assistant.close();
     if (PowerMenu.open) return PowerMenu.close();
     if (Edge.isOpen) return Edge.close();
     if (Ctx.open) return Ctx.hide();
@@ -1736,7 +1847,7 @@ const QS_DEFAULT = [
   { id: 'wifi', sz: 'w' }, { id: 'bt', sz: 'w' },
   { id: 'sound', sz: 's' }, { id: 'rotate', sz: 's' }, { id: 'torch', sz: 's' }, { id: 'air', sz: 's' },
   { id: 'bright', sz: 'v' }, { id: 'vol', sz: 'v' },
-  { id: 'dark', sz: 's' }, { id: 'dnd', sz: 's' }, { id: 'data', sz: 's' }, { id: 'loc', sz: 's' }, { id: 'eyeComfort', sz: 's' }, { id: 'rec', sz: 's' },
+  { id: 'dark', sz: 's' }, { id: 'dnd', sz: 's' }, { id: 'data', sz: 's' }, { id: 'loc', sz: 's' }, { id: 'eyeComfort', sz: 's' }, { id: 'rec', sz: 's' }, { id: 'ai', sz: 'w' },
 ];
 const Shade = (() => {
   const el = $('#shade');
@@ -1763,6 +1874,7 @@ const Shade = (() => {
     nfc: { label: 'NFC', icon: 'nfc', k: 'nfc' },
     clip: { label: '클립보드', icon: 'clip', on: () => false, act: () => WM.open('clipboard') },
     rec: { label: '화면 캡처', icon: 'img', on: () => false, act: () => capture() },
+    ai: { label: 'Galaxy AI', icon: 'ai', sub: () => 'AI 어시스턴트', on: () => false, act: () => { close(); Assistant.open(); } },
     bright: { label: '밝기', icon: 'sun', slider: 'bright', min: 10, max: 100 },
     vol: { label: '음량', icon: 'speaker', slider: 'vol', min: 0, max: 15 },
   };
@@ -2087,7 +2199,7 @@ function power() {
 }
 (() => {
   const b = $('#powerBtn'); let t = null, long = false;
-  b.addEventListener('pointerdown', () => { long = false; t = setTimeout(() => { long = true; if (!poweredOff) { $('#off').classList.remove('show'); PowerMenu.show(); vibrate(30); } }, 650); });
+  b.addEventListener('pointerdown', () => { long = false; t = setTimeout(() => { long = true; if (!poweredOff) { $('#off').classList.remove('show'); if (S.sideKey === 'assistant') Assistant.open(); else PowerMenu.show(); vibrate(30); } }, 650); });
   b.addEventListener('pointerup', () => { clearTimeout(t); if (!long) power(); });
   b.addEventListener('pointerleave', () => clearTimeout(t));
 })();
@@ -2119,8 +2231,16 @@ const Volume = (() => {
 })();
 
 /* ---------- navigation keys ---------- */
+let homeLong = false;
+(() => {
+  const hb = $('[data-nav=home]'); let t;
+  hb.addEventListener('pointerdown', () => { homeLong = false; clearTimeout(t); t = setTimeout(() => { if (S.aiCts && !Lock.locked) { homeLong = true; CircleSearch.start(); } }, 520); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => hb.addEventListener(ev, () => clearTimeout(t)));
+})();
 $('#navbar').addEventListener('click', e => {
   const b = e.target.closest('[data-nav]'); if (!b) return;
+  if (b.dataset.nav === 'home' && homeLong) { homeLong = false; return; }
+  if (CircleSearch.active) { CircleSearch.stop(); AISheet.close(); if (b.dataset.nav !== 'home') return; }
   vibrate(8);
   if (Lock.locked) return;
   const n = b.dataset.nav;
@@ -2307,8 +2427,17 @@ defineApp('messages', '메시지', '#3f86f7', 'msg', (el, intent) => {
     };
     input.addEventListener('input', () => { input.style.height = 'auto'; input.style.height = Math.min(110, input.scrollHeight) + 'px'; });
     const call = Contacts.list.find(c => c.name === t.name);
+    // Galaxy AI in Messages: suggested replies and a conversation summary
+    const convo = () => (Threads.list.find(x => x.id === id) || { msgs: [] }).msgs.slice(-20).map(m => `${m.me ? '나' : t.name}: ${m.text}`).join('\n');
+    function chatAssist() {
+      AISheet.show({
+        title: '답장 제안', run: () => AI.ask('You suggest replies in a phone messaging app. Given the conversation, write 3 short, natural replies the user ("나") could send next, in the conversation\'s language. One reply per line, no numbering or quotes.', convo(), { max: 1000 }),
+        render: (text, box) => box.append(h('div', { class: 'as-chips', style: 'flex-direction:column;align-items:stretch' }, text.split('\n').map(x => x.replace(/^[\d.\-•)\s"]+|"$/g, '').trim()).filter(Boolean).slice(0, 3).map(r => h('button', { class: 'glass', style: 'text-align:left;padding:12px 16px', onclick: () => { AISheet.close(); input.value = r; input.focus(); } }, r)))),
+        actions: [{ label: '대화 요약', fn: () => setTimeout(() => AISheet.show({ title: '대화 요약', run: () => AI.ask('Summarise this phone conversation in 2-4 short bullet points ("• ") in its language. Plain text.', convo(), { max: 1000 }), actions: [{ label: '복사', fn: x => Clip.add(x) }] }), 0) }],
+      });
+    }
     const v = h('div', { class: 'view' },
-      Bar(t.name, { back: () => stack.pop(), actions: [call ? iconBtn('phone', () => WM.open('phone', { call: call.phone }), '전화') : null] }),
+      Bar(t.name, { back: () => stack.pop(), actions: [iconBtn('ai', () => chatAssist(), '답장 제안'), call ? iconBtn('phone', () => WM.open('phone', { call: call.phone }), '전화') : null] }),
       chat, h('div', { class: 'composer' }, input, h('button', { class: 'send', 'aria-label': '보내기', html: svg('send'), onpointerdown: e => e.preventDefault(), onclick: send })));
     chatRender = () => {
       const th = Threads.list.find(x => x.id === id); if (!th) return;
@@ -2444,8 +2573,30 @@ defineApp('notes', '노트', '#f4683c', 'note', (el, intent) => {
     };
     title.addEventListener('input', persist); body.addEventListener('input', persist);
     title.addEventListener('osenter', () => body.focus());
+    // Note Assist: summarise, auto-format, correct, translate — result can replace or follow the note
+    function noteAssist() {
+      const text = body.value.trim();
+      if (!text) return toast('먼저 노트 내용을 입력하세요');
+      const JOBS = [
+        ['요약', () => AI.ready ? AI.ask('Summarise the user\'s note as 3-5 short bullet points ("• ") in the note\'s language. Plain text, no Markdown headings.', text, { max: 2000 }) : LocalAI.summarize(text)],
+        ['자동 서식', () => AI.ready ? AI.ask('Reformat the user\'s note into a clean structure: a title line, short headings where useful, and "• " bullet points. Keep all information and the original language. Plain text, no Markdown symbols other than "•".', text, { max: 4000 }) : LocalAI.format(text)],
+        ['맞춤법 교정', () => AI.ask('Correct spelling, spacing and grammar in the user\'s note without changing its meaning or language. Reply with the corrected note only.', text, { max: 4000 })],
+        ['영어로 번역', () => AI.translate(text, 'en')],
+        ['핵심 정리 표', () => AI.ask('Turn the user\'s note into a compact plain-text table with aligned columns (use " | " between cells) capturing its key facts. Same language as the note. Reply with the table only.', text, { max: 3000 })],
+      ];
+      Ctx.vertical = true;
+      const r = v.querySelector('.bar').getBoundingClientRect();
+      Ctx.show(localPt({ clientX: r.right - 120, clientY: r.bottom + 150 }), JOBS.map(([label, job]) => ({ label: '✦ ' + label, fn: () => AISheet.show({
+        title: '노트 어시스트 · ' + label, local: !AI.ready && (label === '요약' || label === '자동 서식'), run: job,
+        actions: [
+          { label: '노트에 적용', primary: true, fn: t => { body.value = t; persist(); toast('노트를 바꿨습니다'); } },
+          { label: '아래에 추가', fn: t => { body.value += '\n\n' + t; persist(); } },
+          { label: '복사', fn: t => Clip.add(t) }],
+      }) })));
+    }
     const v = h('div', { class: 'view' },
       Bar('', { back: () => stack.pop(), actions: [
+        iconBtn('ai', () => noteAssist(), '노트 어시스트'),
         iconBtn('copy', () => Clip.add((title.value ? title.value + '\n' : '') + body.value), '전체 복사'),
         iconBtn('trash', async () => { if (await Dialog.confirm('노트 삭제', '이 노트를 삭제할까요?', '삭제', true)) { save(load().filter(x => x.id !== n.id)); title.value = body.value = ''; stack.pop(); } }, '삭제')] }),
       h('div', { class: 'note-ed' }, title, body));
@@ -2658,9 +2809,15 @@ defineApp('clock', '시계', '#283a7a', 'clock', (el, intent) => {
     [['alarm', '알람', 'bell'], ['world', '세계 시각', 'globe'], ['sw', '스톱워치', 'stopwatch'], ['timer', '타이머', 'hourglass']].forEach(([k, l, ic]) => tabs.append(h('button', { class: tab === k ? 'on' : '', 'aria-label': l, title: l, html: svg(ic), onclick: () => { tab = k; render(); } })));
   }
   on('tick', () => { if (WM.cur === 'clock' && view && view._tick) view._tick(); });
+  function handleIntent(i) {
+    if (!i) return;
+    if (i.startTimer) { const sct = i.startTimer; tm.set = { h: Math.floor(sct / 3600), m: Math.floor(sct / 60) % 60, s: sct % 60 }; tm.total = tm.left = sct; startTimer(sct); tab = 'timer'; render(); return; }
+    if (i.tab) { tab = i.tab; render(); }
+  }
   render();
+  if (intent && intent.startTimer) handleIntent(intent);
   return {
-    intent: i => { if (i && i.tab) { tab = i.tab; render(); } },
+    intent: handleIntent,
     show() { cancelAnimationFrame(raf); loop(); }, hide() { cancelAnimationFrame(raf); },
     back() { if (view && view.back) return view.back(); if (body.querySelector('.view.pushin, .view + .view')) { body.lastChild.remove(); return true; } return false; },
     destroy() { stopTimer(); NowBar.clear('sw'); cancelAnimationFrame(raf); },
@@ -2749,6 +2906,7 @@ defineApp('gallery', '갤러리', '#ea4372', 'img', el => {
       img,
       h('div', { class: 'acts' },
         h('button', { onclick: () => { setS('wallCustom', p.src); toast('배경화면으로 설정했습니다'); } }, h('span', { html: svg('wall') }), '배경화면'),
+        h('button', { onclick: () => PhotoAssist.open(p, () => { close(); render(); }) }, h('span', { html: svg('ai') }), 'AI 편집'),
         h('button', { onclick: () => view((i + 1) % l.length) }, h('span', { html: svg('chevR') }), '다음'),
         !p.art ? h('button', { onclick: async () => { if (await Dialog.confirm('사진 삭제', '이 사진을 삭제할까요?', '삭제', true)) { store.set('photos', store.get('photos', []).filter(x => x.id !== p.id)); close(); render(); } } }, h('span', { html: svg('trash') }), '삭제') : null));
     drag(img, { end: (dx, dy, moved) => { if (!moved) return; if (dx < -50) view((i + 1) % l.length); else if (dx > 50) view((i - 1 + l.length) % l.length); else if (dy > 80) close(); } });
@@ -2816,6 +2974,7 @@ defineApp('camera', '카메라', '#e8435a', 'cam', el => {
 /* ---------------- 설정 (One UI menu tree) ---------------- */
 const ACCENTS = [['', '기본'], ['#387cff', '블루'], ['#7b5cff', '퍼플'], ['#e5487c', '핑크'], ['#1fa37a', '그린'], ['#f08c1a', '오렌지'], ['#5c6b80', '그레이']];
 const SETTINGS_MENU = [
+  [['ai', 'Galaxy AI', '어시스턴트 • 서클 투 서치 • 통역 • 채팅 어시스트', 'ai', '#7b5cff']],
   [['conn', '연결', 'Wi-Fi • 블루투스 • SIM 관리', 'wifi', '#3b82f6'], ['devices', '연결된 기기', 'Quick Share • 자동 전환', 'link', '#0ea5c6']],
   [['modes', '모드 및 루틴', '모드 • 루틴', 'routine', '#22b07d'], ['sound', '소리 및 진동', '소리 모드 • 벨소리', 'speaker', '#8b5cf6'], ['noti', '알림', '상태 표시줄 • 방해 금지', 'bell', '#f97316'], ['display', '디스플레이', '밝기 • 편안하게 보기 • 내비게이션 바', 'display', '#16a34a'], ['battery', '배터리', '절전 모드 • 충전', 'battery', '#22c55e']],
   [['wall', '배경화면 및 스타일', '배경화면 • 색상 팔레트', 'palette', '#ec4899'], ['home', '홈 화면', '레이아웃 • 앱 아이콘 배지', 'apps', '#3b82f6'], ['lock', '잠금화면 및 AOD', '화면 잠금 방식 • 시계 스타일', 'lock', '#2563eb']],
@@ -2829,9 +2988,9 @@ const SETTINGS_INDEX = [
   ['다크 모드', 'display'], ['라이트 모드', 'display'], ['밝기', 'display'], ['편안하게 보기', 'display'], ['글자 크기', 'display'], ['엣지 패널', 'useful'],
   ['절전 모드', 'battery'], ['배경화면', 'wall'], ['색상 팔레트', 'wall'], ['홈 화면 초기화', 'home'], ['잠금화면 알림', 'lock'], ['24시간 형식', 'general'],
   ['Galaxy 키보드', 'kb'], ['숫자 키', 'kb'], ['키보드 진동', 'kb'], ['클립보드', 'general'], ['언어', 'general'], ['위치', 'location'],
-  ['소프트웨어 업데이트', 'update'], ['앱 잠금', 'applock'], ['잠금화면 시계', 'lock'], ['휴대전화 정보', 'about'], ['빌드 번호', 'about'], ['저장공간', 'care'], ['메모리', 'care'], ['애플리케이션', 'apps'], ['초기화', 'general'],
+  ['소프트웨어 업데이트', 'update'], ['앱 잠금', 'applock'], ['Galaxy AI', 'ai'], ['서클 투 서치', 'ai'], ['채팅 어시스트', 'ai'], ['통역', 'ai'], ['API 키', 'ai'], ['잠금화면 시계', 'lock'], ['휴대전화 정보', 'about'], ['빌드 번호', 'about'], ['저장공간', 'care'], ['메모리', 'care'], ['애플리케이션', 'apps'], ['초기화', 'general'],
 ];
-const settingsTitle = id => { for (const g of SETTINGS_MENU) for (const m of g) if (m[0] === id) return m[1]; return { applock: '앱 잠금', kb: 'Galaxy 키보드 설정', wifi: 'Wi-Fi', datetime: '날짜 및 시간', reset: '초기화' }[id] || id; };
+const settingsTitle = id => { for (const g of SETTINGS_MENU) for (const m of g) if (m[0] === id) return m[1]; return { ai: 'Galaxy AI', applock: '앱 잠금', kb: 'Galaxy 키보드 설정', wifi: 'Wi-Fi', datetime: '날짜 및 시간', reset: '초기화' }[id] || id; };
 FINDER.push(q => ({ title: '설정', items: SETTINGS_INDEX.filter(([l]) => l.toLowerCase().includes(q) || Hangul.chosung(l).includes(q)).slice(0, 4).map(([l, pg]) => ({ icon: appIcon('settings', 'sm'), label: l, sub: '설정 › ' + settingsTitle(pg), fn: () => WM.open('settings', { page: pg }) })) }));
 const BOOT_AT = Date.now();
 defineApp('settings', '설정', '#68717d', 'gear', (el, intent) => {
@@ -2869,6 +3028,42 @@ defineApp('settings', '설정', '#68717d', 'gear', (el, intent) => {
 
   /* ---- sub pages ---- */
   const PAGES = {
+    ai() {
+      const key = h('input', { type: 'password', class: 'field', placeholder: 'sk-ant-…', value: S.aiKey ? '••••••••' + S.aiKey.slice(-4) : '', inputmode: 'none', 'data-kb': 'en', 'data-enter': '저장', autocomplete: 'off', style: 'background:var(--surface2)' });
+      const status = h('small');
+      const paint = () => { status.textContent = S.aiKey ? `연결됨 · …${S.aiKey.slice(-4)}` : '연결 안 됨'; status.className = S.aiKey ? 'on' : ''; };
+      const save = () => { const v = key.value.trim(); if (!v || v.startsWith('••')) return; setS('aiKey', v); key.value = '••••••••' + v.slice(-4); KB.close(); paint(); toast('API 키를 저장했습니다'); };
+      key.addEventListener('osenter', save);
+      key.addEventListener('focus', () => { if (key.value.startsWith('••')) key.value = ''; });
+      const test = h('button', { class: 'pill ghost', style: 'padding:9px 16px;font-size:14px', onclick: async () => {
+        save(); if (!S.aiKey) return toast('먼저 API 키를 입력하세요');
+        test.disabled = true; test.textContent = '확인 중…';
+        try { const r = await AI.ask('Reply with exactly: 연결 성공', 'ping', { max: 200 }); toast('✓ ' + (r || '연결 성공').slice(0, 30)); } catch (e) { toast(aiErrText(e)); }
+        test.disabled = false; test.textContent = '연결 테스트';
+      } }, '연결 테스트');
+      paint();
+      const models = h('div');
+      const drawModels = () => { models.innerHTML = ''; models.append(card(AI_MODELS.map(([id, name, sub]) => h('div', { class: 'row', onclick: () => { setS('aiModel', id); drawModels(); } }, h('div', { class: 'tx' }, h('b', null, name), h('small', null, sub)), h('span', { class: 'radio' + ((S.aiModel || 'claude-opus-5-5') === id ? ' on' : '') }))))); };
+      drawModels();
+      const sideSeg = h('div', { class: 'seg', style: 'width:170px' }, [['assistant', 'AI 어시스턴트'], ['power', '전원 메뉴']].map(([k, l]) => h('button', { class: S.sideKey === k ? 'on' : '', onclick: e => { setS('sideKey', k); e.target.parentNode.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === e.target)); } }, l)));
+      return [
+        h('div', { class: 'card ai-hero' }, h('span', { class: 'ai-badge lg', html: svg('ai') }), h('b', null, 'Galaxy AI'), h('p', null, '어시스턴트, 서클 투 서치, 통역, 채팅·노트·포토 어시스트를 사용할 수 있습니다.')),
+        h('div', { class: 'grp-t' }, 'Claude 연결'),
+        h('div', { class: 'card', style: 'padding:6px 0 16px' }, h('div', { class: 'row', style: 'cursor:default' }, h('div', { class: 'tx' }, h('b', null, 'Anthropic API 키'), status)),
+          h('div', { style: 'padding:0 18px' }, key, h('div', { style: 'display:flex;gap:8px;justify-content:flex-end;margin-top:10px' },
+            S.aiKey ? h('button', { class: 'tbtn', style: 'color:var(--danger)', onclick: () => { setS('aiKey', ''); key.value = ''; paint(); toast('API 키를 삭제했습니다'); } }, '삭제') : null, test,
+            h('button', { class: 'pill', style: 'padding:9px 18px;font-size:14px', onpointerdown: e => e.preventDefault(), onclick: save }, '저장')))),
+        note('키는 console.anthropic.com에서 만들 수 있습니다. 키는 이 브라우저에만 저장되며, AI 요청은 이 브라우저에서 Anthropic API로 바로 전송됩니다. 다른 사람과 같이 쓰는 기기에서는 키를 저장하지 마세요.'),
+        h('div', { class: 'grp-t' }, 'AI 모델'), models,
+        h('div', { class: 'grp-t' }, '기능'),
+        card(
+          tRow('서클 투 서치', '홈 버튼을 길게 눌러 화면의 무엇이든 동그라미로 검색', 'aiCts'),
+          tRow('채팅 어시스트', '키보드의 ✦ 버튼으로 문체 변경·맞춤법·번역', 'aiKb'),
+          h('div', { class: 'row', style: 'cursor:default' }, h('div', { class: 'tx' }, h('b', null, '측면 버튼 길게 누르기'), h('small', null, '')), sideSeg),
+          linkRow('통역', '마주 보고 대화를 실시간 통역', () => WM.open('interpreter')),
+          linkRow('AI 어시스턴트 열기', '"7시 알람 맞춰줘", "오늘 브리핑"', () => Assistant.open())),
+        note('API 키 없이도 기기 명령(알람·타이머·설정), 노트 요약/서식(기기 내 처리), 포토 어시스트, 번역(MyMemory 무료 번역)은 사용할 수 있습니다.')];
+    },
     search() {
       const q = h('input', { type: 'text', placeholder: '설정 검색', inputmode: 'none', 'data-enter': '검색' });
       const list = h('div', { class: 'card' });
@@ -3102,7 +3297,7 @@ defineApp('clipboard', '클립보드', '#17a7a2', 'clip', el => {
 });
 
 /* ---------------- 인터넷 ---------------- */
-defineApp('internet', '인터넷', '#6b4ff0', 'globe', el => {
+defineApp('internet', '인터넷', '#6b4ff0', 'globe', (el, intent) => {
   const START = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><style>body{font-family:system-ui,sans-serif;margin:0;padding:40px 20px;background:linear-gradient(180deg,#eef2ff,#fff);color:#222}h1{font-weight:300;letter-spacing:6px;text-align:center;font-size:26px}p{text-align:center;color:#666;font-size:14px}.g{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}a{display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;color:#333;font-size:12px}a span{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;color:#fff;font-size:22px;font-weight:700}</style><h1>GALAXY</h1><p>주소창을 눌러 웹 주소나 검색어를 입력하세요</p><div class="g"><a href="https://ko.m.wikipedia.org/"><span style="background:#555">W</span>위키백과</a><a href="https://en.m.wikipedia.org/wiki/Main_Page"><span style="background:#3366cc">W</span>Wikipedia</a><a href="https://www.openstreetmap.org/export/embed.html?bbox=126.9,37.5,127.1,37.6"><span style="background:#7ebc6f">M</span>지도</a><a href="https://example.com"><span style="background:#e96443">E</span>Example</a><a href="https://developer.mozilla.org/ko/"><span style="background:#111">M</span>MDN</a><a href="https://www.youtube.com/embed/jNQXAC9IVRw"><span style="background:#ff0000">▶</span>동영상</a></div>`;
   const url = h('input', { type: 'url', class: 'field', placeholder: '검색 또는 URL 입력', inputmode: 'none', 'data-kb': 'en', 'data-enter': '이동' });
   const frame = h('iframe', { class: 'web', title: '웹 페이지', sandbox: 'allow-scripts allow-same-origin allow-forms allow-popups' });
@@ -3117,7 +3312,381 @@ defineApp('internet', '인터넷', '#6b4ff0', 'globe', el => {
   url.addEventListener('osenter', () => go(url.value));
   el.append(h('div', { class: 'view' }, h('div', { class: 'urlbar' }, iconBtn('home', () => go(''), '시작 페이지'), url, iconBtn('refresh', () => { if (frame.src) frame.src = frame.src; }, '새로고침')), frame, note));
   url.addEventListener('focus', () => setTimeout(() => url.select(), 0));
-  go('');
+  go(intent && intent.q ? intent.q : '');
+  return { intent: i => { if (i && i.q) go(i.q); } };
+});
+
+/* ==========================================================================
+   Galaxy AI — Claude via the official Anthropic SDK, called from the browser
+   with the user's own API key (Settings › Galaxy AI).
+   ========================================================================== */
+const AI_MODELS = [['claude-opus-5-5', 'Claude Opus 5.5', '가장 정확함 (기본값)'], ['claude-sonnet-5-5', 'Claude Sonnet 5.5', '빠르고 균형 잡힘'], ['claude-haiku-5-5', 'Claude Haiku 5.5', '가장 빠르고 저렴함']];
+const LANGS = { ko: ['한국어', 'ko-KR'], en: ['English', 'en-US'], ja: ['日本語', 'ja-JP'], zh: ['中文', 'zh-CN'], es: ['Español', 'es-ES'], fr: ['Français', 'fr-FR'], vi: ['Tiếng Việt', 'vi-VN'] };
+class AIError extends Error { constructor(code, msg) { super(msg || code); this.code = code; } }
+const AI = {
+  get ready() { return !!S.aiKey; },
+  _sdk: null, _client: null, _key: '',
+  async client() {
+    if (!S.aiKey) throw new AIError('nokey');
+    if (!this._sdk) {
+      try { this._sdk = (await import('https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@0.135.0/+esm')).default; }
+      catch { throw new AIError('net'); }
+    }
+    if (!this._client || this._key !== S.aiKey) {
+      // the key belongs to the person using this page and never leaves their browser except to Anthropic
+      this._client = new this._sdk({ apiKey: S.aiKey, dangerouslyAllowBrowser: true });
+      this._key = S.aiKey;
+    }
+    return this._client;
+  },
+  // One Claude call. `messages` is a prompt string or a full history array.
+  async ask(system, messages, { max = 4000 } = {}) {
+    const c = await this.client();
+    const model = S.aiModel || 'claude-opus-5-5';
+    const req = { model, max_tokens: max, system, messages: typeof messages === 'string' ? [{ role: 'user', content: messages }] : messages, output_config: { effort: 'low' } };
+    // Haiku has no server-side fallback; the others re-run a declined request on Anthropic's recommended model
+    if (model !== 'claude-haiku-5-5') { req.betas = ['server-side-fallback-2026-07-01']; req.fallbacks = 'default'; }
+    let r;
+    try { r = await c.beta.messages.create(req); }
+    catch (e) {
+      const st = e && e.status;
+      throw new AIError(st === 401 || st === 403 ? 'auth' : st === 429 ? 'rate' : st >= 500 ? 'busy' : st ? 'api' : 'net', e && e.message);
+    }
+    if (r.stop_reason === 'refusal') throw new AIError('refusal');
+    return r.content.filter(b => b.type === 'text').map(b => b.text).join('').trim();
+  },
+  async translate(text, to, from) {
+    if (this.ready) return this.ask(`You translate text for a phone interpreter app. Translate the user's message into ${LANGS[to][0]}. Reply with the translation only.`, text, { max: 2000 });
+    // without a key: MyMemory's free translation service
+    const src = from || (/[가-힣]/.test(text) ? 'ko' : /[ぁ-ゟ゠-ヿ]/.test(text) ? 'ja' : 'en');
+    if (src === to) return text;
+    let r = null;
+    try { r = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.slice(0, 480))}&langpair=${src}|${to}`).then(x => x.json()); } catch {}
+    if (!r || !r.responseData || !r.responseData.translatedText) throw new AIError('net');
+    return r.responseData.translatedText;
+  },
+};
+function aiErrText(e) {
+  const m = { nokey: 'Galaxy AI를 사용하려면 설정 › Galaxy AI에서 Claude API 키를 연결하세요.', auth: 'API 키가 올바르지 않습니다. 설정 › Galaxy AI에서 다시 확인하세요.', rate: '요청이 너무 많습니다. 잠시 후 다시 시도하세요.', busy: 'AI 서비스가 혼잡합니다. 잠시 후 다시 시도하세요.', refusal: '이 요청은 처리할 수 없습니다.', net: '네트워크에 연결할 수 없습니다.' };
+  return e instanceof AIError ? (m[e.code] || 'AI 오류: ' + e.message) : '오류: ' + (e && e.message);
+}
+// on-device fallbacks used when no key is connected
+const LocalAI = {
+  sentences: t => t.split(/\n+|(?<=[.!?。])\s+/).map(x => x.trim()).filter(x => x.length > 1),
+  summarize(t) {
+    const ss = this.sentences(t); if (ss.length <= 3) return ss.map(x => '• ' + x).join('\n');
+    const freq = {}; t.toLowerCase().split(/[^0-9a-z가-힣]+/).filter(w => w.length > 1).forEach(w => freq[w] = (freq[w] || 0) + 1);
+    const score = s => s.toLowerCase().split(/[^0-9a-z가-힣]+/).reduce((a, w) => a + (freq[w] || 0), 0) / Math.sqrt(s.length + 5);
+    const top = ss.map((s, i) => ({ s, i, v: score(s) + (i === 0 ? 2 : 0) })).sort((a, b) => b.v - a.v).slice(0, 3).sort((a, b) => a.i - b.i);
+    return top.map(x => '• ' + x.s).join('\n');
+  },
+  format(t) {
+    const ls = t.split('\n').map(x => x.trim()).filter(Boolean); if (!ls.length) return t;
+    return '■ ' + ls[0].replace(/^[•\-*■]\s*/, '') + '\n' + ls.slice(1).map(x => '  • ' + x.replace(/^[•\-*]\s*/, '')).join('\n');
+  },
+};
+
+/* ---------- result sheet shared by AI features ---------- */
+const AISheet = (() => {
+  let cur = null;
+  function close() { if (cur) { cur.remove(); cur = null; } }
+  // run(): Promise<string>; render(text, box) optional custom view; actions: [{ label, fn(text) }]
+  function show({ title, sub, run, render, actions = [], local }) {
+    close(); KB.close();
+    const body = h('div', { class: 'ais-body' }, h('div', { class: 'ai-shimmer' }), h('div', { class: 'ai-shimmer', style: 'width:70%' }), h('div', { class: 'ai-shimmer', style: 'width:85%' }));
+    const foot = h('div', { class: 'ais-foot' });
+    const sheet = h('div', { class: 'aisheet glass ai-ring', onclick: e => e.stopPropagation() },
+      h('div', { class: 'ais-head' }, h('span', { class: 'ai-badge', html: svg('ai') }), h('div', { class: 'tx' }, h('b', null, title), h('small', null, sub || (AI.ready && !local ? 'Galaxy AI · ' + AI_MODELS.find(m => m[0] === (S.aiModel || 'claude-opus-5-5'))[1] : '기기 내 처리'))), iconBtn('x', close, '닫기')),
+      body, foot);
+    cur = h('div', { class: 'aisheet-wrap', onclick: close }, sheet);
+    $('#content').append(cur); // above the keyboard, below the status bar
+    const mine = cur;
+    Promise.resolve().then(run).then(text => {
+      if (cur !== mine) return;
+      body.innerHTML = '';
+      if (render) render(text, body); else body.append(h('div', { class: 'ais-text' }, text));
+      actions.forEach(a => foot.append(h('button', { class: a.primary ? 'pill' : 'pill ghost', onclick: () => { a.fn(text); if (!a.keep) close(); } }, a.label)));
+    }).catch(e => {
+      if (cur !== mine) return;
+      body.innerHTML = ''; body.append(h('div', { class: 'ais-text', style: 'color:var(--sub)' }, aiErrText(e)));
+      if (e.code === 'nokey' || e.code === 'auth') foot.append(h('button', { class: 'pill', onclick: () => { close(); WM.open('settings', { page: 'ai' }); } }, 'Galaxy AI 설정'));
+    });
+  }
+  return { show, close, get open() { return !!cur; } };
+})();
+
+/* ---------- AI assistant (side key long-press) ---------- */
+const Assistant = (() => {
+  let el = null, history = [];
+  const log = h('div', { class: 'as-log' });
+  const input = h('input', { type: 'text', class: 'field', placeholder: '무엇이든 물어보세요', inputmode: 'none', 'data-enter': '보내기' });
+  const bubble = (who, text) => { const b = h('div', { class: 'as-b ' + who, ctx: () => [{ label: '복사', fn: () => Clip.add(text) }] }, text); log.append(b); log.scrollTop = log.scrollHeight; return b; };
+  function brief() {
+    const d = new Date(), w = Weather.now, k = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+    const ev = store.get('events', {})[k] || [], unread = Threads.list.reduce((a, t) => a + (t.unread || 0), 0);
+    const al = store.get('alarms', []).filter(a => a.on).map(a => `${pad2(a.h)}:${pad2(a.m)}`);
+    return `${d.getHours() < 12 ? '좋은 아침이에요' : d.getHours() < 18 ? '좋은 오후예요' : '좋은 저녁이에요'} ☀️\n` +
+      `• 날씨: ${S.wxCity} ${w.t}°, ${wxInfo(w.code)[1]} (최고 ${w.hi}° / 최저 ${w.lo}°)\n` +
+      `• 오늘 일정: ${ev.length ? ev.join(', ') : '없음'}\n• 읽지 않은 메시지: ${unread}개\n• 켜진 알람: ${al.length ? al.join(', ') : '없음'}`;
+  }
+  // phone actions handled on the device, before asking Claude
+  function local(t) {
+    const s = t.replace(/\s+/g, ' ').trim();
+    const onoff = /(꺼|끄|off)/i.test(s) ? false : /(켜|on)/i.test(s) ? true : null;
+    const toggles = [[/다크\s?모드/, 'dark', '다크 모드'], [/(와이파이|wi-?fi)/i, 'wifi', 'Wi-Fi'], [/블루투스/, 'bt', '블루투스'], [/손전등|플래시/, 'torch', '손전등'], [/방해\s?금지/, 'dnd', '방해 금지'], [/비행기/, 'air', '비행기 탑재 모드'], [/절전/, 'powerSave', '절전 모드']];
+    for (const [re, k, name] of toggles) if (re.test(s) && onoff !== null) { setS(k, onoff); return `${name}을(를) ${onoff ? '켰어요' : '껐어요'}.`; }
+    let m = s.match(/(오전|오후|아침|저녁|밤)?\s*(\d{1,2})\s*시\s*(?:(\d{1,2})\s*분|(반))?.*알람/);
+    if (m) {
+      let hh = +m[2]; const mm = m[4] ? 30 : +(m[3] || 0);
+      if (/(오후|저녁|밤)/.test(m[1] || '') && hh < 12) hh += 12; if (m[1] === '오전' && hh === 12) hh = 0;
+      const al = store.get('alarms', []); al.push({ id: uid(), h: hh % 24, m: mm % 60, on: true, label: 'AI 어시스턴트' }); store.set('alarms', al); emit('alarms');
+      return `${fmtST(new Date(2000, 0, 1, hh % 24, mm % 60))}에 알람을 맞췄어요.`;
+    }
+    m = s.match(/(\d+)\s*(시간|분|초)\s*(?:짜리\s*)?타이머|타이머\s*(\d+)\s*(시간|분|초)/);
+    if (m) { const n = +(m[1] || m[3]), u = m[2] || m[4]; const secs = n * (u === '시간' ? 3600 : u === '분' ? 60 : 1); WM.open('clock', { startTimer: secs }); return `${n}${u} 타이머를 시작했어요.`; }
+    if (/(브리핑|나우 브리프|now brief|오늘 일정|오늘 어때)/i.test(s)) return brief();
+    if (/날씨/.test(s) && s.length < 20) { const w = Weather.now; return `${S.wxCity}은(는) 지금 ${w.t}°, ${wxInfo(w.code)[1]}이에요. 최고 ${w.hi}°, 최저 ${w.lo}°예요.`; }
+    if (/(몇\s?시|시간\s?알려)/.test(s)) return `지금은 ${fmtST(new Date())}이에요.`;
+    m = s.match(/^(.+?)\s*(메모|노트)(?:해줘|해|로 저장)/) || s.match(/(?:메모|노트)(?:에|로)?\s*(.+?)\s*(?:저장|적어)/);
+    if (m && m[1]) { const notes = store.get('notes', []); notes.push({ id: uid(), title: 'AI 메모', body: m[1], t: Date.now() }); store.set('notes', notes); return `노트에 저장했어요: "${m[1]}"`; }
+    for (const id of APP_ORDER) { const n = APPS[id].name; if (s.includes(n) && /(열어|실행|켜줘|보여줘|가줘)/.test(s)) { setTimeout(() => { close(); WM.open(id); }, 500); return `${n}을(를) 열게요.`; } }
+    return null;
+  }
+  async function send(text) {
+    text = (text || input.value).trim(); if (!text) return;
+    input.value = '';
+    bubble('me', text);
+    const l = local(text);
+    if (l) { bubble('ai', l); history.push({ role: 'user', content: text }, { role: 'assistant', content: l }); return; }
+    const b = bubble('ai', ''); b.append(h('div', { class: 'ai-shimmer' }));
+    try {
+      if (!AI.ready) throw new AIError('nokey');
+      history.push({ role: 'user', content: text });
+      const ctx = `[휴대전화 정보: ${fmtDate(new Date())} ${fmtST(new Date())}, ${S.wxCity} ${Weather.now.t}° ${wxInfo(Weather.now.code)[1]}]`;
+      const msgs = history.slice(-12).map((m, i, a) => i === a.length - 1 ? { role: 'user', content: `${ctx}\n${m.content}` } : m);
+      const ans = await AI.ask('You are Galaxy AI, the built-in assistant of a Galaxy phone running Galaxy OS. Reply in the user\'s language (Korean by default), short and friendly, plain text without Markdown. The phone itself already handles alarms, timers, opening apps and toggling settings, so for those just tell the user how to phrase the command (e.g. "7시 알람 맞춰줘").', msgs, { max: 2000 });
+      history.push({ role: 'assistant', content: ans });
+      b.textContent = ans;
+    } catch (e) { history.pop(); b.textContent = aiErrText(e); if (e.code === 'nokey') b.append(h('button', { class: 'tbtn', style: 'display:block;margin-top:6px;padding:4px 0', onclick: () => { close(); WM.open('settings', { page: 'ai' }); } }, 'Galaxy AI 설정 열기')); }
+    log.scrollTop = log.scrollHeight;
+  }
+  input.addEventListener('osenter', () => send());
+  function listen() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return toast('이 브라우저에서는 음성 인식을 사용할 수 없습니다');
+    const r = new SR(); r.lang = 'ko-KR';
+    r.onresult = e => send(e.results[0][0].transcript);
+    r.onerror = () => toast('음성을 인식하지 못했습니다');
+    try { r.start(); toast('말씀하세요…'); } catch {}
+  }
+  function open(prompt) {
+    if (Lock.locked) Lock.unlock();
+    Shade.close(); Ctx.hide();
+    if (!el) {
+      el = h('div', { class: 'asst', onclick: e => { if (e.target === el) close(); } },
+        h('div', { class: 'as-panel glass ai-ring' },
+          h('div', { class: 'ais-head' }, h('span', { class: 'ai-badge', html: svg('ai') }), h('div', { class: 'tx' }, h('b', null, 'Galaxy AI'), h('small', null, AI.ready ? '무엇을 도와드릴까요?' : '기기 명령 사용 가능 · 대화는 API 키 연결 필요')), iconBtn('x', close, '닫기')),
+          log,
+          h('div', { class: 'as-chips' }, ['오늘 브리핑', '7시 30분 알람 맞춰줘', '5분 타이머', '다크 모드 켜줘'].map(c => h('button', { class: 'glass', onclick: () => send(c) }, c))),
+          h('div', { class: 'composer' }, input, iconBtn('mic', listen, '음성으로 말하기'), h('button', { class: 'send ai-grad', 'aria-label': '보내기', html: svg('send'), onpointerdown: e => e.preventDefault(), onclick: () => send() }))));
+      if (!log.children.length) bubble('ai', '안녕하세요! Galaxy AI예요. 알람·타이머·설정 변경 같은 명령이나 궁금한 것을 말씀해 주세요.');
+    }
+    $('#content').append(el);
+    vibrate(20);
+    if (prompt) send(prompt);
+  }
+  function close() { if (el && el.isConnected) { KB.close(); el.remove(); } }
+  return { open, close, brief, get open_() { return !!(el && el.isConnected); } };
+})();
+
+/* ---------- Circle to Search (long-press the Home button) ---------- */
+const CircleSearch = (() => {
+  let ov = null;
+  function start() {
+    if (Lock.locked || ov) return;
+    KB.close(); Shade.close(); Ctx.hide();
+    const c = document.createElement('canvas');
+    const W = phone.clientWidth, H = phone.clientHeight;
+    c.width = W * 2; c.height = H * 2; c.className = 'cts-canvas';
+    const g = c.getContext('2d'); g.scale(2, 2);
+    ov = h('div', { class: 'cts' }, c, h('div', { class: 'cts-hint glass' }, h('span', { html: svg('ai') }), '검색할 대상에 동그라미를 그리거나 탭하세요'), h('button', { class: 'cts-x glass', 'aria-label': '닫기', html: svg('x'), onclick: stop }));
+    phone.append(ov);
+    vibrate([10, 40, 10]);
+    let pts = [];
+    const grad = () => { const gr = g.createLinearGradient(0, 0, W, H); gr.addColorStop(0, '#8a6bff'); gr.addColorStop(0.5, '#3c8dff'); gr.addColorStop(1, '#ff6ad5'); return gr; };
+    const draw = () => {
+      g.clearRect(0, 0, W, H); if (pts.length < 2) return;
+      g.lineCap = g.lineJoin = 'round'; g.shadowColor = 'rgba(120,120,255,.8)'; g.shadowBlur = 14;
+      g.strokeStyle = grad(); g.lineWidth = 7; g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p.x, p.y) : g.moveTo(p.x, p.y)); g.stroke();
+      g.shadowBlur = 0; g.strokeStyle = 'rgba(255,255,255,.9)'; g.lineWidth = 2.5; g.stroke();
+    };
+    c.addEventListener('pointerdown', e => {
+      pts = [localPt(e)]; c.setPointerCapture(e.pointerId);
+      const mv = ev => { pts.push(localPt(ev)); draw(); };
+      const up = () => { c.removeEventListener('pointermove', mv); c.removeEventListener('pointerup', up); finish(pts); };
+      c.addEventListener('pointermove', mv); c.addEventListener('pointerup', up);
+    });
+  }
+  function finish(pts) {
+    let x1 = Math.min(...pts.map(p => p.x)), x2 = Math.max(...pts.map(p => p.x)), y1 = Math.min(...pts.map(p => p.y)), y2 = Math.max(...pts.map(p => p.y));
+    if (x2 - x1 < 24 && y2 - y1 < 24) { x1 -= 70; x2 += 70; y1 -= 26; y2 += 26; } // a tap selects the area around it
+    const box = { x1, y1, x2, y2 };
+    const { text, image } = collect(box);
+    // show the selection as a glowing rounded box
+    ov.querySelector('canvas').style.opacity = 0;
+    ov.querySelector('.cts-hint').remove();
+    ov.classList.add('done'); // the result sheet and the navigation bar sit above the selection
+    ov.append(h('div', { class: 'cts-sel', style: `left:${x1}px;top:${y1}px;width:${x2 - x1}px;height:${y2 - y1}px` }));
+    const q = text || (image ? '선택한 이미지' : '');
+    if (!q) { toast('선택한 영역에서 내용을 찾지 못했습니다'); stop(); return; }
+    AISheet.show({
+      title: '서클 투 서치', sub: text ? `"${text.length > 40 ? text.slice(0, 40) + '…' : text}"` : '이미지 선택됨', local: !AI.ready,
+      run: () => AI.ready
+        ? AI.ask('사용자가 휴대전화 화면에서 동그라미를 그려 선택한 내용입니다. 그것이 무엇인지 한국어로 3~4문장의 "AI 개요"로 설명하세요. 마크다운 없이 일반 텍스트로 답하세요.', text || '(텍스트 없는 이미지 영역)', { max: 1500 })
+        : `선택한 내용\n${q}\n\nAI 개요를 보려면 설정 › Galaxy AI에서 Claude API 키를 연결하세요.`,
+      actions: [
+        { label: '웹 검색', primary: true, fn: () => WM.open('internet', { q }) },
+        { label: '번역', fn: () => AISheet.show({ title: '번역', run: () => AI.translate(q, /[가-힣]/.test(q) ? 'en' : 'ko'), local: !AI.ready, actions: [{ label: '복사', fn: t => Clip.add(t) }] }) },
+        { label: '복사', fn: () => Clip.add(q) },
+      ],
+    });
+    const watch = setInterval(() => { if (!AISheet.open) { clearInterval(watch); stop(); } }, 200);
+  }
+  // text nodes that are actually visible inside the circled box
+  function collect(b) {
+    const r0 = phone.getBoundingClientRect(), toC = (x, y) => ({ x: r0.left + x * SCALE, y: r0.top + y * SCALE });
+    const a = toC(b.x1, b.y1), z = toC(b.x2, b.y2);
+    ov.style.pointerEvents = 'none';
+    const out = [], seen = new Set(); let image = false;
+    const tw = document.createTreeWalker(phone, NodeFilter.SHOW_TEXT);
+    const rg = document.createRange();
+    for (let n = tw.nextNode(); n; n = tw.nextNode()) {
+      const t = n.textContent.trim(); if (!t || ov.contains(n)) continue;
+      rg.selectNodeContents(n);
+      for (const r of rg.getClientRects()) {
+        if (r.right < a.x || r.left > z.x || r.bottom < a.y || r.top > z.y || !r.width) continue;
+        const top = document.elementFromPoint(clamp((r.left + r.right) / 2, a.x, z.x), clamp((r.top + r.bottom) / 2, a.y, z.y));
+        if (top && (top === n.parentElement || n.parentElement.contains(top) || top.contains(n.parentElement)) && !seen.has(n)) { seen.add(n); out.push(t); }
+        break;
+      }
+    }
+    for (let y = a.y + 6; y < z.y; y += 24) for (let x = a.x + 6; x < z.x; x += 24) { const e = document.elementFromPoint(x, y); if (e && (e.tagName === 'IMG' || e.tagName === 'VIDEO' || /url\(/.test(getComputedStyle(e).backgroundImage))) image = true; }
+    ov.style.pointerEvents = '';
+    return { text: out.join(' ').replace(/\s+/g, ' ').slice(0, 600), image };
+  }
+  function stop() { if (ov) { ov.remove(); ov = null; } }
+  return { start, stop, get active() { return !!ov; } };
+})();
+
+/* ---------- Photo Assist: on-device style transfer with an AI watermark ---------- */
+const PhotoAssist = (() => {
+  const STYLES = [['watercolor', '수채화'], ['cartoon', '만화'], ['sketch', '스케치'], ['vintage', '빈티지'], ['neon', '네온'], ['pop', '팝아트']];
+  function loadImg(src) { return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; }); }
+  async function apply(src, style) {
+    const img = await loadImg(src);
+    const W = 540, Hh = Math.round(W * (img.naturalHeight || 960) / (img.naturalWidth || 540));
+    const c = document.createElement('canvas'); c.width = W; c.height = Hh; const g = c.getContext('2d');
+    const filters = { watercolor: 'saturate(1.35) contrast(1.05) blur(1.4px)', cartoon: 'saturate(1.5) contrast(1.15)', sketch: 'grayscale(1)', vintage: 'sepia(.65) contrast(1.08) saturate(.85) brightness(1.03)', neon: 'saturate(2.2) hue-rotate(35deg) contrast(1.35)', pop: 'saturate(2.6) contrast(1.4)' };
+    g.filter = filters[style]; g.drawImage(img, 0, 0, W, Hh); g.filter = 'none';
+    const d = g.getImageData(0, 0, W, Hh), p = d.data;
+    if (style === 'cartoon' || style === 'pop') {
+      const lv = style === 'pop' ? 3 : 5, step = 255 / (lv - 1);
+      const gray = new Float32Array(W * Hh); for (let i = 0; i < W * Hh; i++) gray[i] = p[i * 4] * .3 + p[i * 4 + 1] * .59 + p[i * 4 + 2] * .11;
+      for (let y = 1; y < Hh - 1; y++) for (let x = 1; x < W - 1; x++) {
+        const i = y * W + x, gx = gray[i + 1] - gray[i - 1], gy = gray[i + W] - gray[i - W], edge = Math.hypot(gx, gy) > (style === 'pop' ? 60 : 42);
+        for (let k = 0; k < 3; k++) p[i * 4 + k] = edge ? 25 : Math.round(p[i * 4 + k] / step) * step;
+      }
+    } else if (style === 'sketch') {
+      // colour-dodge pencil effect
+      const src2 = new Uint8ClampedArray(p), blur = new Float32Array(W * Hh), R = 4;
+      for (let y = 0; y < Hh; y++) for (let x = 0; x < W; x++) { let s = 0, n = 0; for (let dy = -R; dy <= R; dy += 2) for (let dx = -R; dx <= R; dx += 2) { const xx = clamp(x + dx, 0, W - 1), yy = clamp(y + dy, 0, Hh - 1); s += 255 - src2[(yy * W + xx) * 4]; n++; } blur[y * W + x] = s / n; }
+      for (let i = 0; i < W * Hh; i++) { const v = Math.min(255, src2[i * 4] * 255 / Math.max(1, 255 - blur[i])); p[i * 4] = p[i * 4 + 1] = p[i * 4 + 2] = v; }
+    } else if (style === 'watercolor') {
+      for (let i = 0; i < p.length; i += 4) { const n = (Math.random() - .5) * 14; p[i] += n; p[i + 1] += n; p[i + 2] += n; }
+    }
+    g.putImageData(d, 0, 0);
+    if (style === 'vintage') { const vg = g.createRadialGradient(W / 2, Hh / 2, W * .3, W / 2, Hh / 2, W * .85); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(40,20,0,.55)'); g.fillStyle = vg; g.fillRect(0, 0, W, Hh); }
+    if (style === 'neon') { g.globalCompositeOperation = 'screen'; g.filter = 'blur(8px)'; g.drawImage(c, 0, 0); g.filter = 'none'; g.globalCompositeOperation = 'source-over'; }
+    // Galaxy AI marks generated images with a visible watermark
+    g.font = '600 15px sans-serif'; g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(12, Hh - 36, 98, 24); g.fillStyle = '#fff'; g.fillText('✦ AI 생성', 22, Hh - 18);
+    return c.toDataURL('image/jpeg', 0.85);
+  }
+  function open(photo, onSaved) {
+    let chosen = null;
+    AISheet.show({
+      title: '포토 어시스트', sub: '스타일을 고르면 새 사진으로 저장됩니다', local: true,
+      run: () => '',
+      render: (_, box) => {
+        const prev = h('div', { class: 'pa-prev', style: `background-image:url("${photo.src}")` });
+        const row = h('div', { class: 'as-chips', style: 'padding:10px 0 0' });
+        STYLES.forEach(([k, l]) => row.append(h('button', { class: 'glass', onclick: async e => {
+          row.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === e.currentTarget));
+          prev.classList.add('busy');
+          try { chosen = await apply(photo.src, k); prev.style.backgroundImage = `url("${chosen}")`; } catch { toast('이 이미지는 편집할 수 없습니다'); }
+          prev.classList.remove('busy');
+        } }, l)));
+        box.append(prev, row);
+      },
+      actions: [{ label: '새 사진으로 저장', primary: true, fn: () => {
+        if (!chosen) return toast('먼저 스타일을 선택하세요');
+        let list = [{ id: uid(), src: chosen, t: Date.now(), ai: true }, ...store.get('photos', [])].slice(0, 12);
+        while (list.length) { try { localStorage.setItem('gos.photos', JSON.stringify(list)); break; } catch { list = list.slice(0, -1); } }
+        emit('photos'); toast('AI 편집 사진을 저장했습니다'); onSaved && onSaved();
+      } }],
+    });
+  }
+  return { open, apply };
+})();
+
+/* ---------------- 통역 (Interpreter) ---------------- */
+defineApp('interpreter', '통역', '#6b4dff', 'translate', el => {
+  // bottom half: me; top half (rotated) for the person across the table
+  const st = { me: 'ko', you: 'en' };
+  const half = who => {
+    const lang = h('button', { class: 'ip-lang glass' });
+    const text = h('div', { class: 'ip-text' });
+    const mic = h('button', { class: 'ip-mic ai-grad', 'aria-label': '말하기', html: svg('mic') });
+    const box = h('div', { class: 'ip-half ' + who }, lang, text, mic);
+    return { box, lang, text, mic };
+  };
+  const top = half('you'), bot = half('me');
+  const input = h('input', { type: 'text', class: 'field', placeholder: '입력해서 통역하기', inputmode: 'none', 'data-enter': '통역' });
+  el.append(h('div', { class: 'view ip' }, top.box, h('div', { class: 'ip-mid' }, h('button', { class: 'ibtn', 'aria-label': '언어 바꾸기', html: svg('rotate'), onclick: () => { [st.me, st.you] = [st.you, st.me]; paint(); } })), bot.box, h('div', { class: 'composer' }, input)));
+  const pickLang = side => {
+    Ctx.vertical = true;
+    const r = (side === 'me' ? bot : top).lang.getBoundingClientRect();
+    Ctx.show(localPt({ clientX: r.left + r.width / 2, clientY: side === 'me' ? r.top : r.bottom + 260 }), Object.entries(LANGS).map(([k, [n]]) => ({ label: n, fn: () => { st[side] = k; paint(); } })));
+  };
+  top.lang.onclick = () => pickLang('you'); bot.lang.onclick = () => pickLang('me');
+  function paint() {
+    top.lang.textContent = LANGS[st.you][0]; bot.lang.textContent = LANGS[st.me][0];
+    if (!bot.text.textContent) bot.text.innerHTML = '<span class="ip-ph">마이크를 누르고 말하세요</span>';
+    if (!top.text.textContent) top.text.innerHTML = `<span class="ip-ph">${st.you === 'en' ? 'Tap the mic and speak' : '마이크를 누르고 말하세요'}</span>`;
+  }
+  function speak(text, lang) {
+    try { if (!window.speechSynthesis || S.silent) return; const u = new SpeechSynthesisUtterance(text); u.lang = LANGS[lang][1]; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch {}
+  }
+  async function interpret(text, from) {
+    const to = from === 'me' ? 'you' : 'me';
+    const src = from === 'me' ? bot : top, dst = from === 'me' ? top : bot;
+    src.text.textContent = text;
+    dst.text.innerHTML = '<div class="ai-shimmer"></div><div class="ai-shimmer" style="width:60%"></div>';
+    try { const out = await AI.translate(text, st[to], st[from]); dst.text.textContent = out; speak(out, st[to]); }
+    catch (e) { dst.text.textContent = aiErrText(e); }
+  }
+  function listen(from) {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return toast('이 브라우저에서는 음성 인식을 사용할 수 없습니다. 아래 입력창을 사용하세요.');
+    const r = new SR(); r.lang = LANGS[st[from]][1];
+    const b = (from === 'me' ? bot : top).mic; b.classList.add('rec');
+    r.onresult = e => interpret(e.results[0][0].transcript, from);
+    r.onerror = () => toast('음성을 인식하지 못했습니다');
+    r.onend = () => b.classList.remove('rec');
+    try { r.start(); } catch { b.classList.remove('rec'); }
+  }
+  top.mic.onclick = () => listen('you'); bot.mic.onclick = () => listen('me');
+  input.addEventListener('osenter', () => { const t = input.value.trim(); if (t) { input.value = ''; KB.close(); interpret(t, 'me'); } });
+  paint();
   return {};
 });
 
