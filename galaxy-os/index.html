@@ -5,23 +5,27 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <title>Galaxy OS 1.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{background:radial-gradient(1200px 800px at 30% 20%,#2a2f45,#0b0c10 70%);font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;display:flex;align-items:center;justify-content:center;overflow:hidden;user-select:none;-webkit-user-select:none}
-button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
-input,textarea,select{font:inherit;color:inherit;user-select:text;-webkit-user-select:text}
+body{background:radial-gradient(1200px 800px at 30% 20%,#262b3f,#0a0b0f 70%);font-family:"SamsungOne","Samsung Sans","Noto Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;display:flex;align-items:center;justify-content:center;overflow:hidden;user-select:none;-webkit-user-select:none;letter-spacing:-.2px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;letter-spacing:inherit}
+input,textarea,select{font:inherit;color:inherit;user-select:text;-webkit-user-select:text;letter-spacing:inherit}
 svg{display:block}
 
 /* ---------- device frame ---------- */
-.device{position:relative;width:392px;height:850px;border-radius:56px;background:#0d0d0f;padding:11px;box-shadow:0 0 0 2px #34343a,0 0 0 5px #141416,0 40px 90px rgba(0,0,0,.6);transform-origin:center;flex:none}
-.device .hw{position:absolute;right:-7px;width:5px;background:#2c2c32;border-radius:0 3px 3px 0}
-.device .hw.vol{top:170px;height:96px}
-.device .hw.power{top:290px;height:66px;cursor:pointer}
-.device .hw.power:active{background:#45454c}
-.phone{--bg:#f4f4f6;--surface:#fff;--surface2:#ececf0;--text:#111114;--sub:#6e6e75;--line:rgba(0,0,0,.08);--accent:#3c74f0;--danger:#e5484d;--ok:#22b45a;--kb-bg:#e6e7eb;--key:#fff;--key-fn:#d2d4da;--key-text:#16161a;--shade:rgba(244,244,246,.94);--chip:#fff;
-  position:relative;width:100%;height:100%;border-radius:45px;overflow:hidden;background:#000;color:var(--text);isolation:isolate}
-.phone[data-theme=dark]{--bg:#000;--surface:#171719;--surface2:#232327;--text:#f2f2f4;--sub:#9b9ba3;--line:rgba(255,255,255,.1);--accent:#5f8fff;--kb-bg:#141416;--key:#38383d;--key-fn:#26262a;--key-text:#f2f2f2;--shade:rgba(18,18,20,.94);--chip:#26262a}
+.device{position:relative;width:392px;height:850px;border-radius:56px;background:#0c0c0e;padding:10px;box-shadow:0 0 0 2px #3a3a40,0 0 0 5px #151518,0 40px 90px rgba(0,0,0,.6);transform-origin:center;flex:none}
+.device .hw{position:absolute;right:-7px;width:5px;background:#2c2c32;border-radius:0 3px 3px 0;cursor:pointer}
+.device .hw:active{background:#55555c}
+.device .hw.volup{top:168px;height:48px;border-radius:0 3px 0 0}
+.device .hw.voldn{top:217px;height:48px;border-radius:0 0 3px 0}
+.device .hw.power{top:290px;height:66px}
+.phone{--bg:#f6f6f6;--surface:#fff;--surface2:#ececee;--text:#0f0f0f;--sub:#7b7b80;--line:rgba(0,0,0,.075);--accent:#387cff;--accent2:#e9f0ff;--danger:#f23f3f;--ok:#2fb35a;--kb-bg:#eeeef0;--key:#fff;--key-fn:#dcdce0;--key-text:#151515;--shade:rgba(242,242,244,.86);--qbtn:#fff;--glass:rgba(255,255,255,.72);
+  position:relative;width:100%;height:100%;border-radius:46px;overflow:hidden;background:#000;color:var(--text);isolation:isolate;font-size:calc(16px * var(--fs,1))}
+.phone[data-theme=dark]{--bg:#000;--surface:#171717;--surface2:#272727;--text:#f6f6f6;--sub:#8e8e93;--line:rgba(255,255,255,.09);--accent:#4f8dff;--accent2:#14243f;--kb-bg:#121212;--key:#2d2d2f;--key-fn:#1f1f21;--key-text:#f2f2f2;--shade:rgba(16,16,16,.86);--qbtn:#2a2a2c;--glass:rgba(40,40,42,.72)}
 @media (max-width:520px),(max-height:640px){
   body{display:block}
   .device{width:100vw;height:100vh;height:100dvh;border-radius:0;padding:0;box-shadow:none;transform:none!important}
@@ -35,134 +39,195 @@ svg{display:block}
 .stage{position:absolute;inset:0;display:flex;flex-direction:column;padding-top:34px}
 .content{position:relative;flex:1;min-height:0}
 .layer{position:absolute;inset:0}
-
-.statusbar{position:absolute;top:0;left:0;right:0;height:34px;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:0 22px 0 26px;font-size:13px;font-weight:600;color:#fff;cursor:pointer;touch-action:none;transition:color .2s}
+.statusbar{position:absolute;top:0;left:0;right:0;height:34px;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:2px 24px 0 28px;font-size:13.5px;font-weight:500;color:#fff;cursor:pointer;touch-action:none;transition:color .2s,background .2s;letter-spacing:0}
 .phone.in-app .statusbar{background:var(--bg);color:var(--text)}
-.phone.light-ui .statusbar{color:#111}
-.statusbar .l,.statusbar .r{display:flex;align-items:center;gap:5px}
+.phone.shade-open .statusbar{background:none;color:var(--text);opacity:0}
+.statusbar .l,.statusbar .r{display:flex;align-items:center;gap:4px}
 .statusbar svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.statusbar .nicons svg{width:13px;height:13px;opacity:.85}
+.statusbar .nicons{display:flex;gap:3px;margin-left:4px}.statusbar .nicons svg{width:12px;height:12px;opacity:.85}
+.sig{display:flex;align-items:flex-end;gap:1.5px;height:12px}.sig i{width:3px;background:currentColor;border-radius:1px;display:block}.sig i.o{opacity:.3}
+.net{font-size:10px;font-weight:700;margin-right:-1px}
 .batt{display:flex;align-items:center;gap:3px;font-size:12px}
-.batt i{position:relative;width:22px;height:11px;border:1.5px solid currentColor;border-radius:3px;display:block}
-.batt i::after{content:"";position:absolute;right:-4px;top:2.5px;width:2px;height:4px;background:currentColor;border-radius:0 1px 1px 0}
-.batt b{position:absolute;left:1px;top:1px;bottom:1px;background:currentColor;border-radius:1px}
+.batt i{position:relative;width:23px;height:12px;border:1.4px solid currentColor;border-radius:3.5px;display:block;opacity:.95}
+.batt i::after{content:"";position:absolute;right:-3.8px;top:3px;width:2px;height:4px;background:currentColor;border-radius:0 1px 1px 0}
+.batt b{position:absolute;left:1.2px;top:1.2px;bottom:1.2px;background:currentColor;border-radius:1.5px}
 .punch{position:absolute;top:10px;left:50%;width:13px;height:13px;margin-left:-6.5px;border-radius:50%;background:#050506;z-index:200;box-shadow:inset 0 0 0 2px #121216;pointer-events:none}
-
-.navbar{height:46px;flex:none;display:flex;align-items:center;justify-content:space-around;padding:0 30px;color:#fff;position:relative;z-index:30;transition:background .2s,color .2s}
+.navbar{height:46px;flex:none;display:flex;align-items:center;justify-content:space-around;padding:0 34px;color:#fff;position:relative;z-index:30;transition:background .2s,color .2s}
 .phone.in-app .navbar{background:var(--bg);color:var(--text)}
 .phone.kb-open .navbar{background:var(--kb-bg);color:var(--text)}
 .navbar button{width:64px;height:40px;display:grid;place-items:center;border-radius:20px}
-.navbar button:active{background:rgba(128,128,128,.25)}
+.navbar button:active{background:rgba(128,128,128,.22)}
 .navbar svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-/* ---------- icons ---------- */
-.ic{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.35);cursor:pointer;min-width:0}
-.ic span{max-width:76px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sq{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.18);flex:none;transition:transform .12s}
-.ic:active .sq{transform:scale(.9)}
-.sq svg{width:29px;height:29px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.sq.sm{width:36px;height:36px;border-radius:12px}.sq.sm svg{width:19px;height:19px}
-.sq.xs{width:22px;height:22px;border-radius:7px;box-shadow:none}.sq.xs svg{width:13px;height:13px;stroke-width:2.2}
+/* ---------- app icons (One UI squircle) ---------- */
+.ic{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;font-size:12px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.4);cursor:pointer;min-width:0;letter-spacing:-.3px}
+.ic span{max-width:78px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sq{--c:#888;width:56px;height:56px;border-radius:30%;display:grid;place-items:center;flex:none;transition:transform .14s;position:relative;overflow:hidden;
+  background:radial-gradient(120% 90% at 30% 0%,rgba(255,255,255,.32),rgba(255,255,255,0) 60%),linear-gradient(170deg,var(--c),color-mix(in srgb,var(--c) 78%,#000));box-shadow:0 2px 6px rgba(0,0,0,.14)}
+.ic:active .sq{transform:scale(.88)}
+.sq svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.sq.sm{width:38px;height:38px}.sq.sm svg{width:20px;height:20px}
+.sq.xs{width:24px;height:24px;box-shadow:none}.sq.xs svg{width:14px;height:14px;stroke-width:2.2}
+.calic{display:flex;flex-direction:column;align-items:center;line-height:1;color:#fff}
+.calic small{font-size:9px;font-weight:600;opacity:.9;letter-spacing:.5px}
+.calic b{font-size:24px;font-weight:600;margin-top:2px;letter-spacing:-1px}
+.sq.sm .calic small{font-size:6px}.sq.sm .calic b{font-size:15px}.sq.xs .calic small{display:none}.sq.xs .calic b{font-size:11px;margin:0}
 
 /* ---------- home ---------- */
-#home{display:flex;flex-direction:column;padding:0 14px 4px;touch-action:none}
-.widget{color:#fff;padding:30px 10px 6px;text-shadow:0 1px 10px rgba(0,0,0,.3)}
-.widget .t{font-size:66px;font-weight:250;letter-spacing:-2px;line-height:1}
-.widget .d{font-size:15px;margin-top:8px;opacity:.92}
-.widget .w{font-size:13px;margin-top:4px;opacity:.75}
-.hgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 4px;align-content:start;flex:1;padding-top:26px}
-.drawer-hint{align-self:center;color:#fff;opacity:.8;padding:4px 20px}
-.drawer-hint svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round}
-.dock{display:grid;grid-template-columns:repeat(4,1fr);padding:10px 0 4px}
+#home{display:flex;flex-direction:column;touch-action:none}
+.pager{flex:1;position:relative;overflow:hidden;min-height:0}
+.strip{position:absolute;inset:0;display:flex;transition:transform .34s cubic-bezier(.2,.85,.25,1)}
+.hpage{flex:none;width:100%;height:100%;padding:8px 12px 0;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(6,1fr);gap:0 2px}
+.hpage .ic{grid-row:span 1}
+.widget{grid-column:1/-1;grid-row:span 2;display:flex;align-items:center;justify-content:space-between;padding:6px 14px;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.28);cursor:pointer}
+.widget .t{font-size:62px;font-weight:300;letter-spacing:-2px;line-height:1}
+.widget .d{font-size:14px;margin-top:6px;opacity:.95}
+.widget .wx{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.widget .wx .ti{font-size:34px;font-weight:300;display:flex;align-items:center;gap:6px}
+.widget .wx .ti span{font-size:30px}
+.widget .wx small{font-size:12.5px;opacity:.9}
+.wsearch{grid-column:1/-1;align-self:center;display:flex;align-items:center;gap:10px;height:48px;border-radius:24px;background:rgba(255,255,255,.88);color:#555;padding:0 18px;font-size:15px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+.wsearch svg{width:20px;height:20px;stroke:#555;fill:none;stroke-width:2.2;stroke-linecap:round}
+.dots{display:flex;justify-content:center;align-items:center;gap:8px;height:22px;flex:none}
+.dots i{width:6px;height:6px;border-radius:50%;background:#fff;opacity:.45;transition:opacity .2s,transform .2s;display:block}
+.dots i.on{opacity:1;transform:scale(1.15)}
+.dots.dark i{background:var(--text)}
+.dock{display:grid;grid-template-columns:repeat(4,1fr);padding:8px 12px 6px;flex:none}
 .dock .ic span{display:none}
 
-/* ---------- drawer ---------- */
-#drawer{background:rgba(10,10,16,.45);backdrop-filter:blur(26px) saturate(1.2);-webkit-backdrop-filter:blur(26px) saturate(1.2);transform:translateY(100%);opacity:0;transition:transform .32s cubic-bezier(.2,.8,.2,1),opacity .25s;display:flex;flex-direction:column;z-index:5;visibility:hidden}
+/* ---------- apps screen ---------- */
+#drawer{background:rgba(8,8,12,.38);backdrop-filter:blur(30px) saturate(1.25);-webkit-backdrop-filter:blur(30px) saturate(1.25);transform:translateY(40px);opacity:0;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .22s;display:flex;flex-direction:column;z-index:5;visibility:hidden;touch-action:none}
 #drawer.open{transform:none;opacity:1;visibility:visible}
-.dr-head{padding:14px 18px 10px;touch-action:none}
-.dr-search{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.18);border-radius:24px;padding:0 14px;color:#fff}
-.dr-search svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;flex:none}
-.dr-search input{flex:1;border:0;outline:0;background:none;color:#fff;font-size:15px;padding:11px 0}
-.dr-search input::placeholder{color:rgba(255,255,255,.7)}
-.dr-grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:22px 4px;align-content:start;padding:12px 14px 20px;touch-action:pan-y;overscroll-behavior:contain}
-.dr-empty{grid-column:1/-1;text-align:center;color:rgba(255,255,255,.75);padding:40px 0;font-size:14px}
+.dr-head{padding:12px 16px 4px;flex:none}
+.dr-search{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.2);border-radius:26px;padding:0 6px 0 18px;color:#fff;height:46px}
+.dr-search>svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2.1;flex:none;stroke-linecap:round}
+.dr-search input{flex:1;border:0;outline:0;background:none;color:#fff;font-size:16px;padding:0;min-width:0}
+.dr-search input::placeholder{color:rgba(255,255,255,.78)}
+.dr-search .ibtn{color:#fff;width:38px;height:38px}
+.dr-page{flex:none;width:100%;height:100%;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(6,1fr);padding:4px 10px}
+.dr-results{flex:1;overflow-y:auto;padding:10px 14px;touch-action:pan-y}
+.dr-results .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 2px}
+.dr-results .sect{color:rgba(255,255,255,.8);font-size:13px;font-weight:600;margin:6px 6px 14px}
+.dr-results .rrow{display:flex;align-items:center;gap:12px;padding:10px 8px;color:#fff;border-radius:14px;cursor:pointer;font-size:15px}
+.dr-results .rrow small{display:block;opacity:.7;font-size:12px}
+.dr-empty{text-align:center;color:rgba(255,255,255,.75);padding:40px 0;font-size:14px}
 
-/* ---------- apps ---------- */
+/* ---------- edge panel ---------- */
+.edge-h{position:absolute;right:0;top:26%;width:7px;height:96px;border-radius:5px 0 0 5px;background:rgba(255,255,255,.55);z-index:24;cursor:pointer;box-shadow:0 0 6px rgba(0,0,0,.15);touch-action:none}
+.edge-h::before{content:"";position:absolute;inset:-6px -2px -6px -18px}
+.phone.in-app .edge-h{background:rgba(128,128,128,.45)}
+.phone.kb-open .edge-h,.phone.locked .edge-h{display:none}
+#edge{position:absolute;inset:0;z-index:26;display:none}
+#edge.open{display:block}
+#edge .ep{position:absolute;right:10px;top:15%;width:86px;border-radius:28px;background:var(--glass);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);padding:16px 0 10px;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:0 10px 40px rgba(0,0,0,.25);animation:edgeIn .26s cubic-bezier(.2,.8,.2,1)}
+#edge .ic{color:var(--text);text-shadow:none;font-size:11px}
+#edge .ic .sq{width:48px;height:48px}#edge .ic .sq svg{width:24px;height:24px}
+#edge .ep .tl{font-size:11px;color:var(--sub);margin-top:4px}
+@keyframes edgeIn{from{transform:translateX(110%)}}
+
+/* ---------- One UI app chrome ---------- */
 #apps{z-index:10;pointer-events:none}
 .app{position:absolute;inset:0;background:var(--bg);color:var(--text);display:none;pointer-events:auto;overflow:hidden}
 .app.active{display:block}
-.app.opening{animation:appIn .28s cubic-bezier(.2,.8,.2,1)}
-.app.closing{animation:appOut .22s ease-in forwards}
-@keyframes appIn{from{transform:scale(.88);opacity:0;border-radius:30px}to{transform:none;opacity:1}}
-@keyframes appOut{to{transform:scale(.86);opacity:0;border-radius:30px}}
+.app.opening{animation:appIn .32s cubic-bezier(.2,.85,.25,1)}
+.app.closing{animation:appOut .24s cubic-bezier(.4,0,.8,.6) forwards}
+@keyframes appIn{from{transform:scale(.18);opacity:0;border-radius:60px}40%{opacity:1}to{transform:none;border-radius:0}}
+@keyframes appOut{to{transform:scale(.18);opacity:0;border-radius:60px}}
 .view{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;isolation:isolate}
-.view.pushin{animation:pushIn .26s cubic-bezier(.2,.8,.2,1)}
-.view.popout{animation:popOut .2s ease-in forwards}
-@keyframes pushIn{from{transform:translateX(40%);opacity:0}to{transform:none;opacity:1}}
-@keyframes popOut{to{transform:translateX(40%);opacity:0}}
-.pg-head{padding:34px 22px 14px;display:flex;align-items:flex-end;gap:4px;min-height:118px;flex:none}
-.pg-head .grow{flex:1;min-width:0}
-.pg-head h1{font-size:30px;font-weight:600;letter-spacing:-.5px}
-.pg-head .sub{font-size:13px;color:var(--sub);margin-top:4px}
-.bar{height:56px;display:flex;align-items:center;padding:0 6px;gap:2px;flex:none}
-.bar .title{flex:1;font-size:19px;font-weight:600;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pg-body{flex:1;overflow-y:auto;padding:0 14px 24px;overscroll-behavior:contain;position:relative}
+.view.pushin{animation:pushIn .3s cubic-bezier(.2,.85,.25,1)}
+.view.popout{animation:popOut .22s ease-in forwards}
+@keyframes pushIn{from{transform:translateX(30%);opacity:0}to{transform:none;opacity:1}}
+@keyframes popOut{to{transform:translateX(30%);opacity:0}}
+.ou-sc{flex:1;overflow-y:auto;overscroll-behavior:contain;position:relative;min-height:0;scrollbar-width:none}
+.ou-sc::-webkit-scrollbar{display:none}
+.ou-hero{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 24px 0;text-align:center;overflow:hidden}
+.ou-hero h1{font-size:31px;font-weight:400;letter-spacing:-.6px;line-height:1.2}
+.ou-hero .sub{font-size:14px;color:var(--sub);margin-top:8px;min-height:0}
+.ou-hero .sub:empty{display:none}
+.ou-bar{position:sticky;top:0;z-index:3;height:56px;display:flex;align-items:center;padding:0 4px 0 6px;background:var(--bg);gap:0}
+.ou-bar .t{flex:1;font-size:20px;font-weight:600;padding:0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transition:opacity .15s}
+.ou-body{padding:0 12px 24px}
+.bar{height:56px;display:flex;align-items:center;padding:0 4px;gap:0;flex:none}
+.bar .title{flex:1;font-size:19px;font-weight:600;padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pg-body{flex:1;overflow-y:auto;padding:0 12px 24px;overscroll-behavior:contain;position:relative}
 .ibtn{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;flex:none;color:var(--text)}
 .ibtn:active{background:var(--surface2)}
-.ibtn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.card{background:var(--surface);border-radius:24px;overflow:hidden;margin-bottom:12px}
-.card-t{font-size:13px;color:var(--sub);padding:14px 22px 2px;font-weight:600}
-.row{display:flex;align-items:center;gap:14px;padding:14px 20px;min-height:58px;cursor:pointer;position:relative}
-.row+.row::before{content:"";position:absolute;top:0;left:20px;right:20px;height:1px;background:var(--line)}
+.ibtn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.card{background:var(--surface);border-radius:26px;overflow:hidden;margin-bottom:14px}
+.card-t{font-size:13.5px;color:var(--accent);padding:16px 22px 4px;font-weight:600}
+.grp-t{font-size:13.5px;color:var(--sub);padding:14px 22px 8px;font-weight:600}
+.row{display:flex;align-items:center;gap:16px;padding:15px 22px;min-height:60px;cursor:pointer;position:relative}
+.row+.row::before{content:"";position:absolute;top:0;left:22px;right:22px;height:1px;background:var(--line)}
+.row.ind+.row::before,.row+.row.ind::before{left:72px}
 .row:active{background:var(--surface2)}
 .row .tx{flex:1;min-width:0}
-.row .tx b{display:block;font-weight:500;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row .tx small{display:block;color:var(--sub);font-size:13px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row .meta{font-size:12px;color:var(--sub);flex:none}
-.switch{width:46px;height:27px;border-radius:14px;background:#b9b9c0;position:relative;flex:none;transition:background .2s}
-.switch::after{content:"";position:absolute;left:3px;top:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
-.switch.on{background:var(--accent)}.switch.on::after{transform:translateX(19px)}
-.fab{position:absolute;right:20px;bottom:20px;width:58px;height:58px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;box-shadow:0 6px 16px rgba(0,0,0,.25);z-index:3}
+.row .tx b{display:block;font-weight:400;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .tx small{display:block;color:var(--sub);font-size:13.5px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .tx small.on{color:var(--accent)}
+.row .meta{font-size:12.5px;color:var(--sub);flex:none}
+.row .vdiv{width:1px;height:28px;background:var(--line);flex:none}
+.sic{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;flex:none}
+.sic svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.switch{width:44px;height:24px;border-radius:12px;background:transparent;border:2px solid #9a9aa0;position:relative;flex:none;transition:background .2s,border-color .2s;cursor:pointer}
+.switch::after{content:"";position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#9a9aa0;transition:transform .2s,background .2s,width .2s,height .2s,top .2s,left .2s}
+.switch.on{background:var(--accent);border-color:var(--accent)}
+.switch.on::after{transform:translateX(18px);left:2px;top:2px;width:16px;height:16px;background:#fff}
+.fab{position:absolute;right:22px;bottom:22px;width:58px;height:58px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;box-shadow:0 6px 16px rgba(0,0,0,.22);z-index:4}
 .fab svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round}
-.field{width:100%;border:0;outline:0;background:var(--surface);border-radius:16px;padding:13px 16px;font-size:16px;color:var(--text)}
-.field:focus{box-shadow:0 0 0 2px var(--accent) inset}
+.field{width:100%;border:0;outline:0;background:var(--surface);border-radius:18px;padding:13px 18px;font-size:16px;color:var(--text)}
+.field.ul{background:none;border-radius:0;border-bottom:1.5px solid var(--line);padding:12px 4px}
+.field.ul:focus{border-bottom-color:var(--accent);box-shadow:none}
+.field:focus{box-shadow:0 0 0 1.5px var(--accent) inset}
+.searchf{display:flex;align-items:center;gap:8px;background:var(--surface2);border-radius:24px;padding:0 16px;height:46px;margin:0 4px 14px}
+.searchf svg{width:18px;height:18px;stroke:var(--sub);fill:none;stroke-width:2.2;flex:none;stroke-linecap:round}
+.searchf input{flex:1;border:0;outline:0;background:none;font-size:16px;min-width:0;color:var(--text)}
 textarea.field{resize:none;line-height:1.5}
 .pill{background:var(--accent);color:#fff;border-radius:24px;padding:11px 22px;font-weight:600;font-size:15px}
 .pill.ghost{background:var(--surface2);color:var(--text)}
 .pill.red{background:var(--danger)}
-.tabbar{display:flex;flex:none;background:var(--bg);border-top:1px solid var(--line)}
-.tabbar button{flex:1;padding:14px 0 12px;font-size:14px;color:var(--sub);font-weight:500}
+.tbtn{color:var(--accent);font-weight:600;font-size:15px;padding:10px 14px;border-radius:20px}
+.tbtn:active{background:var(--surface2)}
+.tabbar{display:flex;flex:none;background:var(--bg);padding:2px 10px 4px}
+.tabbar button{flex:1;padding:13px 0 12px;font-size:14.5px;color:var(--sub);font-weight:500;position:relative}
 .tabbar button.on{color:var(--text);font-weight:700}
-.empty{color:var(--sub);text-align:center;padding:50px 10px;font-size:14px;line-height:1.6}
-.av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:600;font-size:17px;flex:none}
-.av.lg{width:96px;height:96px;font-size:40px}
-.seg{display:flex;background:var(--surface2);border-radius:20px;padding:3px;gap:2px}
-.seg button{flex:1;border-radius:17px;padding:8px 0;font-size:14px;color:var(--sub)}
+.tabbar button.on::after{content:"";position:absolute;left:30%;right:30%;bottom:5px;height:2.5px;border-radius:2px;background:var(--text)}
+.empty{color:var(--sub);text-align:center;padding:50px 10px;font-size:15px;line-height:1.6;white-space:pre-line}
+.av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:500;font-size:18px;flex:none}
+.av.lg{width:100px;height:100px;font-size:42px}
+.seg{display:flex;background:var(--surface2);border-radius:22px;padding:3px;gap:2px}
+.seg button{flex:1;border-radius:19px;padding:8px 0;font-size:14px;color:var(--sub)}
 .seg button.on{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 input[type=range]{width:100%;accent-color:var(--accent)}
+.oslider{position:relative;height:30px;display:flex;align-items:center;touch-action:none;cursor:pointer;flex:1}
+.oslider .tr{position:absolute;left:0;right:0;height:6px;border-radius:3px;background:var(--surface2)}
+.oslider .fi{position:absolute;left:0;height:6px;border-radius:3px;background:var(--accent)}
+.oslider .th{position:absolute;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:#fff;border:2px solid var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.2)}
 
-/* ---------- keyboard ---------- */
-#kb{display:none;background:var(--kb-bg);color:var(--key-text);padding:0 4px 2px;touch-action:none;flex:none;position:relative;z-index:30}
+/* ---------- Samsung keyboard ---------- */
+#kb{display:none;background:var(--kb-bg);color:var(--key-text);padding:0 3px 2px;touch-action:none;flex:none;position:relative;z-index:30}
 #kb.show{display:block}
-.kb-tool{height:42px;display:flex;align-items:center;gap:2px;padding:0 4px}
-.kb-tool button{width:42px;height:34px;border-radius:10px;display:grid;place-items:center;color:var(--key-text)}
-.kb-tool button.on{background:var(--key-fn)}
-.kb-tool svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.kb-tool .lbl{flex:1;text-align:center;font-size:12px;color:var(--sub);opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 6px}
-.kb-rows{display:flex;flex-direction:column;gap:8px;padding:2px 0 6px}
+.kb-tool{height:44px;display:flex;align-items:center;gap:0;padding:0 2px}
+.kb-tool button{width:46px;height:36px;border-radius:12px;display:grid;place-items:center;color:var(--key-text)}
+.kb-tool button.on{background:var(--key-fn);color:var(--accent)}
+.kb-tool button.rec{color:#fff;background:var(--danger);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.6}}
+.kb-tool svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.kb-tool .lbl{flex:1;text-align:center;font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 6px}
+.kb-rows{display:flex;flex-direction:column;gap:9px;padding:2px 0 7px}
 .kb-row{display:flex;gap:5px}
 .kb-sp{flex:.5}
-.key{flex:1;height:43px;border-radius:7px;background:var(--key);color:var(--key-text);font-size:20px;display:grid;place-items:center;position:relative;box-shadow:0 1px 0 rgba(0,0,0,.18);cursor:pointer;min-width:0}
+.key{flex:1;height:44px;border-radius:8px;background:var(--key);color:var(--key-text);font-size:22px;display:grid;place-items:center;position:relative;box-shadow:0 1px 0 rgba(0,0,0,.12);cursor:pointer;min-width:0;font-weight:400}
+.key .alt{position:absolute;top:2px;right:5px;font-size:10.5px;color:var(--sub);line-height:1}
 .key.fn{background:var(--key-fn);font-size:14px;font-weight:500}
-.key.wide{flex:1.45}.key.space{flex:4;font-size:12px;color:var(--sub)}
-.key svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.key.down{filter:brightness(.82)}
-.phone[data-theme=dark] .key.down{filter:brightness(1.35)}
-.key.ch.down::after{content:attr(data-c);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);min-width:46px;height:54px;padding:0 6px;border-radius:12px;background:var(--key);color:var(--key-text);display:grid;place-items:center;font-size:28px;box-shadow:0 4px 16px rgba(0,0,0,.28);pointer-events:none;z-index:5}
+.key.wide{flex:1.45}.key.space{flex:4;font-size:13px;color:var(--sub)}
+.key svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.key.down{filter:brightness(.86)}
+.phone[data-theme=dark] .key.down{filter:brightness(1.4)}
+.key.ch.down::after{content:attr(data-c);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);min-width:46px;height:56px;padding:0 6px;border-radius:12px;background:var(--key);color:var(--key-text);display:grid;place-items:center;font-size:30px;box-shadow:0 4px 18px rgba(0,0,0,.28);pointer-events:none;z-index:5}
+.key.ch.long::after{content:attr(data-a);background:var(--accent);color:#fff}
 .key.shift.on{color:var(--accent)}
 .key.shift.lock svg{fill:var(--accent);stroke:var(--accent)}
-.key.enter{background:var(--accent);color:#fff}
-.key small{font-size:10px;opacity:.7;position:absolute;bottom:3px;right:6px}
+.key small.sub{font-size:10px;opacity:.7;position:absolute;bottom:3px;right:6px}
 .kb-panel{overflow-y:auto;touch-action:pan-y;overscroll-behavior:contain}
 .emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);padding:2px}
 .emoji-grid button{font-size:25px;height:44px;border-radius:8px}
@@ -177,88 +242,153 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .clip-item svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .kb-bottom{display:flex;gap:5px;padding:4px 0 6px}
 
-/* ---------- overlays ---------- */
-#shade{position:absolute;inset:0;z-index:60;background:var(--shade);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);transform:translateY(-102%);transition:transform .32s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;color:var(--text)}
-#shade.open{transform:none}
-.sh-top{padding:40px 22px 8px;display:flex;align-items:flex-end;justify-content:space-between;touch-action:none}
-.sh-top .t{font-size:34px;font-weight:300}
-.sh-top .d{font-size:13px;color:var(--sub)}
-.qs{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 8px;padding:14px 18px}
-.qs button{display:flex;flex-direction:column;align-items:center;gap:7px;font-size:11.5px;color:var(--text)}
-.qs .q{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--surface2);color:var(--text);transition:background .2s}
-.qs .on .q{background:var(--accent);color:#fff}
-.qs svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.bright{display:flex;align-items:center;gap:12px;margin:4px 18px 10px;background:var(--surface);border-radius:28px;padding:10px 18px}
-.bright svg{width:20px;height:20px;stroke:var(--sub);fill:none;stroke-width:2;flex:none}
-.sh-list{flex:1;overflow-y:auto;padding:4px 14px 10px;touch-action:pan-y}
-.noti{background:var(--surface);border-radius:20px;padding:13px 16px;margin-bottom:8px;display:flex;gap:12px;cursor:pointer}
-.noti .tx{flex:1;min-width:0}.noti b{font-size:14px;display:block}.noti p{font-size:13.5px;color:var(--sub);margin-top:2px;word-break:break-all}
-.noti .tm{font-size:11px;color:var(--sub);flex:none}
-.sh-foot{display:flex;justify-content:space-between;align-items:center;padding:6px 20px 16px;touch-action:none}
-.sh-foot .handle{width:40px;height:5px;border-radius:3px;background:var(--sub);opacity:.5;margin:0 auto}
-#headsup{position:absolute;top:40px;left:10px;right:10px;z-index:70;transform:translateY(-140%);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+/* ---------- quick panel ---------- */
+#shade{position:absolute;inset:0 0 46px 0;z-index:60;pointer-events:none;color:var(--text)}
+.phone.shade-open .navbar{background:var(--bg);color:var(--text)}
+#shade .bgd{position:absolute;inset:0;background:var(--shade);backdrop-filter:blur(30px) saturate(1.3);-webkit-backdrop-filter:blur(30px) saturate(1.3);opacity:0;transition:opacity .25s}
+#shade.open{pointer-events:auto}
+#shade.open .bgd{opacity:1}
+.qp{position:relative;display:flex;flex-direction:column;height:100%;transform:translateY(-30px);opacity:0;transition:transform .3s cubic-bezier(.2,.85,.25,1),opacity .22s}
+#shade.open .qp{transform:none;opacity:1}
+.qp-top{display:flex;align-items:center;padding:42px 14px 6px 24px;touch-action:none;gap:2px}
+.qp-top .t{font-size:22px;font-weight:600;letter-spacing:-.4px}
+.qp-top .d{font-size:13.5px;color:var(--sub);margin-left:8px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qp-top .ibtn{width:40px;height:40px}.qp-top .ibtn svg{width:21px;height:21px}
+.qp-panel{margin:6px 12px 8px;touch-action:none}
+.qmini{display:flex;justify-content:space-between;padding:6px 8px}
+.qmini button,.qgrid button{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;color:var(--text);min-width:0}
+.qmini button span:last-child{display:none}
+.qc{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--qbtn);color:var(--text);transition:background .2s,color .2s;flex:none}
+.on>.qc{background:var(--accent);color:#fff}
+.qc svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.qbig{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.qbig button{display:flex;align-items:center;gap:10px;height:64px;border-radius:32px;background:var(--qbtn);padding:0 12px;text-align:left;min-width:0}
+.qbig button.on{background:var(--accent);color:#fff}
+.qbig .qi{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:rgba(128,128,128,.15);flex:none}
+.qbig button.on .qi{background:rgba(255,255,255,.22)}
+.qbig svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.qbig b{display:block;font-size:14.5px;font-weight:600}.qbig small{display:block;font-size:11.5px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qbig .tx{min-width:0}
+.qgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 6px;padding:2px 4px 10px}
+.qgrid button span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:78px}
+.qbright{display:flex;align-items:center;gap:12px;background:var(--qbtn);border-radius:30px;padding:8px 18px;margin:4px 0 10px}
+.qbright svg{width:20px;height:20px;stroke:var(--sub);fill:none;stroke-width:2;flex:none}
+.qrow2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qrow2 button{height:50px;border-radius:25px;background:var(--qbtn);font-size:14px;font-weight:500}
+.qhandle{display:flex;justify-content:center;padding:6px 0 10px;cursor:pointer;touch-action:none}
+.qhandle i{width:38px;height:4.5px;border-radius:3px;background:var(--sub);opacity:.5;display:block}
+.qp-list{flex:1;overflow-y:auto;padding:4px 12px 10px;touch-action:pan-y}
+.noti{background:var(--surface);border-radius:24px;padding:14px 18px;margin-bottom:6px;display:flex;gap:12px;cursor:pointer;align-items:flex-start}
+.noti .tx{flex:1;min-width:0}.noti .ap{font-size:12px;color:var(--sub);margin-bottom:3px}
+.noti b{font-size:15px;display:block;font-weight:600}.noti p{font-size:14px;color:var(--sub);margin-top:2px;word-break:break-all;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.noti .tm{font-size:11.5px;color:var(--sub);flex:none;margin-top:2px}
+.qp-foot{display:flex;justify-content:space-between;padding:4px 8px 8px}
+.qp-foot button{font-size:14px;font-weight:600;padding:9px 12px;border-radius:18px}
+#headsup{position:absolute;top:40px;left:10px;right:10px;z-index:70;transform:translateY(-140%);transition:transform .32s cubic-bezier(.2,.85,.25,1)}
 #headsup.show{transform:none}
-#headsup .noti{box-shadow:0 8px 28px rgba(0,0,0,.25);margin:0}
-#toast{position:absolute;left:50%;bottom:70px;transform:translate(-50%,20px);background:rgba(40,40,44,.94);color:#fff;font-size:14px;padding:11px 20px;border-radius:22px;z-index:90;opacity:0;transition:.25s;pointer-events:none;white-space:nowrap;max-width:88%;overflow:hidden;text-overflow:ellipsis}
+#headsup .noti{box-shadow:0 10px 30px rgba(0,0,0,.22);margin:0}
+#toast{position:absolute;left:50%;bottom:70px;transform:translate(-50%,16px);background:rgba(240,240,242,.97);color:#111;font-size:14px;padding:12px 22px;border-radius:24px;z-index:90;opacity:0;transition:.25s;pointer-events:none;white-space:nowrap;max-width:88%;overflow:hidden;text-overflow:ellipsis;box-shadow:0 4px 20px rgba(0,0,0,.18)}
+.phone[data-theme=dark] #toast{background:rgba(52,52,54,.97);color:#fff}
 #toast.show{opacity:1;transform:translate(-50%,0)}
-#ctx{position:absolute;z-index:85;display:none;background:var(--surface);color:var(--text);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.28);padding:3px;white-space:nowrap}
+#ctx{position:absolute;z-index:85;display:none;background:var(--surface);color:var(--text);border-radius:26px;box-shadow:0 6px 28px rgba(0,0,0,.26);padding:4px;white-space:nowrap}
 #ctx.show{display:flex}
-#ctx button{padding:10px 12px;font-size:14px;border-radius:11px}
+#ctx button{padding:10px 13px;font-size:14px;border-radius:20px}
 #ctx button:active{background:var(--surface2)}
-#dialog{position:absolute;inset:0;z-index:88;background:rgba(0,0,0,.4);display:none;align-items:flex-end;padding:0 12px 70px}
+#ctx.vert{flex-direction:column;border-radius:22px;padding:6px;min-width:170px}
+#ctx.vert button{text-align:left;padding:12px 16px;font-size:15px}
+#dialog{position:absolute;inset:0;z-index:88;background:rgba(0,0,0,.42);display:none;align-items:flex-end;padding:0 12px 60px}
 #dialog.show{display:flex}
-.dlg{background:var(--surface);color:var(--text);border-radius:28px;padding:24px 22px 14px;width:100%;animation:pushUp .22s cubic-bezier(.2,.8,.2,1)}
+.phone.no-edge .edge-h{display:none}
+.dlg{background:var(--surface);color:var(--text);border-radius:30px;padding:26px 26px 10px;width:100%;animation:pushUp .24s cubic-bezier(.2,.85,.25,1)}
 @keyframes pushUp{from{transform:translateY(30px);opacity:0}}
-.dlg h3{font-size:19px;font-weight:600;text-align:center}
-.dlg p{font-size:14.5px;color:var(--sub);text-align:center;margin-top:10px;line-height:1.5}
-.dlg .btns{display:flex;margin-top:18px}
-.dlg .btns button{flex:1;padding:12px;font-size:16px;font-weight:600;border-radius:14px}
+.dlg h3{font-size:19px;font-weight:700}
+.dlg p{font-size:15px;color:var(--sub);margin-top:12px;line-height:1.5;white-space:pre-line}
+.dlg .btns{display:flex;margin-top:20px;align-items:center}
+.dlg .btns button{flex:1;padding:13px;font-size:16px;font-weight:600;border-radius:16px;color:var(--text)}
+.dlg .btns i{width:1px;height:20px;background:var(--line);display:block}
 .dlg .btns button:active{background:var(--surface2)}
 .dlg .btns .ok{color:var(--accent)}.dlg .btns .warn{color:var(--danger)}
 
 /* recents */
-#recents{z-index:20;background:rgba(0,0,0,.55);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);display:none;flex-direction:column}
+#recents{z-index:20;background:rgba(0,0,0,.4);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);display:none;flex-direction:column}
 #recents.open{display:flex;animation:fadeIn .2s}
 @keyframes fadeIn{from{opacity:0}}
-.rc-list{flex:1;display:flex;gap:16px;overflow-x:auto;padding:26px 15%;align-items:center;scroll-snap-type:x mandatory;touch-action:pan-x}
-.rc-card{flex:none;width:70%;height:86%;display:flex;flex-direction:column;gap:10px;scroll-snap-align:center;transition:transform .2s,opacity .2s}
-.rc-card .hd{display:flex;align-items:center;gap:8px;color:#fff;font-size:14px;font-weight:600}
-.rc-card .hd .x{margin-left:auto;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center}
-.rc-card .hd .x svg{width:14px;height:14px;stroke:#fff;stroke-width:2.6;fill:none;stroke-linecap:round}
-.rc-prev{flex:1;border-radius:22px;overflow:hidden;position:relative;background:var(--bg);cursor:pointer}
+.rc-list{flex:1;display:flex;gap:18px;overflow-x:auto;padding:30px 16%;align-items:center;scroll-snap-type:x mandatory;touch-action:pan-x;scrollbar-width:none}
+.rc-list::-webkit-scrollbar{display:none}
+.rc-card{flex:none;width:68%;height:84%;display:flex;flex-direction:column;align-items:center;gap:10px;scroll-snap-align:center;transition:transform .2s,opacity .2s}
+.rc-card .hd{display:flex;align-items:center;justify-content:center;gap:8px;color:#fff;font-size:14px;font-weight:600;height:30px}
+.rc-prev{flex:1;width:100%;border-radius:26px;overflow:hidden;position:relative;background:var(--bg);cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.3)}
 .rc-prev>.app{display:block!important;pointer-events:none;transform-origin:0 0;inset:auto;left:0;top:0}
-.rc-foot{text-align:center;padding:6px 0 18px}
-.rc-foot button{color:#fff;background:rgba(255,255,255,.18);border-radius:22px;padding:10px 26px;font-size:14px;font-weight:600}
-.rc-empty{color:rgba(255,255,255,.8);margin:auto;font-size:15px}
+.rc-foot{text-align:center;padding:6px 0 20px}
+.rc-foot button{color:#fff;font-size:15px;font-weight:600;padding:10px 26px;border-radius:22px}
+.rc-empty{color:rgba(255,255,255,.85);margin:auto;font-size:15px}
 
-/* lock & boot & off */
-#lock{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;color:#fff;touch-action:none;transition:transform .3s,opacity .3s;cursor:grab}
-#lock.hide{transform:translateY(-100%);opacity:0;pointer-events:none}
+/* lock, power, volume, boot */
+#lock{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;color:#fff;touch-action:none;transition:transform .3s,opacity .3s,filter .3s;cursor:grab;background-size:cover}
+#lock.hide{opacity:0;transform:scale(1.08);pointer-events:none}
 #lock.gone{display:none}
-#lock .lbg{position:absolute;inset:0;background:inherit;z-index:-1}
-.lk-clock{margin-top:96px;font-size:84px;font-weight:200;letter-spacing:-3px;line-height:1;text-shadow:0 2px 14px rgba(0,0,0,.3)}
-.lk-date{font-size:17px;margin-top:10px;opacity:.95;text-shadow:0 1px 8px rgba(0,0,0,.3)}
-.lk-notis{width:100%;padding:28px 16px 0;display:flex;flex-direction:column;gap:8px}
+.lk-lock{margin-top:44px;opacity:.9}
+.lk-lock svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.lk-date{font-size:17px;margin-top:40px;opacity:.95;text-shadow:0 1px 8px rgba(0,0,0,.3);font-weight:500}
+.lk-clock{font-size:92px;font-weight:300;letter-spacing:-3px;line-height:1.05;text-shadow:0 2px 14px rgba(0,0,0,.25)}
+.lk-wx{font-size:14px;opacity:.9;margin-top:4px}
+.lk-icons{display:flex;gap:8px;margin-top:22px;min-height:30px;cursor:pointer}
+.lk-icons .sq{box-shadow:none;width:28px;height:28px}
+.lk-icons .sq svg{width:16px;height:16px}
+.lk-notis{width:100%;padding:16px 14px 0;display:flex;flex-direction:column;gap:6px}
 .lk-notis .noti{background:rgba(255,255,255,.88);color:#111}
-.lk-notis .noti p,.lk-notis .noti .tm{color:#555}
-.lk-bottom{margin-top:auto;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 26px 40px}
-.lk-sc{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.15);display:grid;place-items:center;color:#fff}
-.lk-sc svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.lk-hint{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;opacity:.9;color:#fff}
-.lk-hint span{animation:bob 2.2s ease-in-out infinite}
-.lk-hint svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-@keyframes bob{50%{transform:translateY(-6px)}}
+.lk-notis .noti p,.lk-notis .noti .tm,.lk-notis .noti .ap{color:#555}
+.lk-bottom{margin-top:auto;width:100%;display:flex;align-items:flex-end;justify-content:space-between;padding:0 28px 34px}
+.lk-sc{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;color:#fff;touch-action:none;transition:transform .15s,background .15s}
+.lk-sc.drag{background:rgba(255,255,255,.25);transform:scale(1.25)}
+.lk-sc svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lk-hint{font-size:14px;color:#fff;opacity:0;transition:opacity .3s;padding-bottom:18px;text-shadow:0 1px 6px rgba(0,0,0,.3)}
+.lk-hint.show{opacity:.95}
+.lk-ripple{position:absolute;border-radius:50%;border:1.5px solid rgba(255,255,255,.7);pointer-events:none;transform:translate(-50%,-50%)}
 #off{position:absolute;inset:0;background:#000;z-index:99;display:none;cursor:pointer}
 #off.show{display:block}
+#pmenu{position:absolute;inset:0;z-index:97;background:rgba(0,0,0,.55);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);display:none;flex-direction:column;align-items:center;justify-content:center;gap:26px;color:#fff}
+#pmenu.show{display:flex;animation:fadeIn .2s}
+#pmenu button{display:flex;flex-direction:column;align-items:center;gap:10px;font-size:14px}
+#pmenu .pc{width:72px;height:72px;border-radius:50%;display:grid;place-items:center}
+#pmenu svg{width:30px;height:30px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+#volp{position:absolute;right:10px;top:130px;z-index:80;display:flex;flex-direction:column;align-items:center;gap:8px;width:60px;padding:14px 0 10px;border-radius:30px;background:var(--glass);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 8px 30px rgba(0,0,0,.22);transform:translateX(90px);transition:transform .25s cubic-bezier(.2,.85,.25,1);color:var(--text)}
+#volp.show{transform:none}
+#volp .vt{position:relative;width:40px;height:200px;border-radius:20px;background:rgba(128,128,128,.22);overflow:hidden;touch-action:none;cursor:pointer}
+#volp .vf{position:absolute;left:0;right:0;bottom:0;background:var(--accent);transition:height .1s}
+#volp .vn{font-size:12px;font-weight:600}
+#volp .ibtn{width:40px;height:40px}
 #boot{position:absolute;inset:0;background:#000;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;transition:opacity .6s}
 #boot.done{opacity:0;pointer-events:none}
-#boot .logo{font-size:40px;font-weight:300;letter-spacing:14px;padding-left:14px;animation:bootIn 1.6s ease both}
-#boot .ver{font-size:13px;letter-spacing:6px;opacity:.6;margin-top:14px;animation:bootIn 1.6s .3s ease both}
-#boot .ring{width:30px;height:30px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;margin-top:60px;animation:spin .9s linear infinite}
+#boot .logo{font-size:38px;font-weight:300;letter-spacing:14px;padding-left:14px;animation:bootIn 1.8s ease both}
+#boot .ver{font-size:12px;letter-spacing:6px;opacity:.55;margin-top:14px;animation:bootIn 1.8s .3s ease both}
+#boot .pw{position:absolute;bottom:60px;font-size:11px;letter-spacing:3px;opacity:.4}
 @keyframes bootIn{from{opacity:0;letter-spacing:30px}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ---------- app specific ---------- */
+.wx-app{color:#fff;transition:background .4s}
+.wx-app .ibtn{color:#fff}.wx-app .ibtn:active{background:rgba(255,255,255,.15)}
+.wx-now{text-align:center;padding:30px 0 34px;text-shadow:0 1px 8px rgba(0,0,0,.15)}
+.wx-now .city{font-size:20px;font-weight:500}
+.wx-now .t{font-size:96px;font-weight:200;line-height:1.05;letter-spacing:-4px;margin-left:20px}
+.wx-now .desc{font-size:18px;margin-top:2px}
+.wx-now .hl{font-size:14px;opacity:.85;margin-top:8px}
+.wx-card{background:rgba(255,255,255,.16);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:24px;padding:14px 16px;margin-bottom:12px}
+.wx-hours{display:flex;gap:18px;overflow-x:auto;touch-action:pan-x;scrollbar-width:none;padding:2px}
+.wx-hours::-webkit-scrollbar{display:none}
+.wx-hours>div{display:flex;flex-direction:column;align-items:center;gap:6px;flex:none;font-size:14px}
+.wx-hours small{font-size:12px;opacity:.85}.wx-hours small.pp{color:#bfe3ff}
+.wx-hours span{font-size:22px}
+.wx-day{display:flex;align-items:center;padding:9px 4px;font-size:15px}
+.wx-day .n{flex:1}.wx-day span:nth-child(2){font-size:20px;width:60px;text-align:center}
+.wx-day .r{width:80px;text-align:right;font-weight:600}.wx-day .r small{opacity:.7;font-weight:400}
+.wx-det{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.wx-det small{display:block;font-size:12.5px;opacity:.8}.wx-det b{font-size:18px;font-weight:500}
+.wx-card{white-space:pre-line}
+.radio{width:22px;height:22px;border-radius:50%;border:2px solid var(--sub);display:block;transition:border .15s}
+.radio.on{border:7px solid var(--accent)}
+.wx-src{font-size:11.5px;opacity:.7;text-align:center;padding:4px}
 .dial-top{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding:0 20px 10px;min-height:0}
 .dial-num{font-size:34px;font-weight:400;letter-spacing:1px;min-height:46px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dial-hint{font-size:14px;color:var(--accent);min-height:20px;margin-top:4px}
@@ -376,8 +506,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 </head>
 <body>
 <div class="device" id="device">
-  <div class="hw vol"></div>
-  <div class="hw power" id="powerBtn" title="전원 버튼"></div>
+  <div class="hw volup" id="volUp" title="볼륨 올리기"></div>
+  <div class="hw voldn" id="volDn" title="볼륨 내리기"></div>
+  <div class="hw power" id="powerBtn" title="측면 버튼 (길게 누르면 전원 메뉴)"></div>
   <div class="phone" id="phone" data-theme="light">
     <div id="wall"></div>
     <div class="punch"></div>
@@ -399,6 +530,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
         <button data-nav="back" aria-label="뒤로"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
       </div>
     </div>
+    <div class="edge-h" id="edgeH" title="엣지 패널"></div>
+    <div id="edge"></div>
     <div id="lock" class="gone"></div>
     <div id="shade"></div>
     <div id="headsup"></div>
@@ -406,8 +539,10 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     <div id="dialog"></div>
     <div id="toast"></div>
     <div id="dim"></div>
+    <div id="volp"></div>
+    <div id="pmenu"></div>
     <div id="off"></div>
-    <div id="boot"><div class="logo">GALAXY</div><div class="ver">OS 1.0</div><div class="ring"></div></div>
+    <div id="boot"><div class="logo">GALAXY</div><div class="ver">ONE UI · OS 1.0</div></div>
   </div>
 </div>
 <script>
@@ -438,6 +573,10 @@ const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 const fmtHM = d => pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+// status-bar style time: "오후 3:05" (or 24h when enabled)
+const fmtST = d => (typeof S !== 'undefined' && S.h24) ? fmtHM(d) : `${d.getHours() < 12 ? '오전' : '오후'} ${d.getHours() % 12 || 12}:${pad2(d.getMinutes())}`;
+// big clock face: "3:05" / "15:05"
+const fmtBig = d => (typeof S !== 'undefined' && S.h24) ? fmtHM(d) : `${d.getHours() % 12 || 12}:${pad2(d.getMinutes())}`;
 const fmtDate = d => `${d.getMonth() + 1}월 ${d.getDate()}일 ${DAYS[d.getDay()]}요일`;
 function fmtAgo(t) {
   const s = (Date.now() - t) / 1000;
@@ -517,12 +656,38 @@ const P = {
   wall: '<rect x="4" y="2" width="16" height="20" rx="3"/><path d="M4 16l5-5 4 4 2-2 5 5"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>',
   share: '<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/>',
+  mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+  power: '<path d="M12 3v8M6.3 6.3a8 8 0 1 0 11.4 0"/>',
+  restart: '<path d="M20 12a8 8 0 1 1-2.3-5.7L20 8.5M20 3.5v5h-5"/><path d="M12 8v4"/>',
+  sos: '<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/>',
+  apps: '<rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/>',
+  display: '<rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/>',
+  palette: '<path d="M12 3a9 9 0 1 0 0 18c1 0 1.5-.8 1.5-1.6 0-1.2-1-1.4-1-2.4 0-.9.7-1.5 1.6-1.5H16a5 5 0 0 0 5-5C21 6.6 17 3 12 3z"/><path d="M7.5 11.5h.01M10 7.5h.01M15 7.5h.01"/>',
+  shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  pin2: '<path d="M12 21s-7-6.3-7-12a7 7 0 0 1 14 0c0 5.7-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+  heart: '<path d="M12 20s-8-4.7-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9c0 6.3-8 11-8 11z"/>',
+  battery: '<rect x="3" y="7" width="16" height="10" rx="2.5"/><path d="M21 10.5v3M6.5 10v4"/>',
+  access: '<circle cx="12" cy="4.5" r="1.8"/><path d="M5 8.5l7 1.5 7-1.5M12 10v4l-3 7M12 14l3 7"/>',
+  update: '<path d="M12 3v12M7 10l5 5 5-5M5 20h14"/>',
+  sliders: '<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+  account: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.5 18.5a6.5 6.5 0 0 1 11 0"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  vibrate: '<rect x="8" y="4" width="8" height="16" rx="2"/><path d="M4 8v8M20 8v8"/>',
+  folder: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  cloud: '<path d="M7 18a4.5 4.5 0 0 1-.6-9A6 6 0 0 1 18 9.5a4.3 4.3 0 0 1-.5 8.5z"/>',
+  wx: '<circle cx="9" cy="9" r="3.5"/><path d="M9 2.5v1.5M3.6 4.6l1 1M2.5 9H4M14.4 4.6l-1 1"/><path d="M9.5 20a3.5 3.5 0 0 1-.4-7A5 5 0 0 1 18.5 13a3.4 3.4 0 0 1-.4 7z"/>',
+  routine: '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
+  dnd: '<circle cx="12" cy="12" r="9"/><path d="M7.5 12h9"/>',
+  hotspot: '<circle cx="12" cy="12" r="2"/><path d="M8 16a5.7 5.7 0 0 1 0-8M16 8a5.7 5.7 0 0 1 0 8M5 19a10 10 0 0 1 0-14M19 5a10 10 0 0 1 0 14"/>',
+  nfc: '<path d="M6 8v8l6-8v8M14 8h4M14 12h3M14 8v8"/>',
+  eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  data: '<path d="M7 20V9M4 12l3-3 3 3M17 4v11M14 12l3 3 3-3"/>',
 };
 const svg = (n, extra = '') => `<svg viewBox="0 0 24 24" ${extra}>${P[n] || ''}</svg>`;
 const iconBtn = (n, onclick, label) => h('button', { class: 'ibtn', onclick, 'aria-label': label || n, title: label || '', html: svg(n) });
 
 /* ---------- settings ---------- */
-const DEFAULTS = { dark: false, wall: 0, wallCustom: '', bright: 100, numRow: true, kbVib: true, kbSound: false, lang: 'ko', wifi: true, bt: false, silent: false, air: false, torch: false, rotate: true, kbPreview: true };
+const DEFAULTS = { dark: false, wall: 0, wallCustom: '', bright: 100, numRow: true, kbVib: true, kbSound: false, kbAlt: true, lang: 'ko', wifi: true, bt: false, silent: false, vibOnly: false, air: false, torch: false, rotate: true, kbPreview: true, h24: false, vol: 9, mediaVol: 10, fs: 1, headsup: true, dnd: false, data: true, loc: true, hotspot: false, nfc: false, eyeComfort: false, powerSave: false, lockNoti: 'icons', edge: true, pageDots: true, accent: '', wxLat: 37.5665, wxLon: 126.978, wxCity: '서울' };
 const S = Object.assign({}, DEFAULTS, store.get('settings', {}));
 function setS(k, v) { S[k] = v; store.set('settings', S); applySettings(); emit('settings', k); }
 const WALLS = [
@@ -541,6 +706,11 @@ function applySettings() {
   phone.dataset.theme = S.dark ? 'dark' : 'light';
   $('#wall').style.background = wallCss();
   $('#dim').style.opacity = ((100 - S.bright) / 100 * 0.75).toFixed(3);
+  $('#dim').style.background = S.eyeComfort ? 'rgba(255,140,0,1)' : '#000';
+  if (S.eyeComfort) $('#dim').style.opacity = Math.max(0.12, (100 - S.bright) / 100 * 0.6).toFixed(3);
+  phone.style.setProperty('--fs', S.fs);
+  if (S.accent) phone.style.setProperty('--accent', S.accent); else phone.style.removeProperty('--accent');
+  phone.classList.toggle('no-edge', !S.edge);
   updateChrome();
   renderStatus();
 }
@@ -548,6 +718,8 @@ function applySettings() {
 /* ---------- audio / haptics ---------- */
 let actx = null;
 function tone(freq = 880, dur = 0.08, vol = 0.08, type = 'sine') {
+  vol *= (S.vol / 9);
+  if (S.silent || S.vibOnly || vol <= 0) return;
   try {
     actx = actx || new (window.AudioContext || window.webkitAudioContext)();
     const o = actx.createOscillator(), g = actx.createGain();
@@ -558,7 +730,7 @@ function tone(freq = 880, dur = 0.08, vol = 0.08, type = 'sine') {
   } catch {}
 }
 function vibrate(ms) { try { navigator.vibrate && navigator.vibrate(ms); } catch {} }
-function alertSound() { if (S.silent) { vibrate([200, 100, 200]); return; } [0, 180, 360].forEach(t => setTimeout(() => tone(988, 0.14, 0.12, 'triangle'), t)); }
+function alertSound() { if (S.silent || S.vibOnly) { vibrate([200, 100, 200]); return; } [0, 180, 360].forEach(t => setTimeout(() => tone(988, 0.14, 0.12, 'triangle'), t)); }
 
 /* ---------- scale ---------- */
 let SCALE = 1;
@@ -616,7 +788,7 @@ const Dialog = {
       d.innerHTML = '';
       d.append(h('div', { class: 'dlg', onclick: e => e.stopPropagation() },
         h('h3', null, title), msg ? h('p', null, msg) : null,
-        h('div', { class: 'btns' }, buttons.map(b => h('button', { class: b.cls || '', onclick: () => done(b.v) }, b.label)))));
+        h('div', { class: 'btns' }, buttons.map((b, i) => [i ? h('i') : null, h('button', { class: b.cls || '', onclick: () => done(b.v) }, b.label)]))));
       d.onclick = () => done(false);
       d.classList.add('show');
     });
@@ -714,6 +886,9 @@ const KB = (() => {
     sym1: [['+', '×', '÷', '=', '/', '_', '<', '>', '[', ']'], ['!', '@', '#', '₩', '%', '^', '&', '*', '(', ')'], ['1/2', '-', "'", '"', ':', ';', '~', '?', '⌫']],
     sym2: [['`', '|', '\\', '{', '}', '€', '£', '¥', '$', '°'], ['•', '○', '●', '□', '■', '♤', '♡', '◇', '♧', '☆'], ['2/2', '▪', '¤', '《', '》', '¡', '¿', '…', '⌫']],
   };
+  const ALT_TOP = ['+', '×', '÷', '=', '/', '_', '<', '>', '[', ']'];
+  const ALT_MID = ['@', '#', '₩', '%', '&', '-', '+', '(', ')'];
+  const ALT_BOT = ['*', '"', "'", ':', ';', '!', '?'];
   const KO_SH = { 'ㅂ': 'ㅃ', 'ㅈ': 'ㅉ', 'ㄷ': 'ㄸ', 'ㄱ': 'ㄲ', 'ㅅ': 'ㅆ', 'ㅐ': 'ㅒ', 'ㅔ': 'ㅖ' };
   const EMO = (() => {
     const s = '😀😃😄😁😆😅😂🤣😊😇🙂😉😍🥰😘😋😛😜🤪😎🤩🥳😏😒😞😔😟🙁😣😖😫😩🥺😢😭😤😠😡🤯😳🥵🥶😱😨😰😥🤗🤔🤭🤫😶😐😑😬🙄😯😮😲🥱😴🤤😪😵🤐🥴🤢🤧😷👍👎👌✌️🤞🤟👏🙌🙏💪👋❤️🧡💛💚💙💜🖤🤍💔💯✨🔥⭐🎉🎂🎁🌸🍀☕🍕🍔🍜🍰🍺⚽🏀🎮🎵📱💻📷🚗✈️🏠☀️🌙⛅🌈❄️';
@@ -781,6 +956,7 @@ const KB = (() => {
     root.append(h('div', { class: 'kb-tool' },
       tb('smile', '이모티콘', mode === 'emoji', () => setMode(mode === 'emoji' ? 'keys' : 'emoji')),
       tb('clip', '클립보드', mode === 'clip', () => setMode(mode === 'clip' ? 'keys' : 'clip')),
+      tb('mic', '음성 입력', !!rec, voice),
       tb('gear', '키보드 설정', false, () => { close(); WM.open('settings', { section: 'kb' }); }),
       h('div', { class: 'lbl' }, mode === 'clip' ? '클립보드' : mode === 'emoji' ? '이모티콘' : (layout === 'ko' ? '한국어' : layout === 'en' ? 'English' : '기호') + (lbl ? ' · ' + lbl : '')),
       tb('chevD', '키보드 숨기기', false, close)));
@@ -788,7 +964,19 @@ const KB = (() => {
     else if (mode === 'clip') root.append(clipPanel());
     else root.append(keys());
   }
-  function tb(icon, label, isOn, fn) { return h('button', { class: isOn ? 'on' : '', 'aria-label': label, title: label, html: svg(icon), onclick: fn }); }
+  // voice input through the browser's speech recognition
+  let rec = null;
+  function voice() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return toast('이 브라우저에서는 음성 입력을 사용할 수 없습니다');
+    if (rec) { rec.stop(); return; }
+    rec = new SR(); rec.lang = layout === 'en' ? 'en-US' : 'ko-KR'; rec.interimResults = false;
+    rec.onresult = e => { const t = [...e.results].map(r => r[0].transcript).join(''); if (t && field) { comp = null; insert(t); } };
+    rec.onerror = e => toast(e.error === 'not-allowed' ? '마이크 권한이 필요합니다' : '음성을 인식하지 못했습니다');
+    rec.onend = () => { rec = null; render(); };
+    try { rec.start(); toast('말씀하세요…'); render(); } catch { rec = null; }
+  }
+  function tb(icon, label, isOn, fn) { return h('button', { class: isOn ? (icon === 'mic' ? 'rec' : 'on') : '', 'aria-label': label, title: label, html: svg(icon), onclick: fn }); }
   function enterLabel() {
     if (!field) return '';
     if (field.dataset.enter) return field.dataset.enter;
@@ -800,14 +988,18 @@ const KB = (() => {
     const rows = [];
     if (S.numRow || sym) rows.push(NUM);
     rows.push(...LAY[layout]);
-    for (const r of rows) {
+    const letterRow0 = rows.length - 3;
+    rows.forEach((r, ri) => {
       const row = h('div', { class: 'kb-row' });
       const halfPad = r.length === 9 && !r.includes('⌫');
       if (halfPad) row.append(h('div', { class: 'kb-sp' }));
-      for (const k of r) row.append(keyEl(k));
+      // long-press hints like the Samsung keyboard: numbers on the top letter row, symbols below
+      const alts = sym || !S.kbAlt ? null : ri === letterRow0 ? (S.numRow ? ALT_TOP : NUM) : ri === letterRow0 + 1 ? ALT_MID : ri === letterRow0 + 2 ? ALT_BOT : null;
+      let ai = 0;
+      for (const k of r) row.append(keyEl(k, alts && k.length === 1 && !'⇧⌫'.includes(k) ? alts[ai++] : null));
       if (halfPad) row.append(h('div', { class: 'kb-sp' }));
       wrap.append(row);
-    }
+    });
     const el = enterLabel();
     wrap.append(h('div', { class: 'kb-row' },
       sym ? h('div', { class: 'key fn wide', 'data-k': 'abc' }, prevLetter === 'ko' ? '한글' : 'ABC') : h('div', { class: 'key fn wide', 'data-k': 'sym' }, '!#1'),
@@ -815,7 +1007,7 @@ const KB = (() => {
       h('div', { class: 'key ch', 'data-k': 'c', 'data-c': ',' }, ','),
       h('div', { class: 'key space', 'data-k': 'space' }, layout === 'ko' ? '한국어' : layout === 'en' ? 'English' : ''),
       h('div', { class: 'key ch', 'data-k': 'c', 'data-c': '.' }, '.'),
-      h('div', { class: 'key fn wide enter', 'data-k': 'enter', html: el ? `<span style="font-size:14px">${el}</span>` : svg('enter') })));
+      h('div', { class: 'key fn wide', 'data-k': 'enter', html: el ? `<span style="font-size:14px">${el}</span>` : svg('enter') })));
     return wrap;
   }
   function label(k) {
@@ -823,12 +1015,12 @@ const KB = (() => {
     if (layout === 'en' && shift) return k.toUpperCase();
     return k;
   }
-  function keyEl(k) {
+  function keyEl(k, alt) {
     if (k === '⇧') return h('div', { class: 'key fn wide shift' + (shift ? ' on' : '') + (shift === 2 ? ' lock' : ''), 'data-k': 'shift', 'aria-label': 'Shift', html: svg('shift') });
     if (k === '⌫') return h('div', { class: 'key fn wide', 'data-k': 'bksp', 'aria-label': '지우기', html: svg('bksp') });
     if (k === '1/2' || k === '2/2') return h('div', { class: 'key fn wide', 'data-k': 'page' }, k);
     const c = label(k);
-    return h('div', { class: 'key ch', 'data-k': 'c', 'data-c': S.kbPreview ? c : '' , 'data-v': c }, c);
+    return h('div', { class: 'key ch', 'data-k': 'c', 'data-c': S.kbPreview ? c : '', 'data-v': c, 'data-a': alt || '' }, c, alt ? h('span', { class: 'alt' }, alt) : null);
   }
   function emojiPanel() {
     const p = h('div', { class: 'kb-panel', style: `height:${panelH}px` },
@@ -868,12 +1060,27 @@ const KB = (() => {
     const k = e.target.closest('.key');
     if (!k) return;
     e.preventDefault();
+    if (downEl) commitChar();
     downEl = k; k.classList.add('down');
+    if (k.dataset.k === 'c') {
+      // character keys commit on release; holding one types its long-press symbol
+      feedback();
+      if (k.dataset.a) longT = setTimeout(() => { k.classList.add('long'); k.dataset.c = k.dataset.a; longFired = true; vibrate(12); }, 420);
+      return;
+    }
     press(k);
     if (k.dataset.k === 'bksp') repT = setTimeout(() => { repI = setInterval(backspace, 55); }, 380);
   });
   root.addEventListener('mousedown', e => e.preventDefault());
-  const release = () => { stopRepeat(); if (downEl) downEl.classList.remove('down'); downEl = null; if (dirty) render(); };
+  let longT = null, longFired = false;
+  function commitChar() {
+    const k = downEl; clearTimeout(longT);
+    if (!k || k.dataset.k !== 'c' || !field) return;
+    typeChar(longFired ? k.dataset.a : k.dataset.v);
+    longFired = false;
+    if (shift === 1) { shift = 0; dirty = true; }
+  }
+  const release = () => { stopRepeat(); commitChar(); if (downEl) downEl.classList.remove('down', 'long'); downEl = null; if (dirty) render(); };
   addEventListener('pointerup', release); addEventListener('pointercancel', release);
 
   function press(el) {
@@ -910,11 +1117,13 @@ const KB = (() => {
   function attach(f) {
     if (field !== f) { comp = null; field = f; shift = 0; mode = 'keys'; const want = f.dataset.kb; layout = want === 'num' ? 'sym1' : want === 'en' ? 'en' : (layout.startsWith('sym') ? prevLetter : layout); if (want === 'num') prevLetter = S.lang; }
     if (!f.hasAttribute('inputmode')) f.setAttribute('inputmode', 'none');
-    root.classList.add('show'); phone.classList.add('kb-open');
+    root.classList.add('show'); phone.classList.add('kb-open'); navBackIcon(true);
     render();
     setTimeout(() => { if (field === f) scrollInto(f); }, 30);
   }
-  function hide() { comp = null; field = null; root.classList.remove('show'); phone.classList.remove('kb-open'); }
+  function hide() { comp = null; field = null; if (rec) rec.stop(); root.classList.remove('show'); phone.classList.remove('kb-open'); navBackIcon(false); }
+  // One UI turns the Back button into "hide keyboard" while typing
+  function navBackIcon(down) { const b = $('[data-nav=back] svg'); if (b) b.innerHTML = down ? P.chevD : P.back; }
   function close() { const a = document.activeElement; if (isField(a)) a.blur(); hide(); }
 
   // focus tracking
@@ -927,7 +1136,7 @@ const KB = (() => {
   }, true);
   phone.addEventListener('pointerdown', e => { if (e.target.closest && e.target.closest('input,textarea')) comp = null; }, true);
   on('clip', () => { if (visible() && mode === 'clip') render(); });
-  on('settings', k => { if (visible() && (k === 'numRow' || k === 'kbPreview')) render(); });
+  on('settings', k => { if (visible() && ['numRow', 'kbPreview', 'kbAlt'].includes(k)) render(); });
 
   return { attach, hide, close, isField, insertText: t => { comp = null; insert(t); }, setMode, get visible() { return visible(); }, get field() { return field; } };
 })();
@@ -944,6 +1153,8 @@ const Ctx = (() => {
   function show(pt, items) {
     if (!items || !items.length) return;
     el.innerHTML = '';
+    // icon / list menus are vertical cards; the text-selection toolbar is a horizontal pill
+    el.classList.toggle('vert', !!api.vertical); api.vertical = false;
     for (const it of items) el.append(h('button', { onclick: e => { e.stopPropagation(); hide(); it.fn(); } }, it.label));
     el.classList.add('show');
     const w = el.offsetWidth, hh = el.offsetHeight;
@@ -1005,7 +1216,8 @@ const Ctx = (() => {
     lastPt = localPt(e);
     const items = itemsFor(e.target); if (items) show(lastPt, items);
   });
-  return { hide, show, get open() { return isOpen(); } };
+  const api = { hide, show, vertical: false, get open() { return isOpen(); } };
+  return api;
 })();
 
 /* ==========================================================================
@@ -1017,8 +1229,9 @@ const NC = {
   push(n) {
     n = { id: uid(), t: Date.now(), ...n };
     this.list.unshift(n); this.list = this.list.slice(0, 30); this.save();
-    if (!S.silent) tone(1175, 0.12, 0.07); else vibrate(120);
-    Headsup.show(n);
+    if (S.dnd) return;
+    if (S.silent || S.vibOnly) vibrate(120); else tone(1175, 0.12, 0.07);
+    if (S.headsup) Headsup.show(n);
   },
   remove(id) { this.list = this.list.filter(n => n.id !== id); this.save(); },
   clear() { this.list = []; this.save(); },
@@ -1026,9 +1239,8 @@ const NC = {
 function notiEl(n, onClick) {
   const a = APPS[n.app];
   return h('div', { class: 'noti', onclick: onClick },
-    a ? h('div', { class: 'sq sm', style: `background:${a.color}`, html: svg(a.icon) }) : null,
-    h('div', { class: 'tx' }, h('b', null, n.title), h('p', null, n.body)),
-    h('span', { class: 'tm' }, fmtAgo(n.t)));
+    a ? appIcon(n.app, 'sm') : null,
+    h('div', { class: 'tx' }, h('div', { class: 'ap' }, (a ? a.name : '') + ' · ' + fmtAgo(n.t)), h('b', null, n.title), h('p', null, n.body)));
 }
 const Headsup = (() => {
   const el = $('#headsup'); let t;
@@ -1051,10 +1263,11 @@ function defineApp(id, name, color, icon, create) { APPS[id] = { id, name, color
 
 const WM = {
   run: new Map(), cur: null,
-  open(id, intent) {
+  // `from` is the icon that was tapped: the app grows out of it, like One UI
+  open(id, intent, from) {
     const app = APPS[id]; if (!app) return;
     Unlock.force();
-    Drawer.close(); Recents.close(); Shade.close(); Ctx.hide();
+    Drawer.close(); Recents.close(); Shade.close(); Ctx.hide(); Edge.close();
     let r = this.run.get(id);
     if (!r) {
       const el = h('div', { class: 'app', 'data-app': id });
@@ -1065,7 +1278,12 @@ const WM = {
     } else if (intent && r.inst.intent) r.inst.intent(intent);
     if (this.cur && this.cur !== id) { const c = this.run.get(this.cur); if (c) { c.el.classList.remove('active'); c.inst.hide && c.inst.hide(); } }
     r.t = Date.now();
-    if (this.cur !== id) { r.el.classList.remove('closing'); r.el.classList.add('active', 'opening'); setTimeout(() => r.el.classList.remove('opening'), 300); }
+    if (from && from.getBoundingClientRect) {
+      const a = from.getBoundingClientRect(), c = $('#apps').getBoundingClientRect();
+      r.origin = `${(a.left + a.width / 2 - c.left) / SCALE}px ${(a.top + a.height / 2 - c.top) / SCALE}px`;
+    } else r.origin = '50% 60%';
+    r.el.style.transformOrigin = r.origin;
+    if (this.cur !== id) { r.el.classList.remove('closing'); r.el.classList.add('active', 'opening'); setTimeout(() => r.el.classList.remove('opening'), 340); }
     this.cur = id;
     r.inst.show && r.inst.show();
     updateChrome();
@@ -1075,14 +1293,16 @@ const WM = {
     if (this.cur) {
       const id = this.cur, c = this.run.get(id);
       c.el.classList.add('closing');
-      setTimeout(() => { if (this.cur !== id) c.el.classList.remove('active', 'closing'); }, 220);
+      setTimeout(() => { if (this.cur !== id) c.el.classList.remove('active', 'closing'); }, 240);
       c.inst.hide && c.inst.hide();
       this.cur = null;
     }
-    Drawer.close(); Recents.close(); Shade.close();
+    Drawer.close(); Recents.close(); Shade.close(); Edge.close();
     updateChrome();
   },
   back() {
+    if (PowerMenu.open) return PowerMenu.close();
+    if (Edge.isOpen) return Edge.close();
     if (Ctx.open) return Ctx.hide();
     if (Dialog.open) return Dialog.close();
     if (Shade.isOpen) return Shade.close();
@@ -1101,8 +1321,8 @@ const WM = {
 function updateChrome() {
   const inApp = !!WM.cur && !Recents.isOpen;
   phone.classList.toggle('in-app', inApp);
-  phone.classList.toggle('light-ui', inApp && !S.dark && $('#lock').classList.contains('gone') && !Shade.isOpen);
-  if (Shade.isOpen) phone.classList.toggle('light-ui', !S.dark);
+  phone.classList.toggle('shade-open', Shade.isOpen);
+  phone.classList.toggle('locked', !$('#lock').classList.contains('gone'));
 }
 
 /* stack navigation inside an app */
@@ -1112,16 +1332,42 @@ function makeStack(root) {
     push(v) { v.classList.add('pushin'); root.append(v); st.push(v); setTimeout(() => v.classList.remove('pushin'), 270); return v; },
     pop() { if (st.length < 2) return false; KB.close(); const v = st.pop(); v.classList.add('popout'); setTimeout(() => v.remove(), 200); v._onpop && v._onpop(); return true; },
     reset(v) { st.splice(0).forEach(x => x.remove()); root.append(v); st.push(v); },
+    replaceTop(v) { st.pop().remove(); root.append(v); st.push(v); },
     get top() { return st[st.length - 1]; },
     get depth() { return st.length; },
   };
 }
-function Page(title, { actions = [], sub } = {}) {
-  const body = h('div', { class: 'pg-body' });
+/* One UI page: a large centred title in the top "viewing area" that collapses
+   into the toolbar as the list scrolls up, snapping open or closed. */
+function Page(title, { actions = [], sub, back } = {}) {
+  const body = h('div', { class: 'ou-body' });
   const subEl = h('div', { class: 'sub' }, sub || '');
-  const el = h('div', { class: 'view' },
-    h('div', { class: 'pg-head' }, h('div', { class: 'grow' }, h('h1', null, title), subEl), actions), body);
-  return { el, body, subEl };
+  const h1 = h('h1', null, title);
+  const hero = h('div', { class: 'ou-hero' }, h1, subEl);
+  const small = h('div', { class: 't' }, title);
+  const bar = h('div', { class: 'ou-bar' }, back ? iconBtn('back', back, '뒤로') : null, small, actions);
+  const sc = h('div', { class: 'ou-sc' }, hero, bar, body);
+  const el = h('div', { class: 'view' }, sc);
+  let heroH = 0, snapT;
+  const layout = () => {
+    const H = sc.clientHeight; if (!H) return;
+    heroH = Math.round(Math.max(150, H * 0.34));
+    hero.style.height = heroH + 'px';
+    body.style.minHeight = (H - 56) + 'px';
+    paint();
+  };
+  const paint = () => {
+    const p = heroH ? clamp(sc.scrollTop / (heroH - 20), 0, 1) : 0;
+    h1.parentNode.style.opacity = String(1 - p * 1.4);
+    small.style.opacity = p > 0.85 ? String((p - 0.85) / 0.15) : '0';
+  };
+  sc.addEventListener('scroll', () => {
+    paint();
+    clearTimeout(snapT);
+    snapT = setTimeout(() => { const t = sc.scrollTop; if (t > 0 && t < heroH) sc.scrollTo({ top: t < heroH / 2 ? 0 : heroH, behavior: 'smooth' }); }, 140);
+  }, { passive: true });
+  try { new ResizeObserver(layout).observe(sc); } catch { setTimeout(layout, 50); }
+  return { el, body, subEl, sc, setTitle(t) { h1.textContent = t; small.textContent = t; } };
 }
 function Bar(title, { back, actions = [] } = {}) {
   const t = h('div', { class: 'title' }, title);
@@ -1145,170 +1391,382 @@ function avatar(name, cls = '') { return h('div', { class: 'av ' + cls, style: `
    System UI
    ========================================================================== */
 let battery = { level: 0.86, charging: false };
-try { navigator.getBattery && navigator.getBattery().then(b => { const u = () => { battery = { level: b.level, charging: b.charging }; renderStatus(); }; u(); b.addEventListener('levelchange', u); b.addEventListener('chargingchange', u); }); } catch {}
+try { navigator.getBattery && navigator.getBattery().then(b => { const u = () => { battery = { level: b.level, charging: b.charging }; renderStatus(); emit('battery'); }; u(); b.addEventListener('levelchange', u); b.addEventListener('chargingchange', u); }); } catch {}
 
-function renderStatus() {
-  $('#sbTime').textContent = fmtHM(new Date());
-  const apps = [...new Set(NC.list.map(n => n.app))].slice(0, 3);
-  $('#sbNotis').innerHTML = apps.map(a => APPS[a] ? svg(APPS[a].icon) : '').join('');
-  const pct = Math.round(battery.level * 100);
-  $('#sbRight').innerHTML =
-    (S.silent ? svg('mute') : '') + (S.bt && !S.air ? svg('bt') : '') +
-    (S.air ? svg('plane') : S.wifi ? svg('wifi') : '') +
-    `<span class="batt">${pct}%<i><b style="width:${Math.max(2, pct * 0.17)}px"></b></i>${battery.charging ? '⚡' : ''}</span>`;
+/* app icon: One UI squircle; calendar and clock icons are live */
+function iconInner(id) {
+  const d = new Date();
+  if (id === 'calendar') return `<div class="calic"><small>${DAYS[d.getDay()]}요일</small><b>${d.getDate()}</b></div>`;
+  if (id === 'clock') {
+    const ha = ((d.getHours() % 12) + d.getMinutes() / 60) * 30 * Math.PI / 180, ma = d.getMinutes() * 6 * Math.PI / 180;
+    const hx = 12 + 4.2 * Math.sin(ha), hy = 12 - 4.2 * Math.cos(ha), mx = 12 + 6.2 * Math.sin(ma), my = 12 - 6.2 * Math.cos(ma);
+    return `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#fff" stroke="none"/><path d="M12 12L${hx.toFixed(2)} ${hy.toFixed(2)}" stroke="#1d2340" stroke-width="2"/><path d="M12 12L${mx.toFixed(2)} ${my.toFixed(2)}" stroke="#1d2340" stroke-width="1.5"/><circle cx="12" cy="12" r="1.2" fill="#ff4d4d" stroke="none"/></svg>`;
+  }
+  return svg(APPS[id].icon);
+}
+function appIcon(id, cls = '') {
+  const a = APPS[id];
+  return h('div', { class: 'sq ' + cls, style: `--c:${a.color}`, 'data-dyn': id === 'calendar' || id === 'clock' ? id : null, html: iconInner(id) });
+}
+function refreshDynamicIcons() { $$('.sq[data-dyn]').forEach(e => { e.innerHTML = iconInner(e.dataset.dyn); }); }
+
+/* One UI style slider */
+function oslider(value, min, max, oninput) {
+  const tr = h('div', { class: 'tr' }), fi = h('div', { class: 'fi' }), th = h('div', { class: 'th' });
+  const el = h('div', { class: 'oslider', role: 'slider' }, tr, fi, th);
+  let v = value;
+  const paint = () => { const p = (v - min) / (max - min) * 100; fi.style.width = p + '%'; th.style.left = p + '%'; };
+  const at = e => { const r = el.getBoundingClientRect(); v = Math.round(min + clamp((e.clientX - r.left) / r.width, 0, 1) * (max - min)); paint(); oninput(v); };
+  el.addEventListener('pointerdown', e => {
+    e.stopPropagation(); at(e);
+    const mv = ev => at(ev), up = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); };
+    addEventListener('pointermove', mv); addEventListener('pointerup', up);
+  });
+  el._set = nv => { v = nv; paint(); };
+  paint();
+  return el;
 }
 
-/* ---------- home & dock ---------- */
+/* ---------- weather (Open-Meteo, no key) ---------- */
+const WX_CODES = [[0, '맑음', '☀️'], [1, '대체로 맑음', '🌤️'], [2, '구름 조금', '⛅'], [3, '흐림', '☁️'], [48, '안개', '🌫️'], [57, '이슬비', '🌦️'], [67, '비', '🌧️'], [77, '눈', '🌨️'], [82, '소나기', '🌦️'], [86, '눈 소나기', '🌨️'], [99, '뇌우', '⛈️']];
+const wxInfo = c => WX_CODES.find(x => c <= x[0]) || WX_CODES[3];
+const Weather = {
+  data: store.get('wx', null),
+  get now() {
+    const d = this.data;
+    if (d && d.current) return { t: Math.round(d.current.temperature_2m), code: d.current.weather_code, hi: Math.round(d.daily.temperature_2m_max[0]), lo: Math.round(d.daily.temperature_2m_min[0]) };
+    return { t: 18, code: 0, hi: 21, lo: 11, fake: true };
+  },
+  async refresh(force) {
+    if (!force && this.data && this.data.at && Date.now() - this.data.at < 30 * 60e3 && this.data.lat === S.wxLat) return;
+    try {
+      const u = `https://api.open-meteo.com/v1/forecast?latitude=${S.wxLat}&longitude=${S.wxLon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code&hourly=temperature_2m,weather_code,precipitation_probability&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max&timezone=auto&forecast_days=7`;
+      const r = await fetch(u); if (!r.ok) throw 0;
+      const j = await r.json(); j.at = Date.now(); j.lat = S.wxLat;
+      this.data = j; store.set('wx', j); emit('wx');
+    } catch { emit('wx'); }
+  },
+};
+
+function renderStatus() {
+  const d = new Date();
+  $('#sbTime').textContent = fmtST(d);
+  const apps = [...new Set(NC.list.map(n => n.app))].filter(a => APPS[a]).slice(0, 3);
+  $('#sbNotis').innerHTML = apps.map(a => svg(APPS[a].icon)).join('');
+  const pct = Math.round(battery.level * 100);
+  const sig = S.air ? '' : `<span class="net">${S.data ? '5G' : ''}</span><span class="sig"><i style="height:4px"></i><i style="height:6px"></i><i style="height:9px"></i><i style="height:12px" class="o"></i></span>`;
+  $('#sbRight').innerHTML =
+    (S.dnd ? svg('dnd') : '') + (S.silent ? svg('mute') : S.vibOnly ? svg('vibrate') : '') + (store.get('alarms', []).some(a => a.on) ? svg('clock') : '') +
+    (S.bt && !S.air ? svg('bt') : '') + (S.loc ? '' : '') +
+    (S.air ? svg('plane') : S.wifi ? svg('wifi') : '') + sig +
+    `<span class="batt">${pct}%<i><b style="width:${Math.max(2, pct * 0.165)}px"></b></i>${battery.charging ? '⚡' : ''}</span>`;
+}
+
+/* ---------- horizontal pager (home & apps screen) ---------- */
+function makePager(container, dotsEl, { onVertical, filter } = {}) {
+  const strip = h('div', { class: 'strip' });
+  container.append(strip);
+  let page = 0, count = 0;
+  const go = (i, anim = true) => {
+    page = clamp(i, 0, count - 1);
+    strip.style.transition = anim ? '' : 'none';
+    strip.style.transform = `translateX(${-page * 100}%)`;
+    dotsEl.innerHTML = '';
+    if (count > 1) for (let k = 0; k < count; k++) dotsEl.append(h('i', { class: k === page ? 'on' : '' }));
+  };
+  let axis = null;
+  drag(container, {
+    filter: e => !filter || filter(e),
+    start: () => { axis = null; },
+    move: (dx, dy) => {
+      if (!axis && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+      if (axis === 'x') {
+        const edge = (page === 0 && dx > 0) || (page === count - 1 && dx < 0) ? 0.3 : 1;
+        strip.style.transition = 'none';
+        strip.style.transform = `translateX(calc(${-page * 100}% + ${dx * edge}px))`;
+      }
+    },
+    end: (dx, dy, moved) => {
+      if (axis === 'x') go(dx < -50 ? page + 1 : dx > 50 ? page - 1 : page);
+      else if (axis === 'y' && moved && onVertical) onVertical(dy);
+      axis = null;
+    },
+  });
+  container.addEventListener('wheel', e => {
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) { if (Math.abs(e.deltaX) > 30) { go(page + Math.sign(e.deltaX)); } }
+    else if (onVertical && Math.abs(e.deltaY) > 25) onVertical(-e.deltaY);
+  }, { passive: true });
+  return {
+    strip, go,
+    set(pages) { strip.innerHTML = ''; pages.forEach(p => strip.append(p)); count = pages.length; go(Math.min(page, count - 1), false); },
+    get page() { return page; },
+  };
+}
+
+/* ---------- home ---------- */
+const HOME_DEFAULT = [['calendar', 'gallery', 'notes', 'clock', 'weather', 'calculator', 'settings', 'clipboard'], ['contacts', 'internet']];
+const DOCK_DEFAULT = ['phone', 'messages', 'internet', 'camera'];
 const Home = (() => {
   const el = $('#home');
-  let grid = store.get('home', ['calendar', 'gallery', 'notes', 'clock', 'calculator', 'clipboard', 'contacts', 'settings']);
-  let dock = store.get('dock', ['phone', 'messages', 'internet', 'camera']);
-  const save = () => { store.set('home', grid); store.set('dock', dock); };
+  let pages = store.get('homePages', HOME_DEFAULT);
+  let dock = store.get('dock', DOCK_DEFAULT);
+  const save = () => { store.set('homePages', pages); store.set('dock', dock); };
+  const pagerEl = h('div', { class: 'pager' }), dotsEl = h('div', { class: 'dots' }), dockEl = h('div', { class: 'dock' });
+  el.append(pagerEl, dotsEl, dockEl);
+  const pager = makePager(pagerEl, dotsEl, { filter: () => !WM.cur, onVertical: dy => { if (dy < -40) Drawer.open(); else if (dy > 50) Shade.open(1); } });
+  const onHome = id => pages.some(p => p.includes(id)) || dock.includes(id);
   function iconEl(id, where) {
     const a = APPS[id];
-    return h('div', {
-      class: 'ic', onclick: () => WM.open(id), 'aria-label': a.name,
-      ctx: () => [
-        { label: '열기', fn: () => WM.open(id) },
-        where === 'home' ? { label: '홈 화면에서 삭제', fn: () => { grid = grid.filter(x => x !== id); save(); render(); toast(`${a.name}을(를) 홈 화면에서 삭제했습니다`); } } : null,
-        where === 'drawer' && !grid.includes(id) && !dock.includes(id) ? { label: '홈 화면에 추가', fn: () => { grid.push(id); save(); render(); toast(`${a.name}을(를) 홈 화면에 추가했습니다`); } } : null,
+    const el = h('div', {
+      class: 'ic', 'aria-label': a.name, onclick: () => WM.open(id, null, el.firstChild),
+      ctx: () => { Ctx.vertical = true; return [
+        where === 'home' ? { label: '선택한 앱 삭제', fn: () => { pages = pages.map(p => p.filter(x => x !== id)); save(); render(); toast(`${a.name}을(를) 홈 화면에서 삭제했습니다`); } } : null,
+        where !== 'home' && where !== 'dock' && !onHome(id) ? { label: '홈 화면에 추가', fn: () => { const last = pages[pages.length - 1]; if (last.length >= 24) pages.push([id]); else last.push(id); save(); render(); toast(`${a.name}을(를) 홈 화면에 추가했습니다`); } } : null,
+        { label: '앱 정보', fn: () => WM.open('settings', { appInfo: id }) },
         WM.run.has(id) ? { label: '앱 종료', fn: () => { WM.kill(id); toast(`${a.name} 종료됨`); } } : null,
-      ],
-    }, h('div', { class: 'sq', style: `background:${a.color}`, html: svg(a.icon) }), h('span', null, a.name));
+      ]; },
+    }, appIcon(id), h('span', null, a.name));
+    return el;
   }
   const clockT = h('div', { class: 't' }), dateT = h('div', { class: 'd' });
-  function render() {
-    grid = grid.filter(id => APPS[id]); dock = dock.filter(id => APPS[id]);
-    el.innerHTML = '';
-    el.append(
-      h('div', { class: 'widget', onclick: () => WM.open('clock') }, clockT, dateT, h('div', { class: 'w' }, '서울 · 맑음 18°')),
-      h('div', { class: 'hgrid' }, grid.map(id => iconEl(id, 'home'))),
-      h('button', { class: 'drawer-hint', 'aria-label': '앱스 화면 열기', html: svg('chevU'), onclick: () => Drawer.open() }),
-      h('div', { class: 'dock' }, dock.map(id => iconEl(id, 'dock'))));
-    tick();
+  const wxT = h('div', { class: 'ti' }), wxS = h('small'), wxC = h('small');
+  function widget() {
+    return h('div', { class: 'widget' },
+      h('div', { onclick: e => { e.stopPropagation(); WM.open('clock', null, clockT); } }, clockT, dateT),
+      h('div', { class: 'wx', onclick: e => { e.stopPropagation(); WM.open('weather', null, wxT); } }, wxT, wxC, wxS));
   }
-  function tick() { const d = new Date(); clockT.textContent = fmtHM(d); dateT.textContent = fmtDate(d); }
-  drag(el, {
-    filter: () => !WM.cur,
-    end: (dx, dy, moved) => { if (moved && dy < -50) Drawer.open(); else if (moved && dy > 60) Shade.open(); },
-  });
-  el.addEventListener('wheel', e => { if (e.deltaY > 25) Drawer.open(); else if (e.deltaY < -25) Shade.open(); }, { passive: true });
-  return { render, tick, iconEl, reset() { localStorage.removeItem('gos.home'); localStorage.removeItem('gos.dock'); grid = ['calendar', 'gallery', 'notes', 'clock', 'calculator', 'clipboard', 'contacts', 'settings']; dock = ['phone', 'messages', 'internet', 'camera']; render(); } };
+  function paintWx() {
+    const w = Weather.now, [, desc, emo] = wxInfo(w.code);
+    wxT.innerHTML = `<span>${emo}</span>${w.t}°`;
+    wxC.textContent = `${S.wxCity} · ${desc}`;
+    wxS.textContent = `${w.hi}° / ${w.lo}°`;
+  }
+  function render() {
+    pages = pages.map(p => p.filter(id => APPS[id])).filter((p, i) => p.length || i === 0);
+    if (!pages.length) pages = [[]];
+    dock = dock.filter(id => APPS[id]);
+    pager.set(pages.map((p, i) => h('div', { class: 'hpage' }, i === 0 ? widget() : null, p.map(id => iconEl(id, 'home')))));
+    dockEl.innerHTML = ''; dock.forEach(id => dockEl.append(iconEl(id, 'dock')));
+    tick(); paintWx();
+  }
+  function tick() { const d = new Date(); clockT.textContent = fmtBig(d); dateT.textContent = fmtDate(d); }
+  on('wx', paintWx);
+  return { render, tick, iconEl, goPage: i => pager.go(i), reset() { pages = HOME_DEFAULT.map(p => [...p]); dock = [...DOCK_DEFAULT]; save(); render(); } };
 })();
 
-/* ---------- apps screen (drawer) ---------- */
+/* ---------- finder: search providers for the apps screen ---------- */
+const FINDER = [];
+FINDER.push(q => {
+  const l = Contacts.list.filter(c => c.name.includes(q) || Hangul.chosung(c.name).includes(q) || c.phone.replace(/\D/g, '').includes(q.replace(/\D/g, '') || '\u0000'));
+  return { title: '연락처', items: l.slice(0, 4).map(c => ({ icon: avatar(c.name), label: c.name, sub: c.phone, fn: () => WM.open('contacts', { show: c.id }) })) };
+});
+FINDER.push(q => {
+  const l = store.get('notes', []).filter(n => (n.title + n.body).toLowerCase().includes(q.toLowerCase()));
+  return { title: '노트', items: l.slice(0, 3).map(n => ({ icon: appIcon('notes', 'sm'), label: n.title || '제목 없음', sub: n.body.split('\n')[0], fn: () => WM.open('notes', { open: n.id }) })) };
+});
+
+/* ---------- apps screen ---------- */
 const Drawer = (() => {
   const el = $('#drawer');
-  const q = h('input', { type: 'text', placeholder: '앱 검색 (초성 검색 가능)', 'data-enter': '검색', inputmode: 'none', 'aria-label': '앱 검색' });
-  const gridEl = h('div', { class: 'dr-grid' });
-  const head = h('div', { class: 'dr-head' }, h('div', { class: 'dr-search', html: svg('search') }));
-  head.firstChild.append(q, h('button', { 'aria-label': '지우기', style: 'color:#fff;display:none', html: svg('x'), onclick: () => { q.value = ''; q.dispatchEvent(new Event('input')); } }));
-  el.append(head, gridEl);
+  const q = h('input', { type: 'text', placeholder: '검색', 'data-enter': '검색', inputmode: 'none', 'aria-label': '앱 검색' });
+  const clearBtn = iconBtn('x', () => { q.value = ''; render(); }, '지우기');
+  const moreBtn = iconBtn('more', () => {
+    Ctx.vertical = true;
+    const r = moreBtn.getBoundingClientRect();
+    Ctx.show(localPt({ clientX: r.left, clientY: r.bottom + 40 }), [
+      { label: '홈 화면 설정', fn: () => WM.open('settings', { page: 'home' }) },
+      { label: '설정', fn: () => WM.open('settings') },
+    ]);
+  }, '더보기');
+  const head = h('div', { class: 'dr-head' }, h('div', { class: 'dr-search', html: svg('search') }, q, clearBtn, moreBtn));
+  const pagerEl = h('div', { class: 'pager' }), dotsEl = h('div', { class: 'dots' });
+  const results = h('div', { class: 'dr-results', style: 'display:none' });
+  el.append(head, pagerEl, results, dotsEl);
+  const pager = makePager(pagerEl, dotsEl, { onVertical: dy => { if (dy > 50) close(); } });
+  drag(head, { filter: e => e.target !== q, end: (dx, dy, moved) => { if (moved && dy > 50) close(); } });
   const sorted = () => [...APP_ORDER].sort((a, b) => APPS[a].name.localeCompare(APPS[b].name, 'ko'));
+  function renderPages() {
+    const ids = sorted(), pages = [];
+    for (let i = 0; i < ids.length; i += 24) pages.push(h('div', { class: 'dr-page' }, ids.slice(i, i + 24).map(id => Home.iconEl(id, 'drawer'))));
+    pager.set(pages);
+  }
   function render() {
     const v = q.value.trim().toLowerCase();
-    q.nextSibling.style.display = v ? '' : 'none';
-    const ids = sorted().filter(id => {
-      if (!v) return true;
-      const n = APPS[id].name.toLowerCase();
-      return n.includes(v) || id.includes(v) || Hangul.chosung(n).includes(v);
-    });
-    gridEl.innerHTML = '';
-    if (!ids.length) gridEl.append(h('div', { class: 'dr-empty' }, `'${q.value}'에 대한 검색 결과가 없습니다`));
-    ids.forEach(id => gridEl.append(Home.iconEl(id, 'drawer')));
+    clearBtn.style.display = v ? '' : 'none'; moreBtn.style.display = v ? 'none' : '';
+    pagerEl.style.display = dotsEl.style.display = v ? 'none' : '';
+    results.style.display = v ? '' : 'none';
+    if (!v) return;
+    results.innerHTML = '';
+    const ids = sorted().filter(id => { const n = APPS[id].name.toLowerCase(); return n.includes(v) || id.includes(v) || Hangul.chosung(n).includes(v); });
+    if (ids.length) results.append(h('div', { class: 'sect' }, '앱'), h('div', { class: 'grid' }, ids.map(id => Home.iconEl(id, 'drawer'))));
+    let any = ids.length;
+    for (const f of FINDER) {
+      const r = f(v); if (!r.items.length) continue; any++;
+      results.append(h('div', { class: 'sect', style: 'margin-top:20px' }, r.title), ...r.items.map(it => h('div', { class: 'rrow', onclick: () => { close(); it.fn(); } }, it.icon, h('div', null, it.label, h('small', null, it.sub || '')))));
+    }
+    if (!any) results.append(h('div', { class: 'dr-empty' }, `'${q.value}'에 대한 검색 결과 없음`));
   }
   q.addEventListener('input', render);
-  q.addEventListener('osenter', () => { const first = gridEl.querySelector('.ic'); if (first && q.value) first.click(); });
-  drag(head, { end: (dx, dy, moved) => { if (moved && dy > 50) close(); } });
-  drag(gridEl, { filter: () => gridEl.scrollTop <= 0, end: (dx, dy, moved) => { if (moved && dy > 70) close(); } });
-  gridEl.addEventListener('wheel', e => { if (gridEl.scrollTop <= 0 && e.deltaY < -30) close(); }, { passive: true });
-  function open() { if (WM.cur) WM.home(); render(); el.classList.add('open'); }
-  function close() { if (!el.classList.contains('open')) return; el.classList.remove('open'); if (document.activeElement === q) KB.close(); q.value = ''; }
+  q.addEventListener('osenter', () => { const first = results.querySelector('.ic,.rrow'); if (first && q.value) first.click(); });
+  function open(focusSearch) { if (WM.cur) WM.home(); Edge.close(); renderPages(); render(); pager.go(0, false); el.classList.add('open'); if (focusSearch) setTimeout(() => q.focus(), 60); }
+  function close() { if (!el.classList.contains('open')) return; el.classList.remove('open'); if (document.activeElement === q) KB.close(); q.value = ''; render(); }
   return { open, close, render, get isOpen() { return el.classList.contains('open'); } };
 })();
 
-/* ---------- notification shade / quick settings ---------- */
+/* ---------- edge panel ---------- */
+const Edge = (() => {
+  const el = $('#edge'), handle = $('#edgeH');
+  const APPS_EDGE = ['phone', 'messages', 'camera', 'gallery', 'internet', 'calculator', 'notes', 'clipboard'];
+  let isOpen = false;
+  function open() {
+    if (!S.edge || Lock.locked) return;
+    KB.close(); el.innerHTML = '';
+    el.append(h('div', { class: 'ep', onclick: e => e.stopPropagation() }, APPS_EDGE.filter(id => APPS[id]).map(id => {
+      const ic = h('div', { class: 'ic', onclick: () => { close(); WM.open(id, null, ic.firstChild); } }, appIcon(id), h('span', null, APPS[id].name));
+      return ic;
+    }), h('div', { class: 'tl' }, '앱 패널')));
+    el.classList.add('open'); isOpen = true;
+  }
+  function close() { if (!isOpen) return; el.classList.remove('open'); isOpen = false; }
+  el.addEventListener('click', close);
+  drag(handle, { end: (dx, dy, moved) => { if (!moved || dx < -20) open(); } });
+  return { open, close, get isOpen() { return isOpen; } };
+})();
+
+/* ---------- quick panel (two stages, like One UI) ---------- */
 const Shade = (() => {
   const el = $('#shade');
-  let isOpen = false;
-  const QS = [
-    { k: 'wifi', label: 'Wi-Fi', icon: 'wifi' },
-    { k: 'bt', label: '블루투스', icon: 'bt' },
-    { k: 'silent', label: '무음', icon: 'mute', off: 'bell', offLabel: '소리' },
-    { k: 'torch', label: '손전등', icon: 'torch' },
-    { k: 'air', label: '비행기 탑재 모드', icon: 'plane' },
-    { k: 'dark', label: '다크 모드', icon: 'moon' },
-    { k: 'rotate', label: '자동 회전', icon: 'rotate' },
-    { k: '_clip', label: '클립보드', icon: 'clip', act: () => WM.open('clipboard') },
-  ];
-  const timeEl = h('div', { class: 't' }), dateEl = h('div', { class: 'd' });
-  const qsEl = h('div', { class: 'qs' });
-  const list = h('div', { class: 'sh-list' });
-  const br = h('input', { type: 'range', min: 10, max: 100, value: S.bright, 'aria-label': '밝기', oninput: e => setS('bright', +e.target.value) });
-  const top = h('div', { class: 'sh-top' }, h('div', null, timeEl, dateEl), iconBtn('gear', () => WM.open('settings'), '설정'));
-  const foot = h('div', { class: 'sh-foot' }, h('div', { class: 'handle' }));
-  el.append(top, qsEl, h('div', { class: 'bright', html: svg('sun') }, br), list, foot);
-  function renderQS() {
-    qsEl.innerHTML = '';
-    for (const q of QS) {
-      const isOn = q.k[0] !== '_' && S[q.k];
-      qsEl.append(h('button', { class: isOn ? 'on' : '', onclick: () => {
-        if (q.act) return q.act();
-        setS(q.k, !S[q.k]);
-        if (q.k === 'air' && S.air) { S.wifi = false; S.bt = false; store.set('settings', S); renderStatus(); }
-        toast(`${q.label} ${S[q.k] ? '켜짐' : '꺼짐'}`);
-      } }, h('div', { class: 'q', html: svg(!isOn && q.off ? q.off : q.icon) }), isOn || !q.offLabel ? q.label : q.offLabel));
+  let state = 0; // 0 closed, 1 notifications + mini toggles, 2 expanded quick panel
+  const soundMode = () => S.silent ? 2 : S.vibOnly ? 1 : 0;
+  const cycleSound = () => { const m = (soundMode() + 1) % 3; S.vibOnly = m === 1; setS('silent', m === 2); toast(['소리 모드', '진동 모드', '무음 모드'][m]); if (m === 1) vibrate(200); };
+  const QS = {
+    wifi: { label: 'Wi-Fi', icon: 'wifi', k: 'wifi' },
+    bt: { label: '블루투스', icon: 'bt', k: 'bt' },
+    sound: { label: () => ['소리', '진동', '무음'][soundMode()], icon: () => ['bell', 'vibrate', 'mute'][soundMode()], on: () => true, act: cycleSound },
+    rotate: { label: '자동 회전', icon: 'rotate', k: 'rotate' },
+    air: { label: '비행기 탑재 모드', icon: 'plane', k: 'air' },
+    torch: { label: '손전등', icon: 'torch', k: 'torch' },
+    dark: { label: '다크 모드', icon: 'moon', k: 'dark' },
+    dnd: { label: '방해 금지', icon: 'dnd', k: 'dnd' },
+    data: { label: '모바일 데이터', icon: 'data', k: 'data' },
+    loc: { label: '위치', icon: 'pin2', k: 'loc' },
+    hotspot: { label: '모바일 핫스팟', icon: 'hotspot', k: 'hotspot' },
+    powerSave: { label: '절전 모드', icon: 'battery', k: 'powerSave' },
+    eyeComfort: { label: '편안하게 보기', icon: 'eye', k: 'eyeComfort' },
+    nfc: { label: 'NFC', icon: 'nfc', k: 'nfc' },
+    clip: { label: '클립보드', icon: 'clip', on: () => false, act: () => WM.open('clipboard') },
+    rec: { label: '화면 캡처', icon: 'img', on: () => false, act: () => capture() },
+  };
+  const val = (q, f) => typeof q[f] === 'function' ? q[f]() : q[f];
+  const isOn = q => q.on ? q.on() : !!S[q.k];
+  function toggle(id) {
+    const q = QS[id];
+    if (q.act) return q.act();
+    const v = !S[q.k];
+    if (q.k === 'air') { if (v) { S.wifi = false; S.bt = false; } }
+    if ((q.k === 'wifi' || q.k === 'bt') && v) S.air = false;
+    setS(q.k, v);
+  }
+  function qbtn(id, withLabel) {
+    const q = QS[id];
+    return h('button', { class: isOn(q) ? 'on' : '', 'aria-label': val(q, 'label'), onclick: () => toggle(id),
+      ctx: q.k === 'wifi' || q.k === 'bt' || id === 'sound' ? () => [{ label: '설정 열기', fn: () => WM.open('settings', { page: id === 'sound' ? 'sound' : 'conn' }) }] : null },
+      h('span', { class: 'qc', html: svg(val(q, 'icon')) }), h('span', null, val(q, 'label')));
+  }
+  function render() {
+    el.innerHTML = '';
+    const d = new Date();
+    const top = h('div', { class: 'qp-top' }, h('div', { class: 't' }, fmtST(d)), h('div', { class: 'd' }, fmtDate(d)),
+      iconBtn('search', () => { close(); Drawer.open(true); }, '검색'),
+      iconBtn('power', () => { close(); PowerMenu.show(); }, '전원'),
+      iconBtn('gear', () => WM.open('settings'), '설정'));
+    const panel = h('div', { class: 'qp-panel' });
+    if (state === 1) {
+      panel.append(h('div', { class: 'qmini' }, ['wifi', 'sound', 'bt', 'rotate', 'torch', 'air'].map(id => qbtn(id))));
+    } else {
+      const big = (id, sub) => { const q = QS[id]; return h('button', { class: isOn(q) ? 'on' : '', onclick: () => toggle(id) }, h('span', { class: 'qi', html: svg(q.icon) }), h('span', { class: 'tx' }, h('b', null, q.label), h('small', null, sub))); };
+      panel.append(
+        h('div', { class: 'qbig' }, big('wifi', S.wifi && !S.air ? 'Galaxy_5G' : '꺼짐'), big('bt', S.bt ? '켜짐' : '꺼짐')),
+        h('div', { class: 'qgrid' }, ['sound', 'rotate', 'air', 'torch', 'dark', 'dnd', 'data', 'loc', 'hotspot', 'powerSave', 'eyeComfort', 'clip'].map(id => qbtn(id, true))),
+        h('div', { class: 'qbright', html: svg('sun') }, oslider(S.bright, 10, 100, v => setS('bright', v))),
+        h('div', { class: 'qrow2' }, h('button', { onclick: () => toast('연결된 기기가 없습니다') }, '기기 제어'), h('button', { onclick: () => toast('미디어 출력: 이 휴대전화') }, '미디어 출력')));
     }
-    br.value = S.bright;
+    const handle = h('div', { class: 'qhandle', onclick: () => setState(state === 1 ? 2 : 1) }, h('i'));
+    const qp = h('div', { class: 'qp' }, top, panel, handle);
+    if (state === 1) {
+      const list = h('div', { class: 'qp-list' });
+      if (!NC.list.length) list.append(h('div', { class: 'empty', style: 'padding:30px 0' }, '알림 없음'));
+      else {
+        NC.list.forEach(n => list.append(notiEl(n, () => { NC.remove(n.id); WM.open(n.app, n.intent); })));
+        list.append(h('div', { class: 'qp-foot' }, h('button', { onclick: () => WM.open('settings', { page: 'noti' }) }, '알림 설정'), h('button', { onclick: () => NC.clear() }, '모두 지우기')));
+      }
+      list.addEventListener('click', e => { if (e.target === list) close(); });
+      qp.append(list);
+    } else qp.append(h('div', { style: 'flex:1', onclick: () => close() }));
+    el.append(h('div', { class: 'bgd', onclick: () => close() }), qp);
+    drag(top, { end: (dx, dy, moved) => { if (!moved) return; if (dy > 40) setState(2); else if (dy < -40) setState(state - 1); } });
+    drag(panel, { end: (dx, dy, moved) => { if (!moved) return; if (dy > 40) setState(2); else if (dy < -40) setState(state - 1); } });
+    drag(handle, { end: (dx, dy, moved) => { if (!moved) return; if (dy > 30) setState(2); else if (dy < -30) setState(state - 1); } });
+    requestAnimationFrame(() => el.classList.add('open'));
   }
-  function renderList() {
-    list.innerHTML = '';
-    if (!NC.list.length) { list.append(h('div', { class: 'empty', style: 'padding:30px 0' }, '알림 없음')); return; }
-    NC.list.forEach(n => list.append(notiEl(n, () => { NC.remove(n.id); WM.open(n.app, n.intent); }) ));
-    list.append(h('div', { style: 'text-align:right;padding:4px 6px' }, h('button', { class: 'pill ghost', style: 'padding:8px 16px;font-size:13px', onclick: () => NC.clear() }, '모두 지우기')));
-  }
-  function tick() { const d = new Date(); timeEl.textContent = fmtHM(d); dateEl.textContent = fmtDate(d); }
-  function open() { if (!$('#lock').classList.contains('gone')) return; KB.close(); Ctx.hide(); renderQS(); renderList(); tick(); isOpen = true; el.classList.add('open'); updateChrome(); }
-  function close() { if (!isOpen) return; isOpen = false; el.classList.remove('open'); updateChrome(); }
-  drag(top, { end: (dx, dy, moved) => { if (moved && dy < -40) close(); } });
-  drag(foot, { end: (dx, dy, moved) => { if (!moved || dy < -20) close(); } });
-  el.addEventListener('click', e => { if (e.target === el || e.target === list) close(); });
-  drag($('#statusbar'), { end: (dx, dy, moved) => { if (!moved || dy > 20) open(); } });
-  on('settings', () => { if (isOpen) renderQS(); });
-  on('notifs', () => { if (isOpen) renderList(); renderStatus(); Lock.renderNotis(); });
-  return { open, close, tick, get isOpen() { return isOpen; } };
+  function setState(s) { if (s <= 0) return close(); state = Math.min(2, s); render(); }
+  function open(s = 1) { if (Lock.locked) return; KB.close(); Ctx.hide(); Edge.close(); if (state && s <= state) s = state; state = s; render(); updateChrome(); }
+  function close() { if (!state) return; state = 0; el.classList.remove('open'); updateChrome(); setTimeout(() => { if (!state) el.innerHTML = ''; }, 300); }
+  function tick() { if (state) { const t = el.querySelector('.qp-top .t'); if (t) t.textContent = fmtST(new Date()); } }
+  drag($('#statusbar'), { end: (dx, dy, moved) => { if (!moved) open(1); else if (dy > 20) open(dy > 200 ? 2 : 1); } });
+  on('settings', () => { if (state) render(); });
+  on('notifs', () => { if (state === 1) render(); renderStatus(); Lock.renderNotis(); });
+  return { open, close, tick, get isOpen() { return state > 0; }, get state() { return state; } };
 })();
+
+/* screen capture of the current app, saved to the gallery */
+function capture() {
+  Shade.close();
+  setTimeout(() => {
+    const W = 360, Hh = 740, c = document.createElement('canvas'); c.width = W; c.height = Hh;
+    const g = c.getContext('2d');
+    const bg = getComputedStyle(phone).getPropertyValue(WM.cur ? '--bg' : '--accent').trim() || '#222';
+    g.fillStyle = bg; g.fillRect(0, 0, W, Hh);
+    g.fillStyle = S.dark ? '#fff' : '#111'; g.font = '600 26px sans-serif'; g.textAlign = 'center';
+    g.fillText(WM.cur ? APPS[WM.cur].name : '홈 화면', W / 2, 300);
+    g.font = '16px sans-serif'; g.fillText('화면 캡처 · ' + new Date().toLocaleString('ko-KR'), W / 2, 336);
+    const photos = store.get('photos', []); photos.unshift({ id: uid(), src: c.toDataURL('image/jpeg', 0.8), t: Date.now() });
+    try { store.set('photos', photos.slice(0, 12)); } catch {}
+    emit('photos');
+    const f = h('div', { style: 'position:absolute;inset:0;background:#fff;z-index:96;opacity:.8;transition:opacity .3s;pointer-events:none' }); phone.append(f);
+    setTimeout(() => { f.style.opacity = 0; setTimeout(() => f.remove(), 300); }, 60);
+    toast('화면을 캡처했습니다');
+  }, 350);
+}
 
 /* ---------- recent apps ---------- */
 const Recents = (() => {
   const el = $('#recents'); let isOpen = false;
   function open() {
-    KB.close(); Drawer.close(); Shade.close();
+    KB.close(); Drawer.close(); Shade.close(); Edge.close();
     isOpen = true; el.innerHTML = '';
-    const runs = [...WM.run.values()].sort((a, b) => b.t - a.t);
-    if (!runs.length) el.append(h('div', { class: 'rc-empty' }, '최근 사용한 앱이 없습니다'));
+    const runs = [...WM.run.values()].sort((a, b) => a.t - b.t);
+    if (!runs.length) el.append(h('div', { class: 'rc-empty' }, '최근 사용한 앱 없음'));
     else {
       const listEl = h('div', { class: 'rc-list' });
       const content = $('#content'), W = content.clientWidth, H = content.clientHeight;
       for (const r of runs) {
         const a = APPS[r.id];
         const prev = h('div', { class: 'rc-prev', onclick: () => WM.open(r.id) });
-        const card = h('div', { class: 'rc-card' },
-          h('div', { class: 'hd' }, h('div', { class: 'sq xs', style: `background:${a.color}`, html: svg(a.icon) }), a.name,
-            h('button', { class: 'x', 'aria-label': '닫기', html: svg('x'), onclick: () => { WM.kill(r.id); card.style.transform = 'translateY(-60px)'; card.style.opacity = 0; setTimeout(() => { card.remove(); if (!WM.run.size) open(); }, 200); } })),
-          prev);
-        drag(prev, { end: (dx, dy, moved) => { if (moved && dy < -80) card.querySelector('.x').click(); } });
+        const card = h('div', { class: 'rc-card' }, h('div', { class: 'hd' }, appIcon(r.id, 'xs'), a.name), prev);
+        const kill = () => { WM.kill(r.id); card.style.transform = 'translateY(-120px)'; card.style.opacity = 0; setTimeout(() => { card.remove(); if (!WM.run.size) open(); }, 200); };
+        card.querySelector('.hd').addEventListener('click', () => { Ctx.vertical = true; const b = card.getBoundingClientRect(); Ctx.show(localPt({ clientX: b.left + b.width / 2, clientY: b.top + 90 }), [{ label: '앱 정보', fn: () => WM.open('settings', { appInfo: r.id }) }, { label: '닫기', fn: kill }]); });
+        drag(prev, { move: (dx, dy) => { if (dy < 0) { card.style.transition = 'none'; card.style.transform = `translateY(${dy}px)`; card.style.opacity = 1 + dy / 400; } }, end: (dx, dy, moved) => { card.style.transition = ''; if (moved && dy < -90) kill(); else { card.style.transform = ''; card.style.opacity = ''; } } });
         listEl.append(card);
         requestAnimationFrame(() => {
           const clone = r.el.cloneNode(true);
           clone.classList.remove('opening', 'closing');
-          const k = prev.clientWidth / W;
-          clone.style.cssText = `width:${W}px;height:${H}px;transform:scale(${k})`;
+          clone.style.cssText = `width:${W}px;height:${H}px;transform:scale(${prev.clientWidth / W})`;
           prev.append(clone);
         });
       }
-      el.append(listEl, h('div', { class: 'rc-foot' }, h('button', { onclick: () => { [...WM.run.keys()].forEach(id => WM.kill(id)); close(); toast('모든 앱을 닫았습니다'); } }, '모두 닫기')));
-      if (WM.cur) { const i = runs.findIndex(r => r.id === WM.cur); requestAnimationFrame(() => { const c = listEl.children[i]; if (c) listEl.scrollLeft = c.offsetLeft - (listEl.clientWidth - c.clientWidth) / 2; }); }
+      el.append(listEl, h('div', { class: 'rc-foot' }, h('button', { onclick: () => { [...WM.run.keys()].forEach(id => WM.kill(id)); close(); WM.home(); } }, '모두 닫기')));
+      requestAnimationFrame(() => { const i = WM.cur ? runs.findIndex(r => r.id === WM.cur) : runs.length - 1; const c = listEl.children[i]; if (c) listEl.scrollLeft = c.offsetLeft - (listEl.clientWidth - c.clientWidth) / 2; });
     }
     el.classList.add('open'); updateChrome();
   }
@@ -1320,60 +1778,138 @@ const Recents = (() => {
 /* ---------- lock screen ---------- */
 const Lock = (() => {
   const el = $('#lock');
-  const clock = h('div', { class: 'lk-clock' }), date = h('div', { class: 'lk-date' }), notis = h('div', { class: 'lk-notis' });
-  const sc = (icon, label, app) => h('button', { class: 'lk-sc', 'aria-label': label, html: svg(icon), onclick: e => { e.stopPropagation(); unlock(); WM.open(app); } });
-  el.append(h('div', { class: 'lbg' }), clock, date, notis,
-    h('div', { class: 'lk-bottom' }, sc('phone', '전화', 'phone'),
-      h('button', { class: 'lk-hint', onclick: () => unlock() }, h('span', { html: svg('chevU') }), '위로 밀거나 눌러서 잠금 해제'),
-      sc('cam', '카메라', 'camera')));
-  function tick() { const d = new Date(); clock.textContent = fmtHM(d); date.textContent = fmtDate(d); }
-  function renderNotis() {
-    notis.innerHTML = '';
-    NC.list.slice(0, 3).forEach(n => notis.append(notiEl(n, () => { unlock(); NC.remove(n.id); WM.open(n.app, n.intent); })));
+  const clock = h('div', { class: 'lk-clock' }), date = h('div', { class: 'lk-date' }), wx = h('div', { class: 'lk-wx' });
+  const icons = h('div', { class: 'lk-icons' }), notis = h('div', { class: 'lk-notis' });
+  const hint = h('div', { class: 'lk-hint' }, '화면을 밀어서 잠금 해제하세요');
+  let expanded = false, hintT;
+  const showHint = t => { hint.textContent = t; hint.classList.add('show'); clearTimeout(hintT); hintT = setTimeout(() => hint.classList.remove('show'), 1800); };
+  function shortcut(icon, label, app) {
+    const b = h('div', { class: 'lk-sc', 'aria-label': label, role: 'button', html: svg(icon) });
+    let fired = false;
+    b.addEventListener('pointerdown', e => { e.stopPropagation(); fired = false; b.classList.add('drag'); });
+    drag(b, {
+      move: (dx, dy) => { const d = Math.hypot(dx, dy); b.style.transform = `scale(${1.25 + Math.min(d, 120) / 200})`; if (d > 80 && !fired) { fired = true; vibrate(15); } },
+      end: () => { b.classList.remove('drag'); b.style.transform = ''; if (fired) { unlock(); WM.open(app, null, b); } else showHint('아이콘을 밀어서 사용하세요'); },
+    });
+    b.addEventListener('keydown', e => { if (e.key === 'Enter') { unlock(); WM.open(app); } });
+    b.tabIndex = 0;
+    return b;
   }
+  el.append(h('div', { class: 'lk-lock', html: svg('lock') }), date, clock, wx, icons, notis,
+    h('div', { class: 'lk-bottom' }, shortcut('phone', '전화', 'phone'), hint, shortcut('cam', '카메라', 'camera')));
+  function tick() { const d = new Date(); clock.textContent = fmtBig(d); date.textContent = fmtDate(d); const w = Weather.now; wx.textContent = `${wxInfo(w.code)[2]} ${w.t}° ${S.wxCity}`; }
+  function renderNotis() {
+    icons.innerHTML = ''; notis.innerHTML = '';
+    const apps = [...new Set(NC.list.map(n => n.app))].filter(a => APPS[a]);
+    if (!expanded && S.lockNoti === 'icons') apps.forEach(a => icons.append(appIcon(a)));
+    else NC.list.slice(0, 3).forEach(n => notis.append(notiEl(n, () => { unlock(); NC.remove(n.id); WM.open(n.app, n.intent); })));
+  }
+  icons.addEventListener('click', e => { e.stopPropagation(); expanded = true; renderNotis(); });
   function lock() {
-    KB.close(); Ctx.hide(); Shade.close(); Recents.close(); Dialog.close();
-    el.querySelector('.lbg').style.background = wallCss();
-    el.style.background = wallCss();
-    el.classList.remove('gone', 'hide'); el.style.transform = ''; tick(); renderNotis();
+    KB.close(); Ctx.hide(); Shade.close(); Recents.close(); Dialog.close(); Edge.close(); PowerMenu.close();
+    el.style.backgroundImage = ''; el.style.background = wallCss();
+    expanded = false; el.classList.remove('gone', 'hide'); el.style.opacity = ''; el.style.transform = ''; tick(); renderNotis();
     updateChrome();
   }
   function unlock() {
     if (el.classList.contains('gone')) return;
-    el.classList.add('hide'); el.style.transform = '';
-    setTimeout(() => { el.classList.add('gone'); updateChrome(); }, 300);
+    el.classList.add('hide');
+    setTimeout(() => { el.classList.add('gone'); el.querySelectorAll('.lk-ripple').forEach(r => r.remove()); updateChrome(); }, 300);
     vibrate(10);
   }
+  let ripple = null, start = null;
   drag(el, {
-    filter: e => !e.target.closest('.lk-sc,.noti'),
-    move: (dx, dy) => { if (dy < 0) { el.style.transition = 'none'; el.style.transform = `translateY(${dy}px)`; el.style.opacity = 1 + dy / 500; } },
-    end: (dx, dy) => { el.style.transition = ''; el.style.opacity = ''; if (dy < -90) unlock(); else el.style.transform = ''; },
+    filter: e => !e.target.closest('.lk-sc,.noti,.lk-icons'),
+    start: e => { start = localPt(e); ripple = h('div', { class: 'lk-ripple', style: `left:${start.x}px;top:${start.y}px;width:0;height:0` }); el.append(ripple); },
+    move: (dx, dy) => { const d = Math.hypot(dx, dy); ripple.style.width = ripple.style.height = d * 2 + 'px'; ripple.style.opacity = String(Math.max(0, 1 - d / 260)); el.style.transition = 'none'; el.style.opacity = String(Math.max(0.25, 1 - d / 320)); },
+    end: (dx, dy, moved) => {
+      el.style.transition = ''; ripple && ripple.remove(); ripple = null;
+      if (Math.hypot(dx, dy) > 130) unlock(); else { el.style.opacity = ''; if (!moved) showHint('화면을 밀어서 잠금 해제하세요'); }
+    },
   });
   return { lock, unlock, tick, renderNotis, get locked() { return !el.classList.contains('gone'); } };
 })();
 const Unlock = { force() { if (Lock.locked) Lock.unlock(); } };
 
-/* ---------- power / navigation / keys ---------- */
+/* ---------- power menu, side key, volume ---------- */
+const PowerMenu = (() => {
+  const el = $('#pmenu');
+  const btn = (icon, color, label, fn) => h('button', { onclick: e => { e.stopPropagation(); fn(); } }, h('span', { class: 'pc', style: `background:${color}`, html: svg(icon) }), label);
+  function show() {
+    KB.close(); Shade.close();
+    el.innerHTML = '';
+    el.append(btn('power', '#e5484d', '전원 끄기', () => { close(); powerOff(); }), btn('restart', '#22a35a', '다시 시작', () => { close(); boot(); }), btn('sos', '#f08c1a', '긴급 모드', () => { close(); Dialog.alert('긴급 모드', '이 기기에서는 긴급 모드를 사용할 수 없습니다.'); }));
+    el.classList.add('show');
+  }
+  function close() { el.classList.remove('show'); }
+  el.addEventListener('click', close);
+  return { show, close, get open() { return el.classList.contains('show'); } };
+})();
+let poweredOff = false;
+function powerOff() { poweredOff = true; Lock.lock(); $('#off').classList.add('show'); }
+function boot() {
+  poweredOff = false;
+  const b = $('#boot');
+  $('#off').classList.add('show');
+  b.style.transition = 'none'; b.classList.remove('done');
+  b.querySelectorAll('.logo,.ver').forEach(x => { x.style.animation = 'none'; x.offsetHeight; x.style.animation = ''; });
+  requestAnimationFrame(() => { b.style.transition = ''; });
+  setTimeout(() => { Lock.lock(); $('#off').classList.remove('show'); }, 200);
+  setTimeout(() => b.classList.add('done'), 2200);
+}
 function power() {
   const off = $('#off');
+  if (poweredOff) return boot();
   if (off.classList.contains('show')) { off.classList.remove('show'); return; }
   Lock.lock(); off.classList.add('show');
 }
-$('#powerBtn').addEventListener('click', power);
-$('#off').addEventListener('click', power);
+(() => {
+  const b = $('#powerBtn'); let t = null, long = false;
+  b.addEventListener('pointerdown', () => { long = false; t = setTimeout(() => { long = true; if (!poweredOff) { $('#off').classList.remove('show'); PowerMenu.show(); vibrate(30); } }, 650); });
+  b.addEventListener('pointerup', () => { clearTimeout(t); if (!long) power(); });
+  b.addEventListener('pointerleave', () => clearTimeout(t));
+})();
+$('#off').addEventListener('click', () => { if (!poweredOff) power(); });
+
+const Volume = (() => {
+  const el = $('#volp'); let hideT;
+  const fill = h('div', { class: 'vf' }), track = h('div', { class: 'vt' }, fill), num = h('div', { class: 'vn' });
+  const modeBtn = iconBtn('bell', () => { const m = S.silent ? 0 : S.vibOnly ? 2 : 1; S.vibOnly = m === 1; setS('silent', m === 2); paint(); keep(); }, '소리 모드');
+  el.append(iconBtn('more', () => { hide(); WM.open('settings', { page: 'sound' }); }, '소리 설정'), track, num, modeBtn);
+  function paint() {
+    fill.style.height = (S.vol / 15 * 100) + '%'; num.textContent = S.silent ? '' : S.vibOnly ? '' : S.vol;
+    modeBtn.innerHTML = svg(S.silent ? 'mute' : S.vibOnly ? 'vibrate' : 'bell');
+  }
+  const keep = () => { clearTimeout(hideT); hideT = setTimeout(hide, 2600); };
+  function show() { paint(); el.classList.add('show'); keep(); }
+  function hide() { el.classList.remove('show'); }
+  function change(dlt) {
+    if (poweredOff) return;
+    let v = clamp(S.vol + dlt, 0, 15);
+    if (v === 0 && !S.silent) { S.vibOnly = true; vibrate(120); } else if (v > 0) { S.vibOnly = false; S.silent = false; }
+    setS('vol', v); show(); tone(880, 0.05, 0.06);
+  }
+  const setFromY = e => { const r = track.getBoundingClientRect(); const v = Math.round(clamp((r.bottom - e.clientY) / r.height, 0, 1) * 15); S.vibOnly = v === 0; S.silent = false; setS('vol', v); paint(); keep(); };
+  track.addEventListener('pointerdown', e => { setFromY(e); const mv = ev => setFromY(ev), up = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); }; addEventListener('pointermove', mv); addEventListener('pointerup', up); });
+  $('#volUp').addEventListener('click', () => change(1));
+  $('#volDn').addEventListener('click', () => change(-1));
+  return { change, show, hide };
+})();
+
+/* ---------- navigation keys ---------- */
 $('#navbar').addEventListener('click', e => {
   const b = e.target.closest('[data-nav]'); if (!b) return;
   vibrate(8);
-  const n = b.dataset.nav;
   if (Lock.locked) return;
-  if (n === 'home') WM.home();
+  const n = b.dataset.nav;
+  if (n === 'home') { if (!WM.cur && !Drawer.isOpen && !Shade.isOpen && !Recents.isOpen) Home.goPage(0); WM.home(); }
   else if (n === 'back') WM.back();
   else Recents.toggle();
 });
 $('#navbar').addEventListener('pointerdown', e => e.preventDefault());
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { e.preventDefault(); WM.back(); }
-  if (Lock.locked && !$('#off').classList.contains('show') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); Lock.unlock(); }
+  if (Lock.locked && !$('#off').classList.contains('show') && (e.key === 'Enter' || e.key === ' ') && !e.target.closest?.('.lk-sc')) { e.preventDefault(); Lock.unlock(); }
 });
 
 /* ---------- clock tick & alarms ---------- */
@@ -1384,11 +1920,13 @@ function tickAll() {
   const m = d.getHours() * 60 + d.getMinutes();
   if (m !== lastMinute) {
     if (lastMinute !== -1) {
+      refreshDynamicIcons();
       for (const a of store.get('alarms', [])) if (a.on && a.h * 60 + a.m === m) {
         alertSound();
-        NC.push({ app: 'clock', title: '알람', body: `${pad2(a.h)}:${pad2(a.m)} ${a.label || '알람'}`, intent: { tab: 'alarm' } });
-        Dialog.alert('⏰ 알람', `${pad2(a.h)}:${pad2(a.m)} ${a.label || ''}`);
+        NC.push({ app: 'clock', title: '알람', body: `${fmtST(d)} ${a.label || '알람'}`, intent: { tab: 'alarm' } });
+        Dialog.alert('⏰ ' + (a.label || '알람'), fmtST(d));
       }
+      if (m % 30 === 0) Weather.refresh();
     }
     lastMinute = m;
   }
@@ -1419,7 +1957,7 @@ function fmtPhone(n) {
 }
 
 /* ---------------- 전화 ---------------- */
-defineApp('phone', '전화', '#22b45a', 'phone', (el, intent) => {
+defineApp('phone', '전화', '#33b864', 'phone', (el, intent) => {
   let num = '', tab = 'pad', call = null;
   const body = h('div', { style: 'flex:1;display:flex;flex-direction:column;min-height:0' });
   const tabs = h('div', { class: 'tabbar' });
@@ -1511,7 +2049,7 @@ function botReply(t) {
   if (/[?？]$/.test(t.trim())) return pick(['음... 잘 모르겠어 🤔', '그건 좀 생각해볼게!', '아마도?']);
   return pick(['좋아!', '알겠어 👍', '오 진짜?', '나중에 얘기하자~', 'ㅎㅎ 그렇구나', '대박 😮']);
 }
-defineApp('messages', '메시지', '#3c74f0', 'msg', (el, intent) => {
+defineApp('messages', '메시지', '#3f86f7', 'msg', (el, intent) => {
   const stack = makeStack(el);
   let openId = null, chatRender = null;
   const pg = Page('메시지', { actions: [iconBtn('plus', () => newThread(), '새 대화')] });
@@ -1571,7 +2109,7 @@ defineApp('messages', '메시지', '#3c74f0', 'msg', (el, intent) => {
     // Enter on the on-screen keyboard inserts a newline in textarea; the send button sends.
   }
   function newThread() {
-    const p = Page('새 메시지');
+    const p = Page('새 메시지', { back: () => stack.pop() });
     const q = h('input', { type: 'text', class: 'field', placeholder: '이름 또는 전화번호', inputmode: 'none', 'data-enter': '확인' });
     const list = h('div', { class: 'card', style: 'margin-top:12px' });
     const draw = () => { list.innerHTML = ''; Contacts.list.filter(c => !q.value || c.name.includes(q.value) || Hangul.chosung(c.name).includes(q.value) || c.phone.includes(q.value)).forEach(c => list.append(h('div', { class: 'row', onclick: () => start(c.name) }, avatar(c.name), h('div', { class: 'tx' }, h('b', null, c.name), h('small', null, c.phone))))); };
@@ -1583,7 +2121,6 @@ defineApp('messages', '메시지', '#3c74f0', 'msg', (el, intent) => {
     q.addEventListener('input', draw);
     q.addEventListener('osenter', () => q.value.trim() && start(q.value.trim()));
     p.body.append(q, list); draw();
-    p.el.prepend(Bar('', { back: () => stack.pop() }));
     stack.push(p.el);
     setTimeout(() => q.focus(), 280);
   }
@@ -1596,7 +2133,7 @@ defineApp('messages', '메시지', '#3c74f0', 'msg', (el, intent) => {
 });
 
 /* ---------------- 연락처 ---------------- */
-defineApp('contacts', '연락처', '#f2994a', 'user', (el, intent) => {
+defineApp('contacts', '연락처', '#f39237', 'user', (el, intent) => {
   const stack = makeStack(el);
   const pg = Page('연락처', { actions: [iconBtn('plus', () => edit(null), '연락처 추가')] });
   const q = h('input', { type: 'search', class: 'field', placeholder: '검색', inputmode: 'none', 'data-enter': '검색', style: 'margin-bottom:12px' });
@@ -1646,17 +2183,17 @@ defineApp('contacts', '연락처', '#f2994a', 'user', (el, intent) => {
   }
   stack.reset(pg.el); render();
   on('contacts', render);
-  const handle = i => { if (i && i.add) { while (stack.depth > 1) stack.pop(); edit(null, i.add); } };
+  const handle = i => { if (i && i.add) { while (stack.depth > 1) stack.pop(); edit(null, i.add); } if (i && i.show) { while (stack.depth > 1) stack.pop(); detail(i.show); } };
   handle(intent);
   return { intent: handle, back: () => stack.pop() };
 });
 
 /* ---------------- 노트 ---------------- */
-defineApp('notes', '노트', '#f0a91e', 'note', el => {
+defineApp('notes', '노트', '#f4683c', 'note', (el, intent) => {
   const stack = makeStack(el);
   const load = () => store.get('notes', [{ id: 'n1', title: '키보드 사용법', body: '• 한/영 키(🌐)로 언어 전환\n• !#1 키로 기호 입력\n• Shift 두 번 = 대문자 고정\n• ⌫ 길게 누르면 연속 삭제\n• 키보드 상단 클립보드 버튼으로 붙여넣기\n• 글자를 길게 눌러 잘라내기/복사/붙여넣기', t: Date.now() - 5e6 }, { id: 'n2', title: '장보기', body: '우유\n계란\n사과\n커피 원두', t: Date.now() - 9e6 }]);
   const save = l => { store.set('notes', l); render(); };
-  const pg = Page('노트');
+  const pg = Page('모든 노트');
   const fab = h('button', { class: 'fab', 'aria-label': '새 노트', html: svg('plus'), onclick: () => open(null) });
   pg.el.append(fab);
   const q = h('input', { type: 'search', class: 'field', placeholder: '노트 검색', inputmode: 'none', 'data-enter': '검색', style: 'margin-bottom:12px' });
@@ -1694,7 +2231,9 @@ defineApp('notes', '노트', '#f0a91e', 'note', el => {
     if (!id) setTimeout(() => title.focus(), 280);
   }
   stack.reset(pg.el); render();
-  return { back: () => stack.pop() };
+  const handle = i => { if (i && i.open) { while (stack.depth > 1) stack.pop(); open(i.open); } };
+  handle(intent);
+  return { intent: handle, back: () => stack.pop() };
 });
 
 /* ---------------- 계산기 ---------------- */
@@ -1708,7 +2247,7 @@ function evalExpr(s) {
   try { const v = expr(); return i === s.length ? v : null; } catch { return null; }
 }
 const fmtNum = v => !isFinite(v) ? '0으로 나눌 수 없습니다' : Number(v.toPrecision(12)).toLocaleString('en-US', { maximumFractionDigits: 10 });
-defineApp('calculator', '계산기', '#16a085', 'calc', el => {
+defineApp('calculator', '계산기', '#3bb26a', 'calc', el => {
   let ex = '', justEq = false;
   const hist = store.get('calcHist', []);
   const show = s => s.replace(/\*/g, '×').replace(/\//g, '÷').replace(/-/g, '−').replace(/\d+(\.\d+)?/g, m => { const [a, b] = m.split('.'); return Number(a).toLocaleString('en-US') + (b !== undefined ? '.' + b : ''); });
@@ -1774,7 +2313,7 @@ defineApp('calculator', '계산기', '#16a085', 'calc', el => {
 <script>
 'use strict';
 /* ---------------- 시계 ---------------- */
-defineApp('clock', '시계', '#5b5fc7', 'clock', (el, intent) => {
+defineApp('clock', '시계', '#283a7a', 'clock', (el, intent) => {
   let tab = (intent && intent.tab) || 'alarm';
   const body = h('div', { style: 'flex:1;display:flex;flex-direction:column;min-height:0;position:relative' });
   const tabs = h('div', { class: 'tabbar' });
@@ -1904,7 +2443,7 @@ defineApp('clock', '시계', '#5b5fc7', 'clock', (el, intent) => {
 });
 
 /* ---------------- 캘린더 ---------------- */
-defineApp('calendar', '캘린더', '#e5484d', 'cal', el => {
+defineApp('calendar', '캘린더', '#3a9d6c', 'cal', el => {
   const today = new Date(); let ym = new Date(today.getFullYear(), today.getMonth(), 1), sel = new Date(today);
   const key = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
   const load = () => store.get('events', { [key(today)]: ['Galaxy OS 1.0 출시 🎉'] });
@@ -1951,7 +2490,7 @@ const ART = (() => {
     return { id: 'art' + i, src: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s), t: Date.now() - (i + 2) * 864e5, art: true };
   });
 })();
-defineApp('gallery', '갤러리', '#d6457a', 'img', el => {
+defineApp('gallery', '갤러리', '#ea4372', 'img', el => {
   const pg = Page('갤러리');
   el.append(pg.el);
   const all = () => [...store.get('photos', []), ...ART];
@@ -1984,7 +2523,7 @@ defineApp('gallery', '갤러리', '#d6457a', 'img', el => {
 });
 
 /* ---------------- 카메라 ---------------- */
-defineApp('camera', '카메라', '#3a3a44', 'cam', el => {
+defineApp('camera', '카메라', '#e8435a', 'cam', el => {
   let stream = null, facing = 'environment';
   const video = h('video', { autoplay: true, playsinline: true, muted: true });
   const msg = h('div', { class: 'msg', style: 'display:none' });
@@ -2036,79 +2575,249 @@ defineApp('camera', '카메라', '#3a3a44', 'cam', el => {
   return { show: start, hide: stop, destroy: stop };
 });
 
-/* ---------------- 설정 ---------------- */
-defineApp('settings', '설정', '#6b7280', 'gear', (el, intent) => {
+/* ---------------- 설정 (One UI menu tree) ---------------- */
+const ACCENTS = [['', '기본'], ['#387cff', '블루'], ['#7b5cff', '퍼플'], ['#e5487c', '핑크'], ['#1fa37a', '그린'], ['#f08c1a', '오렌지'], ['#5c6b80', '그레이']];
+const SETTINGS_MENU = [
+  [['conn', '연결', 'Wi-Fi • 블루투스 • SIM 관리', 'wifi', '#3b82f6'], ['devices', '연결된 기기', 'Quick Share • 자동 전환', 'link', '#0ea5c6']],
+  [['modes', '모드 및 루틴', '모드 • 루틴', 'routine', '#22b07d'], ['sound', '소리 및 진동', '소리 모드 • 벨소리', 'speaker', '#8b5cf6'], ['noti', '알림', '상태 표시줄 • 방해 금지', 'bell', '#f97316'], ['display', '디스플레이', '밝기 • 편안하게 보기 • 내비게이션 바', 'display', '#16a34a'], ['battery', '배터리', '절전 모드 • 충전', 'battery', '#22c55e']],
+  [['wall', '배경화면 및 스타일', '배경화면 • 색상 팔레트', 'palette', '#ec4899'], ['home', '홈 화면', '레이아웃 • 앱 아이콘 배지', 'apps', '#3b82f6'], ['lock', '잠금화면 및 AOD', '화면 잠금 방식 • 시계 스타일', 'lock', '#2563eb']],
+  [['security', '보안 및 개인정보 보호', '생체 인식 • 권한 관리자', 'shield', '#2563eb'], ['location', '위치', '위치 요청', 'pin2', '#16a34a'], ['safety', '안전 및 긴급', '긴급 연락처 • 긴급 SOS', 'sos', '#ef4444']],
+  [['account', '계정 및 백업', '계정 관리 • 백업', 'account', '#0ea5c6'], ['useful', '유용한 기능', '엣지 패널 • 측면 버튼', 'star', '#f59e0b'], ['wellbeing', '디지털 웰빙 및 자녀 보호', '사용 시간 • 앱 타이머', 'heart', '#22b07d'], ['care', '디바이스 케어', '저장공간 • 메모리 • 기기 보호', 'heart', '#0ea5c6'], ['apps', '애플리케이션', '기본 앱 • 앱 설정', 'apps', '#3b82f6'], ['general', '일반', '언어 및 키보드 • 날짜 및 시간', 'sliders', '#6b7280'], ['access', '접근성', '시인성 향상 • 글자 크기', 'access', '#16a34a'], ['update', '소프트웨어 업데이트', '다운로드 및 설치', 'update', '#7c3aed'], ['about', '휴대전화 정보', '상태 • 법률 정보 • 기기 이름', 'info', '#6b7280']],
+];
+// searchable leaf settings: [label, page]
+const SETTINGS_INDEX = [
+  ['Wi-Fi', 'conn'], ['블루투스', 'conn'], ['비행기 탑재 모드', 'conn'], ['모바일 데이터', 'conn'], ['모바일 핫스팟', 'conn'], ['NFC', 'conn'],
+  ['소리 모드', 'sound'], ['벨소리 음량', 'sound'], ['미디어 음량', 'sound'], ['진동', 'sound'], ['헤드업 알림', 'noti'], ['방해 금지', 'noti'],
+  ['다크 모드', 'display'], ['라이트 모드', 'display'], ['밝기', 'display'], ['편안하게 보기', 'display'], ['글자 크기', 'display'], ['엣지 패널', 'useful'],
+  ['절전 모드', 'battery'], ['배경화면', 'wall'], ['색상 팔레트', 'wall'], ['홈 화면 초기화', 'home'], ['잠금화면 알림', 'lock'], ['24시간 형식', 'general'],
+  ['Galaxy 키보드', 'kb'], ['숫자 키', 'kb'], ['키보드 진동', 'kb'], ['클립보드', 'general'], ['언어', 'general'], ['위치', 'location'],
+  ['소프트웨어 업데이트', 'update'], ['휴대전화 정보', 'about'], ['빌드 번호', 'about'], ['저장공간', 'care'], ['메모리', 'care'], ['애플리케이션', 'apps'], ['초기화', 'general'],
+];
+const settingsTitle = id => { for (const g of SETTINGS_MENU) for (const m of g) if (m[0] === id) return m[1]; return { kb: 'Galaxy 키보드 설정', wifi: 'Wi-Fi', datetime: '날짜 및 시간', reset: '초기화' }[id] || id; };
+FINDER.push(q => ({ title: '설정', items: SETTINGS_INDEX.filter(([l]) => l.toLowerCase().includes(q) || Hangul.chosung(l).includes(q)).slice(0, 4).map(([l, pg]) => ({ icon: appIcon('settings', 'sm'), label: l, sub: '설정 › ' + settingsTitle(pg), fn: () => WM.open('settings', { page: pg }) })) }));
+const BOOT_AT = Date.now();
+defineApp('settings', '설정', '#68717d', 'gear', (el, intent) => {
   const stack = makeStack(el);
-  const pg = Page('설정');
-  stack.reset(pg.el);
-  const toggleRow = (icon, color, label, sub, k, after) => h('div', { class: 'row', onclick: e => e.currentTarget.querySelector('.switch').click() },
-    h('div', { class: 'sq sm', style: `background:${color}`, html: svg(icon) }), h('div', { class: 'tx' }, h('b', null, label), sub ? h('small', null, sub) : null),
-    switchEl(S[k], v => { setS(k, v); after && after(v); }));
-  const linkRow = (icon, color, label, sub, fn) => h('div', { class: 'row', onclick: fn }, h('div', { class: 'sq sm', style: `background:${color}`, html: svg(icon) }), h('div', { class: 'tx' }, h('b', null, label), sub ? h('small', null, sub) : null), h('span', { class: 'ibtn', style: 'width:24px;color:var(--sub)', html: svg('chevR') }));
-  const kbCard = h('div');
-  function render() {
-    pg.body.innerHTML = '';
-    const used = (() => { try { let n = 0; for (const k in localStorage) if (k.startsWith('gos.')) n += (localStorage.getItem(k) || '').length; return n; } catch { return 0; } })();
-    pg.body.append(
-      h('div', { class: 'card' },
-        h('div', { class: 'row', onclick: () => sub('about') }, h('div', { class: 'av', style: 'background:linear-gradient(135deg,#3c74f0,#8a63ff)' }, 'G'), h('div', { class: 'tx' }, h('b', null, 'Galaxy 사용자'), h('small', null, 'Galaxy OS 1.0 · 휴대전화 정보')))),
-      h('div', { class: 'card' },
-        toggleRow('wifi', '#2d9cdb', 'Wi-Fi', S.air ? '비행기 탑재 모드 사용 중' : S.wifi ? 'Galaxy_5G 연결됨' : '꺼짐', 'wifi', () => render()),
-        toggleRow('bt', '#2f80ed', '블루투스', null, 'bt'),
-        toggleRow('plane', '#f2994a', '비행기 탑재 모드', null, 'air', v => { if (v) { S.wifi = false; S.bt = false; store.set('settings', S); renderStatus(); } render(); })),
-      h('div', { class: 'card' },
-        toggleRow('mute', '#eb5757', '무음 모드', '알림음과 키보드 소리를 끕니다', 'silent'),
-        toggleRow('moon', '#5b5fc7', '다크 모드', '어두운 테마 사용', 'dark'),
-        h('div', { class: 'row', style: 'cursor:default' }, h('div', { class: 'sq sm', style: 'background:#f2c94c', html: svg('sun') }), h('div', { class: 'tx' }, h('b', null, '밝기'), h('input', { type: 'range', min: 10, max: 100, value: S.bright, oninput: e => setS('bright', +e.target.value), style: 'margin-top:8px' })))),
-      h('div', { class: 'card' }, h('div', { class: 'card-t' }, '배경화면'),
-        h('div', { class: 'swatches' }, WALLS.map((w, i) => h('button', { class: !S.wallCustom && S.wall === i ? 'on' : '', style: `background:${w}`, 'aria-label': `배경화면 ${i + 1}`, onclick: () => { S.wallCustom = ''; setS('wall', i); render(); } })),
+  const refreshers = new Set();
+  const watch = (node, fn) => { const f = () => { if (!node.isConnected) { refreshers.delete(f); return; } fn(); }; refreshers.add(f); };
+  const sic = (icon, color) => h('div', { class: 'sic', style: `background:${color}`, html: svg(icon) });
+  const linkRow = (title, sub, fn, icon, color) => h('div', { class: 'row' + (icon ? ' ind' : ''), onclick: fn }, icon ? sic(icon, color) : null, h('div', { class: 'tx' }, h('b', null, title), sub ? h('small', null, sub) : null));
+  // a row with a switch; `sub` may be a function so the summary follows the state
+  const tRow = (title, sub, k, after) => {
+    const small = h('small'); const sw = switchEl(S[k], v => { setS(k, v); after && after(v); paintSub(); });
+    const paintSub = () => { const t = typeof sub === 'function' ? sub(S[k]) : sub; small.textContent = t || ''; small.style.display = t ? '' : 'none'; small.className = S[k] && typeof sub === 'function' ? 'on' : ''; sw._set(S[k]); };
+    paintSub(); watch(sw, paintSub);
+    return h('div', { class: 'row', onclick: () => sw.click() }, h('div', { class: 'tx' }, h('b', null, title), small), sw);
+  };
+  // master row: tapping the text opens a page, the switch toggles (One UI's divided row)
+  const mRow = (title, sub, k, page) => {
+    const small = h('small'); const sw = switchEl(S[k], v => { if (k === 'wifi' || k === 'bt') { if (v) S.air = false; } setS(k, v); paint(); });
+    const paint = () => { const t = sub(S[k]); small.textContent = t; small.className = S[k] ? 'on' : ''; sw._set(S[k]); };
+    paint(); watch(sw, paint);
+    return h('div', { class: 'row', onclick: e => { if (!e.target.closest('.switch')) page ? open(page) : sw.click(); } }, h('div', { class: 'tx' }, h('b', null, title), small), h('div', { class: 'vdiv' }), sw);
+  };
+  const card = (...rows) => h('div', { class: 'card' }, rows);
+  const note = t => h('p', { style: 'color:var(--sub);font-size:13px;line-height:1.55;padding:2px 22px 16px;white-space:pre-line' }, t);
+  const sliderRow = (title, icon, k, min, max) => h('div', { class: 'row', style: 'cursor:default;flex-wrap:wrap;gap:6px 14px' }, h('div', { class: 'tx', style: 'flex-basis:100%' }, h('b', null, title)), h('span', { class: 'ibtn', style: 'width:28px;height:28px;color:var(--sub)', html: svg(icon) }), oslider(S[k], min, max, v => setS(k, v)));
+
+  /* ---- main page ---- */
+  const main = Page('설정', { actions: [iconBtn('search', () => open('search'), '검색')] });
+  main.body.append(
+    card(h('div', { class: 'row', onclick: () => open('account') }, h('div', { class: 'av', style: 'background:linear-gradient(135deg,#387cff,#8a63ff);width:52px;height:52px' }, 'G'), h('div', { class: 'tx' }, h('b', { style: 'font-weight:600' }, 'Galaxy 사용자'), h('small', null, 'Galaxy 계정 · 프로필, 계정 및 백업')))),
+    ...SETTINGS_MENU.map(g => card(g.map(([id, t, sub, icon, color]) => linkRow(t, sub, () => open(id), icon, color)))));
+  stack.reset(main.el);
+
+  /* ---- sub pages ---- */
+  const PAGES = {
+    search() {
+      const q = h('input', { type: 'text', placeholder: '설정 검색', inputmode: 'none', 'data-enter': '검색' });
+      const list = h('div', { class: 'card' });
+      const draw = () => {
+        const v = q.value.trim().toLowerCase(); list.innerHTML = '';
+        const hits = v ? SETTINGS_INDEX.filter(([l]) => l.toLowerCase().includes(v) || Hangul.chosung(l).includes(v)) : [];
+        list.style.display = hits.length ? '' : 'none';
+        hits.forEach(([l, pg]) => list.append(linkRow(l, '설정 › ' + settingsTitle(pg), () => open(pg))));
+      };
+      q.addEventListener('input', draw);
+      setTimeout(() => q.focus(), 300);
+      return [h('div', { class: 'searchf', html: svg('search') }, q), list, note('Wi-Fi, 다크 모드, 키보드처럼 찾고 싶은 설정을 입력하세요.')];
+    },
+    conn: () => [
+      card(mRow('Wi-Fi', v => S.air ? '비행기 탑재 모드 사용 중' : v ? 'Galaxy_5G' : '꺼짐', 'wifi', 'wifi'), mRow('블루투스', v => v ? '켜짐 · 연결된 기기 없음' : '꺼짐', 'bt')),
+      card(tRow('NFC 및 비접촉 결제', '', 'nfc'), tRow('비행기 탑재 모드', '전화, 메시지, 모바일 데이터 사용을 중지합니다.', 'air', v => { if (v) { S.wifi = false; S.bt = false; store.set('settings', S); renderStatus(); refreshers.forEach(f => f()); } })),
+      card(linkRow('SIM 관리', 'SK Telecom'), tRow('모바일 데이터', v => v ? '5G 사용 중' : '꺼짐', 'data'), tRow('모바일 핫스팟', v => v ? 'Galaxy 핫스팟 켜짐' : '', 'hotspot')),
+    ],
+    wifi() {
+      const nets = [['Galaxy_5G', true], ['Home_2.4G', true], ['Cafe_Free_WiFi', false], ['KT_GiGA_5G', true], ['U+Net1234', true]];
+      const list = h('div');
+      const draw = () => {
+        list.innerHTML = '';
+        if (!S.wifi || S.air) { list.append(note('사용 가능한 네트워크를 보려면 Wi-Fi를 켜세요.')); return; }
+        const cur = S.ssid || 'Galaxy_5G';
+        list.append(h('div', { class: 'grp-t' }, '현재 네트워크'), card(linkRow(cur, '연결됨', () => toast(`${cur}에 연결되어 있습니다`), 'wifi', 'var(--accent)')),
+          h('div', { class: 'grp-t' }, '사용 가능한 네트워크'), card(nets.filter(n => n[0] !== cur).map(([n, sec]) => linkRow(n, sec ? '보안' : '개방형', () => { S.ssid = n; store.set('settings', S); toast(`${n}에 연결되었습니다`); draw(); }, 'wifi', '#9aa1ab'))));
+      };
+      draw(); watch(list, draw);
+      return [card(mRow('사용 중', v => v ? '켜짐' : '꺼짐', 'wifi')), list];
+    },
+    devices: () => [card(linkRow('Quick Share', '주변 기기와 파일 공유', () => toast('주변에 공유할 기기가 없습니다')), linkRow('자동 전환', '이어폰 연결을 자동 전환'), linkRow('Android Auto'), linkRow('기타 연결 설정', '인쇄 • VPN • 프라이빗 DNS'))],
+    modes: () => [card(tRow('방해 금지', v => v ? '켜짐 · 알림이 소리 없이 표시됩니다' : '꺼짐', 'dnd'), tRow('절전 모드', '', 'powerSave')), note('모드를 사용하면 상황에 맞게 휴대전화 설정을 바꿀 수 있습니다.')],
+    sound() {
+      const seg = h('div', { class: 'seg', style: 'margin:6px 18px 16px' });
+      const paintSeg = () => { const m = S.silent ? 2 : S.vibOnly ? 1 : 0; seg.innerHTML = ''; ['소리', '진동', '무음'].forEach((l, i) => seg.append(h('button', { class: i === m ? 'on' : '', onclick: () => { S.vibOnly = i === 1; setS('silent', i === 2); if (i === 1) vibrate(200); } }, l))); };
+      paintSeg(); watch(seg, paintSeg);
+      return [h('div', { class: 'card', style: 'padding-top:14px' }, seg), card(sliderRow('벨소리', 'bell', 'vol', 0, 15), sliderRow('미디어', 'play', 'mediaVol', 0, 15)),
+        card(linkRow('벨소리', 'Over the Horizon', () => { [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => tone(f, 0.18, 0.08, 'triangle'), i * 160)); }), linkRow('알림 소리', 'Spaceline', () => tone(1175, 0.12, 0.07)), tRow('키보드 소리', '', 'kbSound'), tRow('키보드 진동', '', 'kbVib'))];
+    },
+    noti() {
+      const seg = h('div', { class: 'seg', style: 'width:150px' }, [['icons', '아이콘'], ['cards', '카드']].map(([k, l]) => h('button', { class: S.lockNoti === k ? 'on' : '', onclick: () => { setS('lockNoti', k); seg.querySelectorAll('button').forEach((b, i) => b.classList.toggle('on', ['icons', 'cards'][i] === k)); Lock.renderNotis(); } }, l)));
+      return [card(tRow('헤드업 알림', '화면 위쪽에 알림을 잠깐 표시', 'headsup'), tRow('방해 금지', v => v ? '켜짐' : '', 'dnd')),
+        card(h('div', { class: 'row', style: 'cursor:default' }, h('div', { class: 'tx' }, h('b', null, '잠금화면 알림')), seg)),
+        h('div', { class: 'grp-t' }, '최근 알림을 보낸 앱'), card(['messages', 'clock', 'phone'].map(id => h('div', { class: 'row ind' }, appIcon(id, 'sm'), h('div', { class: 'tx' }, h('b', null, APPS[id].name), h('small', null, `알림 ${NC.list.filter(n => n.app === id).length}개`)), switchEl(true, v => toast(`${APPS[id].name} 알림 ${v ? '켜짐' : '꺼짐'}`)))))];
+    },
+    display() {
+      const mode = (dark, label) => h('button', { style: 'flex:1;display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 0', onclick: () => setS('dark', dark) },
+        h('div', { style: `width:72px;height:128px;border-radius:14px;background:${dark ? '#000' : '#f6f6f6'};border:1px solid var(--line);display:flex;flex-direction:column;gap:6px;padding:20px 8px` }, [0, 1, 2].map(() => h('div', { style: `height:14px;border-radius:5px;background:${dark ? '#262626' : '#fff'}` }))),
+        h('span', { style: 'font-size:15px' }, label), h('span', { class: 'radio' + (S.dark === dark ? ' on' : '') }));
+      const fsSeg = h('div', { class: 'seg', style: 'margin:0 18px 16px' }, [[0.92, '작게'], [1, '보통'], [1.1, '크게']].map(([v, l]) => h('button', { class: S.fs === v ? 'on' : '', onclick: () => { setS('fs', v); } }, l)));
+      return [h('div', { class: 'card', style: 'display:flex;padding:16px 10px 8px' }, mode(false, '라이트'), mode(true, '다크')),
+        card(sliderRow('밝기', 'sun', 'bright', 10, 100), tRow('편안하게 보기', '눈의 피로를 줄이기 위해 화면 색상을 따뜻하게 조정합니다.', 'eyeComfort')),
+        h('div', { class: 'card' }, h('div', { class: 'card-t' }, '글자 크기'), h('div', { style: 'height:8px' }), fsSeg),
+        card(tRow('엣지 패널', '화면 오른쪽 핸들을 밀어 앱 패널 열기', 'edge'), linkRow('내비게이션 바', '버튼'), tRow('자동 회전', '', 'rotate'))];
+    },
+    battery() {
+      const pct = Math.round(battery.level * 100), R = 70, C = 2 * Math.PI * R;
+      return [h('div', { class: 'card', style: 'display:flex;flex-direction:column;align-items:center;padding:26px 0 20px' },
+        h('div', { style: 'position:relative;width:170px;height:170px', html: `<svg viewBox="0 0 170 170" style="transform:rotate(-90deg)"><circle cx="85" cy="85" r="${R}" fill="none" stroke="var(--surface2)" stroke-width="12"/><circle cx="85" cy="85" r="${R}" fill="none" stroke="${pct < 20 ? 'var(--danger)' : 'var(--ok)'}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pct / 100)}"/></svg><div style="position:absolute;inset:0;display:grid;place-items:center;font-size:38px;font-weight:300">${pct}%</div>` }),
+        h('div', { style: 'color:var(--sub);margin-top:12px;font-size:14px' }, battery.charging ? '충전 중' : `약 ${Math.max(1, Math.round(pct / 6))}시간 남음`)),
+        card(tRow('절전 모드', '백그라운드 네트워크 사용과 동기화를 제한합니다.', 'powerSave')),
+        note('배터리 정보는 브라우저가 지원하면 실제 기기 배터리를 표시합니다.')];
+    },
+    wall() {
+      const pal = h('div', { style: 'display:flex;gap:12px;flex-wrap:wrap;padding:6px 20px 18px' }, ACCENTS.map(([c, l]) => h('button', { title: l, 'aria-label': l, style: `width:44px;height:44px;border-radius:50%;background:${c || 'conic-gradient(#387cff,#7b5cff,#e5487c,#1fa37a,#387cff)'};box-shadow:${(S.accent || '') === c ? '0 0 0 3px var(--bg),0 0 0 5px var(--text)' : 'none'}`, onclick: () => { setS('accent', c); open('wall', true); } })));
+      return [h('div', { class: 'card' }, h('div', { class: 'card-t' }, '배경화면'),
+        h('div', { class: 'swatches' }, WALLS.map((w, i) => h('button', { class: !S.wallCustom && S.wall === i ? 'on' : '', style: `background:${w}`, 'aria-label': `배경화면 ${i + 1}`, onclick: () => { S.wallCustom = ''; setS('wall', i); open('wall', true); } })),
           S.wallCustom ? h('button', { class: 'on', style: `background:url("${S.wallCustom}") center/cover`, 'aria-label': '갤러리 사진' }) : null),
-        h('div', { style: 'padding:0 18px 16px;font-size:12.5px;color:var(--sub)' }, '갤러리에서 사진을 열고 "배경화면"을 누르면 사진을 배경으로 쓸 수 있습니다.')),
-      kbCard,
-      h('div', { class: 'card' },
-        linkRow('clip', '#16a085', '클립보드', `저장된 항목 ${Clip.items.length}개`, () => WM.open('clipboard')),
-        linkRow('home', '#9b51e0', '홈 화면 초기화', '앱 배치를 기본값으로 되돌립니다', async () => { if (await Dialog.confirm('홈 화면 초기화', '홈 화면 배치를 기본값으로 되돌릴까요?', '초기화')) { Home.reset(); toast('홈 화면을 초기화했습니다'); } })),
-      h('div', { class: 'card' },
-        linkRow('info', '#6b7280', '휴대전화 정보', `Galaxy OS 1.0 · 사용 중인 저장공간 ${(used / 1024).toFixed(1)}KB`, () => sub('about')),
-        linkRow('refresh', '#e5484d', '모든 데이터 초기화', '설정, 노트, 메시지 등을 모두 삭제합니다', async () => {
-          if (await Dialog.confirm('초기화', '모든 데이터를 삭제하고 다시 시작할까요?', '초기화', true)) { try { Object.keys(localStorage).filter(k => k.startsWith('gos.')).forEach(k => localStorage.removeItem(k)); } catch {} location.reload(); }
-        })));
-    renderKb();
-  }
-  function renderKb() {
-    kbCard.innerHTML = '';
-    kbCard.append(h('div', { class: 'card' }, h('div', { class: 'card-t' }, 'Galaxy 키보드'),
-      h('div', { class: 'row', style: 'cursor:default' }, h('div', { class: 'sq sm', style: 'background:#3c74f0', html: svg('globe') }), h('div', { class: 'tx' }, h('b', null, '기본 언어')),
-        h('div', { class: 'seg', style: 'width:150px' }, [['ko', '한국어'], ['en', 'English']].map(([k, l]) => h('button', { class: S.lang === k ? 'on' : '', onclick: () => { setS('lang', k); renderKb(); } }, l)))),
-      toggleRow('keypad', '#27ae60', '숫자 키 표시', '키보드 맨 위에 숫자 줄 표시', 'numRow'),
-      toggleRow('kb', '#2d9cdb', '키 누를 때 미리보기', null, 'kbPreview'),
-      toggleRow('bell', '#f2994a', '키 누를 때 진동', '지원되는 기기에서 동작', 'kbVib'),
-      toggleRow('speaker', '#9b51e0', '키 누를 때 소리', null, 'kbSound'),
-      h('div', { style: 'padding:6px 20px 16px' }, h('input', { type: 'text', class: 'field', placeholder: '여기에서 키보드를 테스트해 보세요', inputmode: 'none', style: 'background:var(--surface2)' }))));
-  }
-  function sub(which) {
-    if (which === 'about') {
-      const row = (k, v) => h('div', { class: 'row', ctx: () => [{ label: '복사', fn: () => Clip.add(v) }] }, h('div', { class: 'tx' }, h('b', null, k), h('small', null, v)));
+        h('div', { style: 'padding:0 14px 14px' }, h('button', { class: 'tbtn', onclick: () => WM.open('gallery') }, '갤러리에서 선택'))),
+        h('div', { class: 'card' }, h('div', { class: 'card-t' }, '색상 팔레트'), pal)];
+    },
+    home: () => [card(tRow('엣지 패널', '', 'edge'), linkRow('홈 화면 레이아웃', '홈 화면 및 앱스 화면'), linkRow('홈 화면 초기화', '앱 배치를 기본값으로 되돌립니다', async () => { if (await Dialog.confirm('홈 화면 초기화', '홈 화면 배치를 기본값으로 되돌릴까요?', '초기화')) { Home.reset(); toast('홈 화면을 초기화했습니다'); } })), note('앱스 화면에서 앱을 길게 누르면 홈 화면에 추가할 수 있습니다.')],
+    lock: () => [card(linkRow('화면 잠금 방식', '밀기'), tRow('24시간 형식 사용', '', 'h24', () => { tickAll(); Home.render(); })), card(linkRow('알림', S.lockNoti === 'icons' ? '아이콘만 표시' : '카드', () => open('noti')), linkRow('바로가기', '전화, 카메라')), note('잠금화면에서 아무 방향으로나 화면을 밀면 잠금이 해제됩니다.\n바로가기 아이콘은 밀어서 실행합니다.')],
+    security: () => [h('div', { class: 'card', style: 'display:flex;align-items:center;gap:16px;padding:20px 22px' }, sic('shield', 'var(--ok)'), h('div', null, h('b', { style: 'font-weight:600' }, '보안 상태'), h('div', { style: 'color:var(--sub);font-size:13.5px;margin-top:3px' }, '조치가 필요한 항목이 없습니다'))), card(linkRow('생체 인식', '사용 안 함'), linkRow('권한 관리자', '앱 권한 확인'), linkRow('개인정보 보호', ''))],
+    location: () => [card(mRow('위치 사용', v => v ? '켜짐' : '꺼짐', 'loc')), card(linkRow('날씨 위치', S.wxCity, () => WM.open('weather')))],
+    safety: () => [card(linkRow('긴급 연락처', '추가된 연락처 없음'), linkRow('긴급 SOS', '측면 버튼 5번 누르기'), linkRow('재난 문자', ''))],
+    account: () => [h('div', { style: 'display:flex;flex-direction:column;align-items:center;padding:10px 0 24px;gap:10px' }, h('div', { class: 'av lg', style: 'background:linear-gradient(135deg,#387cff,#8a63ff)' }, 'G'), h('div', { style: 'font-size:22px' }, 'Galaxy 사용자')), card(linkRow('계정 관리', ''), linkRow('백업', '이 브라우저에 자동 저장 중'), linkRow('데이터 내보내기', '노트와 연락처를 클립보드에 복사', () => { Clip.add(JSON.stringify({ notes: store.get('notes', []), contacts: Contacts.list }, null, 1)); }))],
+    useful: () => [card(tRow('엣지 패널', '화면 가장자리에서 앱을 빠르게 실행', 'edge'), linkRow('측면 버튼', '누르기: 화면 켜기/끄기 · 길게 누르기: 전원 메뉴'), linkRow('화면 캡처', '빠른 설정 패널에서 사용', () => capture()))],
+    wellbeing() {
+      const mins = Math.max(1, Math.round((Date.now() - BOOT_AT) / 60000));
+      return [h('div', { class: 'card', style: 'padding:24px 22px;text-align:center' }, h('div', { style: 'font-size:13px;color:var(--sub)' }, '오늘'), h('div', { style: 'font-size:36px;font-weight:300;margin-top:6px' }, `${Math.floor(mins / 60)}시간 ${mins % 60}분`), h('div', { style: 'font-size:13px;color:var(--sub);margin-top:6px' }, `실행 중인 앱 ${WM.run.size}개`)),
+        card([...WM.run.values()].map(r => h('div', { class: 'row ind' }, appIcon(r.id, 'sm'), h('div', { class: 'tx' }, h('b', null, APPS[r.id].name), h('small', null, '마지막 사용 ' + fmtAgo(r.t)))))), note('사용 시간은 이번 세션을 기준으로 계산됩니다.')];
+    },
+    care() {
+      let used = 0; try { for (const k in localStorage) if (k.startsWith('gos.')) used += (localStorage.getItem(k) || '').length * 2; } catch {}
+      const score = h('div', { style: 'font-size:56px;font-weight:300' }, '100');
+      return [h('div', { class: 'card', style: 'padding:26px;text-align:center' }, score, h('div', { style: 'color:var(--sub);font-size:14px' }, '기기 상태가 좋습니다'),
+        h('button', { class: 'pill', style: 'margin-top:16px', onclick: () => { const n = WM.run.size - 1; [...WM.run.keys()].filter(id => id !== 'settings').forEach(id => WM.kill(id)); toast(`앱 ${Math.max(0, n)}개를 종료해 메모리를 확보했습니다`); open('care', true); } }, '지금 최적화')),
+        card(linkRow('배터리', Math.round(battery.level * 100) + '%', () => open('battery'), 'battery', '#22c55e'), linkRow('저장공간', `${(used / 1024).toFixed(1)}KB 사용 중 (브라우저 저장소)`, null, 'folder', '#f59e0b'), linkRow('메모리', `실행 중인 앱 ${WM.run.size}개`, null, 'apps', '#8b5cf6'))];
+    },
+    apps: () => [card([...APP_ORDER].sort((a, b) => APPS[a].name.localeCompare(APPS[b].name, 'ko')).map(id => h('div', { class: 'row ind', onclick: () => open('appInfo:' + id) }, appIcon(id, 'sm'), h('div', { class: 'tx' }, h('b', null, APPS[id].name), h('small', null, WM.run.has(id) ? '실행 중' : '')))))],
+    general: () => [card(linkRow('언어', '한국어'), linkRow('Galaxy 키보드 설정', '', () => open('kb')), linkRow('키보드 목록 및 기본값', 'Galaxy 키보드')), card(tRow('24시간 형식 사용', fmtST(new Date()), 'h24', () => { tickAll(); Home.render(); }), linkRow('날짜 및 시간', '자동 시간 설정 사용')), card(linkRow('클립보드', `저장된 항목 ${Clip.items.length}개`, () => WM.open('clipboard'))), card(linkRow('초기화', '', () => open('reset')))],
+    reset: () => [card(
+      linkRow('홈 화면 초기화', '', async () => { if (await Dialog.confirm('홈 화면 초기화', '홈 화면 배치를 기본값으로 되돌릴까요?', '초기화')) { Home.reset(); toast('홈 화면을 초기화했습니다'); } }),
+      linkRow('설정 초기화', '저장된 데이터는 지워지지 않습니다', async () => { if (await Dialog.confirm('설정 초기화', '모든 설정을 기본값으로 되돌릴까요?', '초기화')) { Object.assign(S, DEFAULTS); setS('accent', ''); toast('설정을 초기화했습니다'); } }),
+      linkRow('모든 데이터 초기화', '노트, 메시지, 연락처 등 모든 데이터 삭제', async () => { if (await Dialog.confirm('모든 데이터 초기화', '모든 데이터를 삭제하고 다시 시작할까요?\n이 작업은 되돌릴 수 없습니다.', '초기화', true)) { try { Object.keys(localStorage).filter(k => k.startsWith('gos.')).forEach(k => localStorage.removeItem(k)); } catch {} location.reload(); } }))],
+    access: () => [card(tRow('다크 모드', '', 'dark'), tRow('편안하게 보기', '', 'eyeComfort')), h('div', { class: 'card' }, h('div', { class: 'card-t' }, '글자 크기'), h('div', { class: 'row', style: 'cursor:default' }, h('span', { style: 'font-size:12px' }, '가'), oslider(S.fs * 100, 85, 120, v => setS('fs', v / 100)), h('span', { style: 'font-size:20px' }, '가')))],
+    update() {
+      const st = h('div', { style: 'color:var(--sub);font-size:14.5px;margin-top:8px' }, '마지막 확인: ' + (store.get('lastUpd') ? fmtAgo(store.get('lastUpd')) : '없음'));
+      const btn = h('button', { class: 'pill', style: 'margin-top:18px', onclick: () => { btn.disabled = true; st.textContent = '업데이트 확인 중…'; setTimeout(() => { store.set('lastUpd', Date.now()); st.textContent = '최신 소프트웨어 버전입니다.'; btn.disabled = false; }, 1600); } }, '다운로드 및 설치');
+      return [h('div', { class: 'card', style: 'padding:30px 24px;text-align:center' }, h('div', { style: 'font-size:15px' }, '현재 소프트웨어 버전'), h('div', { style: 'font-size:22px;font-weight:600;margin-top:6px' }, 'Galaxy OS 1.0 (One UI 스타일)'), st, btn), card(linkRow('자동 다운로드', 'Wi-Fi 연결 시'))];
+    },
+    about() {
       let taps = 0;
-      stack.push(h('div', { class: 'view' }, Bar('휴대전화 정보', { back: () => stack.pop() }), h('div', { class: 'pg-body' },
-        h('div', { style: 'text-align:center;padding:24px 0 26px' }, h('div', { style: 'font-size:30px;font-weight:300;letter-spacing:8px' }, 'GALAXY'), h('div', { style: 'color:var(--sub);margin-top:6px' }, 'OS 1.0')),
-        h('div', { class: 'card' }, row('기기 이름', 'Galaxy 웹 폰'), row('모델 번호', 'GOS-W100'), row('소프트웨어 버전', 'Galaxy OS 1.0'),
-          h('div', { class: 'row', onclick: () => { if (++taps === 5) { toast('🎉 개발자 모드가 켜졌습니다 (농담입니다)'); taps = 0; } } }, h('div', { class: 'tx' }, h('b', null, '빌드 번호'), h('small', null, 'GOS1.0.' + new Date().getFullYear() + '.001'))),
-          row('브라우저', navigator.userAgent.replace(/\s*\(.*?\)\s*/g, ' ').slice(0, 80)),
-          row('화면 해상도', `${$('#phone').clientWidth} × ${$('#phone').clientHeight}`)),
-        h('p', { style: 'color:var(--sub);font-size:12px;text-align:center;padding:12px;line-height:1.6' }, 'Galaxy OS 1.0은 브라우저에서 동작하는 휴대전화 OS 시뮬레이터입니다.\n모든 데이터는 이 브라우저에만 저장됩니다.'))));
-    }
+      const row = (k, v) => h('div', { class: 'row', ctx: () => [{ label: '복사', fn: () => Clip.add(v) }] }, h('div', { class: 'tx' }, h('b', null, k), h('small', null, v)));
+      return [h('div', { style: 'text-align:center;padding:4px 0 24px' }, h('div', { style: 'font-size:26px;font-weight:300;letter-spacing:7px' }, 'GALAXY'), h('div', { style: 'color:var(--sub);margin-top:6px' }, 'Galaxy 웹 폰')),
+        card(row('기기 이름', 'Galaxy 웹 폰'), row('모델 번호', 'GOS-W100'), row('전화번호', '010-0000-0000')),
+        card(row('소프트웨어 버전', 'Galaxy OS 1.0'), h('div', { class: 'row', onclick: () => { if (++taps === 7) { toast('개발자 모드가 켜졌습니다'); taps = 0; } else if (taps > 3) toast(`개발자 모드까지 ${7 - taps}단계 남았습니다`); } }, h('div', { class: 'tx' }, h('b', null, '빌드 번호'), h('small', null, 'GOS1.0.' + new Date().getFullYear() + '.ONEUI'))),
+          row('화면 해상도', `${phone.clientWidth} × ${phone.clientHeight}`), row('브라우저', navigator.userAgent.replace(/\s*\(.*?\)\s*/g, ' ').slice(0, 80))),
+        note('Galaxy OS 1.0은 브라우저에서 동작하는 One UI 스타일 휴대전화 시뮬레이터입니다.\n모든 데이터는 이 브라우저에만 저장됩니다.')];
+    },
+    kb: () => [
+      card(h('div', { class: 'row', style: 'cursor:default' }, h('div', { class: 'tx' }, h('b', null, '기본 언어')),
+        h('div', { class: 'seg', style: 'width:150px' }, [['ko', '한국어'], ['en', 'English']].map(([k, l]) => h('button', { class: S.lang === k ? 'on' : '', onclick: e => { setS('lang', k); e.target.parentNode.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === e.target)); } }, l))))),
+      h('div', { class: 'grp-t' }, '레이아웃'), card(tRow('숫자 키', '키보드 맨 위에 숫자 줄 표시', 'numRow'), tRow('대체 문자', '키를 길게 눌러 기호 입력 (키 위에 표시)', 'kbAlt'), tRow('키 누를 때 미리보기', '', 'kbPreview')),
+      h('div', { class: 'grp-t' }, '피드백'), card(tRow('소리', '', 'kbSound'), tRow('진동', '', 'kbVib')),
+      h('div', { style: 'padding:6px 6px 16px' }, h('input', { type: 'text', class: 'field', placeholder: '여기에서 키보드를 테스트해 보세요', inputmode: 'none' }))],
+  };
+  function appInfo(id) {
+    const a = APPS[id];
+    return [h('div', { style: 'display:flex;flex-direction:column;align-items:center;gap:10px;padding:0 0 22px' }, appIcon(id), h('div', { style: 'font-size:20px' }, a.name), h('div', { style: 'color:var(--sub);font-size:13px' }, '버전 1.0')),
+      h('div', { style: 'display:flex;justify-content:space-around;padding:0 20px 18px' },
+        h('button', { class: 'tbtn', onclick: () => WM.open(id) }, '열기'),
+        h('button', { class: 'tbtn', style: WM.run.has(id) ? '' : 'opacity:.4', onclick: () => { if (WM.run.has(id) && id !== 'settings') { WM.kill(id); toast(`${a.name}을(를) 강제 종료했습니다`); } } }, '강제 종료')),
+      card(linkRow('알림', '허용됨'), linkRow('권한', id === 'camera' ? '카메라' : '요청된 권한 없음'), linkRow('저장공간', '브라우저 저장소'), linkRow('배터리', '최적화됨'))];
   }
-  render();
-  on('settings', k => { if (k !== 'bright') render(); });
-  on('clip', render);
-  const handle = i => { if (i && i.section === 'kb') { while (stack.depth > 1) stack.pop(); setTimeout(() => scrollInto(kbCard, 'start'), 320); } };
+  function open(page, replace) {
+    let content, title;
+    if (page.startsWith('appInfo:')) { const id = page.slice(8); content = appInfo(id); title = '애플리케이션 정보'; }
+    else { const f = PAGES[page]; if (!f) return toast('준비 중인 메뉴입니다'); content = f(); title = settingsTitle(page); }
+    const p = Page(title, { back: () => stack.pop() });
+    p.body.append(...content);
+    if (replace && stack.depth > 1) stack.replaceTop(p.el); else stack.push(p.el);
+  }
+  const refresh = () => refreshers.forEach(f => { try { f(); } catch {} });
+  on('settings', refresh);
+  const handle = i => {
+    if (!i) return;
+    while (stack.depth > 1) stack.pop();
+    if (i.section === 'kb') open('kb');
+    if (i.page) open(i.page);
+    if (i.appInfo) open('appInfo:' + i.appInfo);
+  };
   handle(intent);
   return { intent: handle, back: () => stack.pop() };
 });
 
+/* ---------------- 날씨 ---------------- */
+defineApp('weather', '날씨', '#2f8ef0', 'wx', el => {
+  const view = h('div', { class: 'view wx-app' });
+  el.append(view);
+  const bgFor = (code, night) => night ? 'linear-gradient(180deg,#0f1a3d,#25335e 60%,#36477a)' : code <= 1 ? 'linear-gradient(180deg,#2f8ef0,#5fb0ff 55%,#9fd0ff)' : code <= 3 ? 'linear-gradient(180deg,#5b7391,#8ba3bf 60%,#b8c9db)' : code >= 95 ? 'linear-gradient(180deg,#2a2f45,#4b5470)' : 'linear-gradient(180deg,#46617f,#6f8aa8 60%,#a5b8cc)';
+  function render() {
+    const d = Weather.data, w = Weather.now, [, desc, emo] = wxInfo(w.code);
+    const hr = new Date().getHours(), night = hr < 6 || hr >= 19;
+    view.style.background = bgFor(w.code, night);
+    view.innerHTML = '';
+    const bar = h('div', { class: 'bar' }, h('div', { class: 'title' }), iconBtn('pin2', locate, '현재 위치'), iconBtn('refresh', () => { toast('날씨를 업데이트하는 중…'); Weather.refresh(true); }, '새로고침'));
+    const sc = h('div', { class: 'pg-body', style: 'padding:0 16px 30px' });
+    sc.append(h('div', { class: 'wx-now' }, h('div', { class: 'city' }, S.wxCity), h('div', { class: 't' }, `${w.t}°`), h('div', { class: 'desc' }, `${emo} ${desc}`), h('div', { class: 'hl' }, `최고 ${w.hi}° / 최저 ${w.lo}°` + (d && d.current ? ` · 체감 ${Math.round(d.current.apparent_temperature)}°` : ''))));
+    if (d && d.hourly) {
+      const now = Date.now(), idx = Math.max(0, d.hourly.time.findIndex(t => new Date(t).getTime() > now - 3600e3));
+      const row = h('div', { class: 'wx-hours' });
+      for (let i = idx; i < Math.min(idx + 24, d.hourly.time.length); i++) {
+        const t = new Date(d.hourly.time[i]);
+        row.append(h('div', null, h('small', null, i === idx ? '지금' : `${t.getHours()}시`), h('span', null, wxInfo(d.hourly.weather_code[i])[2]), h('b', null, Math.round(d.hourly.temperature_2m[i]) + '°'), h('small', { class: 'pp' }, (d.hourly.precipitation_probability ? d.hourly.precipitation_probability[i] : 0) + '%')));
+      }
+      sc.append(h('div', { class: 'wx-card' }, row));
+      sc.append(h('div', { class: 'wx-card' }, d.daily.time.map((t, i) => { const dt = new Date(t); return h('div', { class: 'wx-day' }, h('span', { class: 'n' }, i === 0 ? '오늘' : DAYS[dt.getDay()] + '요일'), h('span', null, wxInfo(d.daily.weather_code[i])[2]), h('span', { class: 'r' }, h('small', null, Math.round(d.daily.temperature_2m_min[i]) + '°'), ' ', Math.round(d.daily.temperature_2m_max[i]) + '°')); })));
+      const det = (k, v) => h('div', null, h('small', null, k), h('b', null, v));
+      sc.append(h('div', { class: 'wx-card wx-det' }, det('습도', d.current.relative_humidity_2m + '%'), det('바람', d.current.wind_speed_10m + ' km/h'), det('자외선', String(Math.round(d.daily.uv_index_max[0] || 0))), det('일출 / 일몰', `${d.daily.sunrise[0].slice(11)} / ${d.daily.sunset[0].slice(11)}`)));
+      sc.append(h('p', { class: 'wx-src' }, `데이터: Open-Meteo · ${fmtAgo(d.at)} 업데이트`));
+    } else sc.append(h('div', { class: 'wx-card', style: 'padding:22px;text-align:center;line-height:1.6' }, '실시간 날씨를 불러오지 못했습니다.\n인터넷에 연결된 상태에서 새로고침을 눌러 주세요.'));
+    view.append(bar, sc);
+  }
+  function locate() {
+    if (!navigator.geolocation) return toast('위치를 사용할 수 없습니다');
+    toast('현재 위치를 확인하는 중…');
+    navigator.geolocation.getCurrentPosition(p => { S.wxLat = +p.coords.latitude.toFixed(3); S.wxLon = +p.coords.longitude.toFixed(3); S.wxCity = '현재 위치'; store.set('settings', S); Weather.refresh(true); },
+      () => toast('위치 권한이 거부되었습니다'), { timeout: 8000 });
+  }
+  on('wx', () => render());
+  render(); Weather.refresh();
+  return { show: render };
+});
+
 /* ---------------- 클립보드 ---------------- */
-defineApp('clipboard', '클립보드', '#0ea5a4', 'clip', el => {
+defineApp('clipboard', '클립보드', '#17a7a2', 'clip', el => {
   const pg = Page('클립보드', { actions: [iconBtn('trash', async () => { if (await Dialog.confirm('클립보드 비우기', '고정되지 않은 항목을 모두 삭제할까요?', '삭제', true)) Clip.clear(); }, '모두 삭제')] });
   el.append(pg.el);
   const input = h('textarea', { class: 'field', rows: 2, placeholder: '여기에 입력한 뒤 [저장]을 누르면 클립보드에 복사됩니다', inputmode: 'none', style: 'margin-bottom:8px' });
@@ -2133,7 +2842,7 @@ defineApp('clipboard', '클립보드', '#0ea5a4', 'clip', el => {
 });
 
 /* ---------------- 인터넷 ---------------- */
-defineApp('internet', '인터넷', '#7a5af8', 'globe', el => {
+defineApp('internet', '인터넷', '#6b4ff0', 'globe', el => {
   const START = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><style>body{font-family:system-ui,sans-serif;margin:0;padding:40px 20px;background:linear-gradient(180deg,#eef2ff,#fff);color:#222}h1{font-weight:300;letter-spacing:6px;text-align:center;font-size:26px}p{text-align:center;color:#666;font-size:14px}.g{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}a{display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;color:#333;font-size:12px}a span{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;color:#fff;font-size:22px;font-weight:700}</style><h1>GALAXY</h1><p>주소창을 눌러 웹 주소나 검색어를 입력하세요</p><div class="g"><a href="https://ko.m.wikipedia.org/"><span style="background:#555">W</span>위키백과</a><a href="https://en.m.wikipedia.org/wiki/Main_Page"><span style="background:#3366cc">W</span>Wikipedia</a><a href="https://www.openstreetmap.org/export/embed.html?bbox=126.9,37.5,127.1,37.6"><span style="background:#7ebc6f">M</span>지도</a><a href="https://example.com"><span style="background:#e96443">E</span>Example</a><a href="https://developer.mozilla.org/ko/"><span style="background:#111">M</span>MDN</a><a href="https://www.youtube.com/embed/jNQXAC9IVRw"><span style="background:#ff0000">▶</span>동영상</a></div>`;
   const url = h('input', { type: 'url', class: 'field', placeholder: '검색 또는 URL 입력', inputmode: 'none', 'data-kb': 'en', 'data-enter': '이동' });
   const frame = h('iframe', { class: 'web', title: '웹 페이지', sandbox: 'allow-scripts allow-same-origin allow-forms allow-popups' });
